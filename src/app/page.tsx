@@ -1,7 +1,8 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, Disc3, ShoppingBag, Users, Play } from "lucide-react";
+import { ArrowDown, Disc3, ShoppingBag, Users, Play, Volume2, VolumeX } from "lucide-react";
 import { useLenis } from "@/hooks/use-lenis";
 import Link from "next/link";
 import MatrixText from "@/components/fancy/text/matrix-text";
@@ -9,6 +10,24 @@ import MatrixText from "@/components/fancy/text/matrix-text";
 export default function Home() {
   // Initialize smooth scrolling
   useLenis();
+
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+    }
+  };
+
+  // YouTube URL with mute parameter
+  const youtubeUrl = `https://www.youtube.com/embed/OOx9QAeRo8E?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=OOx9QAeRo8E&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
 
   return (
     <div className="relative">
@@ -18,30 +37,50 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-noir-void/60 z-10" />
           {/* Desktop Video (YouTube) */}
-          <iframe
-            src="https://www.youtube.com/embed/OOx9QAeRo8E?autoplay=1&mute=1&loop=1&playlist=OOx9QAeRo8E&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
-            className="hidden md:block absolute inset-0 w-full h-full object-cover"
-            style={{
-              width: '100vw',
-              height: '100vh',
-              objectFit: 'cover',
-              pointerEvents: 'none'
-            }}
-            allow="autoplay; encrypted-media"
-            allowFullScreen
-            title="Loaf Records Featured Video"
-          />
+          {isClient && (
+            <iframe
+              key={isMuted ? 'muted' : 'unmuted'}
+              src={youtubeUrl}
+              className="hidden md:block absolute inset-0 w-full h-full object-cover"
+              style={{
+                width: '100vw',
+                height: '100vh',
+                objectFit: 'cover',
+                pointerEvents: 'none'
+              }}
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+              title="Loaf Records Featured Video"
+            />
+          )}
 
           {/* Mobile Video (Local) */}
           <video
+            ref={videoRef}
             src="/0128.mp4"
             className="block md:hidden absolute inset-0 w-full h-full object-cover"
             autoPlay
-            muted
+            muted={isMuted}
             loop
             playsInline
           />
         </div>
+
+        {/* Mute/Unmute Button */}
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          onClick={toggleMute}
+          className="absolute bottom-24 right-6 z-30 p-3 bg-noir-void/70 backdrop-blur-sm border border-noir-smoke rounded-full hover:border-accent-cyan/50 hover:bg-noir-charcoal/80 transition-all group"
+          aria-label={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? (
+            <VolumeX className="w-5 h-5 text-noir-cloud group-hover:text-accent-cyan transition-colors" />
+          ) : (
+            <Volume2 className="w-5 h-5 text-accent-cyan" />
+          )}
+        </motion.button>
 
         {/* Hero content */}
         <motion.div
