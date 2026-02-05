@@ -167,16 +167,25 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          {/* Featured Video Embed - Lost City */}
+          {/* Featured Video Embed - Desktop: Abel, Mobile: Lost City */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="aspect-video rounded-2xl overflow-hidden shadow-2xl"
           >
+            {/* Desktop - Abel */}
+            <iframe
+              src="https://www.youtube.com/embed/41Zx0etfnkM"
+              className="hidden md:block w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="Abel - Rah Tha Ruler & Shadow The Great"
+            />
+            {/* Mobile - Lost City */}
             <iframe
               src="https://www.youtube.com/embed/OOx9QAeRo8E"
-              className="w-full h-full"
+              className="block md:hidden w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               title="Lost City - Shadow The Great"
