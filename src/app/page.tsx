@@ -36,12 +36,12 @@ export default function Home() {
         {/* Background Video */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-noir-void/60 z-10" />
-          {/* Video (YouTube - same for desktop and mobile) */}
+          {/* Desktop Video (YouTube Lost City) */}
           {isClient && (
             <iframe
               key={isMuted ? 'muted' : 'unmuted'}
               src={youtubeUrl}
-              className="absolute inset-0 w-full h-full"
+              className="hidden md:block absolute inset-0 w-full h-full"
               style={{
                 width: '100vw',
                 height: '100vh',
@@ -53,6 +53,17 @@ export default function Home() {
               title="Lost City - Loaf Records Featured Video"
             />
           )}
+
+          {/* Mobile Video (Local Graffiti Guy) */}
+          <video
+            ref={videoRef}
+            src="/0128.mp4"
+            className="block md:hidden absolute inset-0 w-full h-full object-cover"
+            autoPlay
+            muted={isMuted}
+            loop
+            playsInline
+          />
         </div>
 
         {/* Mute/Unmute Button */}
@@ -156,7 +167,7 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          {/* Featured Video Embed */}
+          {/* Featured Video Embed - Lost City */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -164,11 +175,11 @@ export default function Home() {
             className="aspect-video rounded-2xl overflow-hidden shadow-2xl"
           >
             <iframe
-              src="https://www.youtube.com/embed/41Zx0etfnkM"
+              src="https://www.youtube.com/embed/OOx9QAeRo8E"
               className="w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              title="Abel - Rah Tha Ruler & Shadow The Great"
+              title="Lost City - Shadow The Great"
             />
           </motion.div>
         </div>
