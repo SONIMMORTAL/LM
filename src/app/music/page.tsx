@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Disc3, Music2, Sparkles } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Disc3, Music2, Shuffle } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -65,6 +65,11 @@ export default function MusicPage() {
             const data = await res.json();
             if (data.tracks && data.tracks.length > 0) {
                 setTracks(data.tracks);
+                // Set initial track to first Lost City track
+                const lostCityIndex = data.tracks.findIndex((t: Track) => t.album === "Lost City");
+                if (lostCityIndex >= 0) {
+                    setCurrentTrackIndex(lostCityIndex);
+                }
             }
         } catch (error) {
             console.error("Failed to fetch tracks:", error);
@@ -75,7 +80,7 @@ export default function MusicPage() {
 
     const currentTrack = tracks[currentTrackIndex];
 
-    // Group tracks by album
+    // Group tracks by album - filter out Gotham from The Commission
     const albums: Album[] = [
         {
             name: "The Commission",
@@ -83,7 +88,7 @@ export default function MusicPage() {
             cover: "/THE COMMISSION.png",
             gradient: "from-amber-500/20 via-orange-600/10 to-red-900/20",
             accentColor: "amber",
-            tracks: tracks.filter(t => t.album === "The Commission" || (!t.album && t.title !== "Lost City"))
+            tracks: tracks.filter(t => (t.album === "The Commission" || (!t.album && t.title !== "Lost City")) && t.title.toUpperCase() !== "GOTHAM")
         },
         {
             name: "Lost City",
@@ -162,6 +167,23 @@ export default function MusicPage() {
 
     const getGlobalTrackIndex = (track: Track) => {
         return tracks.findIndex(t => t.id === track.id);
+    };
+
+    const shufflePlay = () => {
+        if (tracks.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * tracks.length);
+        setCurrentTrackIndex(randomIndex);
+        setIsPlaying(true);
+    };
+
+    const getAlbumCover = (albumName: string | null | undefined): string => {
+        switch (albumName) {
+            case "Lost City": return "/LC1.jpg";
+            case "More Life": return "/MORE LIFE VINYL.jpg";
+            case "Live From The Dungeon": return "/LFTD.jpg";
+            case "The Commission":
+            default: return "/THE COMMISSION.png";
+        }
     };
 
     return (
@@ -337,23 +359,7 @@ export default function MusicPage() {
                                                 </motion.div>
                                             )}
 
-                                            {/* Back Cover Art (Live From The Dungeon) */}
-                                            {album.name === "Live From The Dungeon" && (
-                                                <motion.div
-                                                    className="mt-8 relative aspect-square w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border border-white/10"
-                                                    initial={{ opacity: 0, scale: 0.95 }}
-                                                    whileInView={{ opacity: 1, scale: 1 }}
-                                                    viewport={{ once: true }}
-                                                    transition={{ duration: 0.5 }}
-                                                >
-                                                    <Image
-                                                        src="/LFTD3.jpg"
-                                                        alt="Live From The Dungeon Artwork"
-                                                        fill
-                                                        className="object-cover"
-                                                    />
-                                                </motion.div>
-                                            )}
+                                            {/* Back Cover Art removed for cleaner design */}
                                         </div>
 
                                         {/* Tracks Section */}
@@ -487,11 +493,7 @@ export default function MusicPage() {
                                     transition={{ duration: 2, repeat: Infinity }}
                                 >
                                     <Image
-                                        src={
-                                            currentTrack?.album === "MORE LIFE" ? "/MORE LIFE VINYL.jpg" :
-                                                currentTrack?.album === "Lost City" ? "/LC1.jpg" :
-                                                    "/THE COMMISSION.png"
-                                        }
+                                        src={getAlbumCover(currentTrack?.album)}
                                         alt="Now Playing"
                                         fill
                                         className="object-cover"
@@ -531,6 +533,16 @@ export default function MusicPage() {
                                         className="p-2 text-noir-cloud hover:text-white transition-colors"
                                     >
                                         <SkipForward className="w-5 h-5" />
+                                    </motion.button>
+
+                                    <motion.button
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        onClick={shufflePlay}
+                                        className="p-2 text-noir-cloud hover:text-accent-cyan transition-colors"
+                                        title="Shuffle"
+                                    >
+                                        <Shuffle className="w-5 h-5" />
                                     </motion.button>
                                 </div>
 

@@ -48,6 +48,12 @@ async function fetchTracksFromStorage(): Promise<Track[]> {
     const allTracks: Track[] = [];
     const audioExtensions = ['mp3', 'wav', 'm4a', 'ogg', 'flac'];
 
+    // Helper to extract track number from filename
+    const getTrackNumber = (filename: string): number => {
+        const match = filename.match(/^(\d+)/);
+        return match ? parseInt(match[1], 10) : 999;
+    };
+
     // Iterate through configured albums to fetch from correct buckets
     for (const album of Object.values(ALBUMS)) {
         console.log(`Fetching tracks for ${album.name} from bucket: ${album.bucket}, path: ${album.path || 'root'}`);
@@ -56,7 +62,6 @@ async function fetchTracksFromStorage(): Promise<Track[]> {
             .from(album.bucket)
             .list(album.path || undefined, {
                 limit: 100,
-                sortBy: { column: 'name', order: 'asc' }
             });
 
         if (filesError) {
@@ -69,33 +74,36 @@ async function fetchTracksFromStorage(): Promise<Track[]> {
             continue;
         }
 
-        const tracks = files
+        // Sort files by track number numerically
+        const sortedFiles = files
             .filter(file => {
                 const ext = file.name.split('.').pop()?.toLowerCase();
                 return ext && audioExtensions.includes(ext);
             })
-            .map((file, index) => {
-                const { title, artist } = parseTrackName(file.name);
+            .sort((a, b) => getTrackNumber(a.name) - getTrackNumber(b.name));
 
-                // Construct the correct path for getPublicUrl
-                const filePath = album.path ? `${album.path}/${file.name}` : file.name;
+        const tracks = sortedFiles.map((file, index) => {
+            const { title, artist } = parseTrackName(file.name);
 
-                const { data: { publicUrl } } = supabaseAdmin.storage
-                    .from(album.bucket)
-                    .getPublicUrl(filePath);
+            // Construct the correct path for getPublicUrl
+            const filePath = album.path ? `${album.path}/${file.name}` : file.name;
 
-                return {
-                    id: file.id || `${album.id}-${index}`,
-                    title,
-                    artist,
-                    duration: null,
-                    audio_url: publicUrl,
-                    soundcloud_url: null,
-                    album: album.name, // Ensure this matches frontend expected album names
-                    price: 1.00,
-                    plays: 0
-                };
-            });
+            const { data: { publicUrl } } = supabaseAdmin.storage
+                .from(album.bucket)
+                .getPublicUrl(filePath);
+
+            return {
+                id: file.id || `${album.id}-${index}`,
+                title,
+                artist,
+                duration: null,
+                audio_url: publicUrl,
+                soundcloud_url: null,
+                album: album.name, // Ensure this matches frontend expected album names
+                price: 1.00,
+                plays: 0
+            };
+        });
 
         allTracks.push(...tracks);
     }
@@ -108,6 +116,12 @@ async function fetchTracksFromStorageForAlbums(albumsToFetch: typeof ALBUMS[keyo
     const allTracks: Track[] = [];
     const audioExtensions = ['mp3', 'wav', 'm4a', 'ogg', 'flac'];
 
+    // Helper to extract track number from filename
+    const getTrackNumber = (filename: string): number => {
+        const match = filename.match(/^(\d+)/);
+        return match ? parseInt(match[1], 10) : 999;
+    };
+
     for (const album of albumsToFetch) {
         console.log(`Fetching tracks for ${album.name} from bucket: ${album.bucket}, path: ${album.path || 'root'}`);
 
@@ -115,7 +129,6 @@ async function fetchTracksFromStorageForAlbums(albumsToFetch: typeof ALBUMS[keyo
             .from(album.bucket)
             .list(album.path || undefined, {
                 limit: 100,
-                sortBy: { column: 'name', order: 'asc' }
             });
 
         if (filesError) {
@@ -128,33 +141,36 @@ async function fetchTracksFromStorageForAlbums(albumsToFetch: typeof ALBUMS[keyo
             continue;
         }
 
-        const tracks = files
+        // Sort files by track number numerically
+        const sortedFiles = files
             .filter(file => {
                 const ext = file.name.split('.').pop()?.toLowerCase();
                 return ext && audioExtensions.includes(ext);
             })
-            .map((file, index) => {
-                const { title, artist } = parseTrackName(file.name);
+            .sort((a, b) => getTrackNumber(a.name) - getTrackNumber(b.name));
 
-                // Construct the correct path for getPublicUrl
-                const filePath = album.path ? `${album.path}/${file.name}` : file.name;
+        const tracks = sortedFiles.map((file, index) => {
+            const { title, artist } = parseTrackName(file.name);
 
-                const { data: { publicUrl } } = supabaseAdmin.storage
-                    .from(album.bucket)
-                    .getPublicUrl(filePath);
+            // Construct the correct path for getPublicUrl
+            const filePath = album.path ? `${album.path}/${file.name}` : file.name;
 
-                return {
-                    id: file.id || `${album.id}-${index}`,
-                    title,
-                    artist,
-                    duration: null,
-                    audio_url: publicUrl,
-                    soundcloud_url: null,
-                    album: album.name,
-                    price: 1.00,
-                    plays: 0
-                };
-            });
+            const { data: { publicUrl } } = supabaseAdmin.storage
+                .from(album.bucket)
+                .getPublicUrl(filePath);
+
+            return {
+                id: file.id || `${album.id}-${index}`,
+                title,
+                artist,
+                duration: null,
+                audio_url: publicUrl,
+                soundcloud_url: null,
+                album: album.name,
+                price: 1.00,
+                plays: 0
+            };
+        });
 
         allTracks.push(...tracks);
     }
