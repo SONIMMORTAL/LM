@@ -36,12 +36,12 @@ export default function Home() {
         {/* Background Video */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-noir-void/60 z-10" />
-          {/* Desktop Video (YouTube) */}
+          {/* Video (YouTube - same for desktop and mobile) */}
           {isClient && (
             <iframe
               key={isMuted ? 'muted' : 'unmuted'}
               src={youtubeUrl}
-              className="hidden md:block absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full"
               style={{
                 width: '100vw',
                 height: '100vh',
@@ -50,20 +50,9 @@ export default function Home() {
               }}
               allow="autoplay; encrypted-media"
               allowFullScreen
-              title="Loaf Records Featured Video"
+              title="Lost City - Loaf Records Featured Video"
             />
           )}
-
-          {/* Mobile Video (Local) */}
-          <video
-            ref={videoRef}
-            src="/0128.mp4"
-            className="block md:hidden absolute inset-0 w-full h-full object-cover"
-            autoPlay
-            muted={isMuted}
-            loop
-            playsInline
-          />
         </div>
 
         {/* Mute/Unmute Button */}
