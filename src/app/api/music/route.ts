@@ -230,29 +230,35 @@ export async function GET() {
         };
 
         // Add database tracks if available, fixing URLs
-        const formattedDbTracks = (dbTracks || []).map(track => ({
-            id: track.id,
-            title: track.title,
-            artist: track.artist,
-            duration: track.duration,
-            audio_url: fixAudioUrl(track.audio_url, track.album),
-            soundcloud_url: track.soundcloud_url,
-            album: track.album,
-            price: track.price ? parseFloat(track.price) : null,
-            plays: track.plays || 0
-        }));
+        // EXCLUDE Lost City from DB due to filename mismatches - always fetch from storage
+        const formattedDbTracks = (dbTracks || [])
+            .filter(track => track.album !== 'Lost City')
+            .map(track => ({
+                id: track.id,
+                title: track.title,
+                artist: track.artist,
+                duration: track.duration,
+                audio_url: fixAudioUrl(track.audio_url, track.album),
+                soundcloud_url: track.soundcloud_url,
+                album: track.album,
+                price: track.price ? parseFloat(track.price) : null,
+                plays: track.plays || 0
+            }));
 
         allTracks.push(...formattedDbTracks);
-        console.log(`Found ${formattedDbTracks.length} tracks in database`);
+        console.log(`Found ${formattedDbTracks.length} tracks in database (excluding Lost City)`);
 
         // Check which albums are missing from DB and fetch from storage
+        // ALWAYS include Lost City to fetch from storage with correct filenames
         const dbAlbumNames = new Set(formattedDbTracks.map(t => t.album));
-        const missingAlbums = Object.values(ALBUMS).filter(album => !dbAlbumNames.has(album.name));
+        const missingAlbums = Object.values(ALBUMS).filter(album =>
+            !dbAlbumNames.has(album.name) || album.name === 'Lost City'
+        );
 
         if (missingAlbums.length > 0) {
-            console.log(`Albums missing from DB: ${missingAlbums.map(a => a.name).join(', ')}`);
+            console.log(`Fetching from storage: ${missingAlbums.map(a => a.name).join(', ')}`);
             const storageTracks = await fetchTracksFromStorageForAlbums(missingAlbums);
-            console.log(`Found ${storageTracks.length} tracks in storage for missing albums`);
+            console.log(`Found ${storageTracks.length} tracks in storage`);
             allTracks.push(...storageTracks);
         }
 
