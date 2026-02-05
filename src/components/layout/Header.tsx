@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { useAuth, AuthModal } from "@/components/auth";
 import { useCart } from "@/context/CartContext";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const navItems = [
     { href: "/", label: "Home" },
@@ -193,6 +194,9 @@ export function Header() {
                                     </span>
                                 )}
                             </button>
+
+                            {/* Theme Toggle */}
+                            <ThemeToggle />
                         </div>
 
                         {/* Mobile Menu Button */}
@@ -331,8 +335,13 @@ export function Header() {
 
                             {/* Bottom branding */}
                             <div className="mt-auto pt-8 border-t border-noir-smoke">
-                                <p className="text-noir-ash text-sm">Loaf Records</p>
-                                <p className="text-accent-cyan text-xs mt-1">Brooklyn, NY</p>
+                                <div className="flex items-center justify-between mb-4">
+                                    <div>
+                                        <p className="text-noir-ash text-sm">Loaf Records</p>
+                                        <p className="text-accent-cyan text-xs mt-1">Brooklyn, NY</p>
+                                    </div>
+                                    <ThemeToggle />
+                                </div>
                             </div>
                         </motion.nav>
                     </motion.div>

@@ -9,7 +9,8 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/components/auth";
 import { AnalyticsTracker } from "@/components/analytics";
 import { CartSidebar } from "@/components/shop/CartSidebar";
-
+import { CartProvider } from "@/context/CartContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,10 +30,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { CartProvider } from "@/context/CartContext";
-
-// ... imports
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -41,46 +38,49 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} font-body antialiased`}>
-        <AuthProvider>
-          <CartProvider>
-            {/* Analytics Tracker */}
-            <AnalyticsTracker />
+        <ThemeProvider>
+          <AuthProvider>
+            <CartProvider>
+              {/* Analytics Tracker */}
+              <AnalyticsTracker />
 
-            {/* Film Grain Overlay */}
-            <div className="film-grain" aria-hidden="true" />
+              {/* Film Grain Overlay */}
+              <div className="film-grain" aria-hidden="true" />
 
-            {/* Site Header */}
-            <Header />
-            <CartSidebar />
+              {/* Site Header */}
+              <Header />
+              <CartSidebar />
 
-            {/* Main Content */}
-            <main className="relative min-h-screen">
-              {children}
-            </main>
+              {/* Main Content */}
+              <main className="relative min-h-screen">
+                {children}
+              </main>
 
-            {/* Site Footer */}
-            <Footer />
+              {/* Site Footer */}
+              <Footer />
 
-            {/* Persistent Music Player - Dynamic Island */}
-            <MusicPlayer />
+              {/* Persistent Music Player - Dynamic Island */}
+              <MusicPlayer />
 
-            {/* Social Media Sidebar */}
-            <SocialSidebar />
+              {/* Social Media Sidebar */}
+              <SocialSidebar />
 
-            {/* Toast Notifications */}
-            <Toaster
-              position="top-center"
-              toastOptions={{
-                style: {
-                  background: "#1A1A1A",
-                  color: "#F5F5F5",
-                  border: "1px solid #3A3A3A",
-                },
-              }}
-            />
-          </CartProvider>
-        </AuthProvider>
+              {/* Toast Notifications */}
+              <Toaster
+                position="top-center"
+                toastOptions={{
+                  style: {
+                    background: "var(--color-noir-charcoal)",
+                    color: "var(--color-foreground)",
+                    border: "1px solid var(--color-noir-smoke)",
+                  },
+                }}
+              />
+            </CartProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+

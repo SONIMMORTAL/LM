@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ========================
-   Brooklyn Noir Theme Tokens
+   Brooklyn Noir Theme Tokens (Dark - Default)
    ======================== */
 @theme inline {
   /* Colors - Noir Palette */
@@ -28,6 +28,37 @@
   --shadow-glow-sm: 0 0 10px rgba(0, 217, 255, 0.2);
   --shadow-glow-md: 0 0 20px rgba(0, 217, 255, 0.3);
   --shadow-glow-lg: 0 0 40px rgba(0, 217, 255, 0.4);
+}
+
+/* ========================
+   Brooklyn Morning Theme (Light)
+   ======================== */
+html[data-theme="light"] {
+  --color-background: #FAF8F5;
+  --color-foreground: #1A1A1A;
+
+  --color-noir-void: #FAF8F5;
+  --color-noir-charcoal: #F0EDE8;
+  --color-noir-slate: #E5E0D8;
+  --color-noir-smoke: #D0C9BE;
+  --color-noir-ash: #8A8478;
+  --color-noir-cloud: #5A564E;
+
+  --color-accent-cyan: #0088AA;
+  --color-accent-cyan-muted: #006D8A;
+  --color-accent-cyan-glow: rgba(0, 136, 170, 0.3);
+
+  --shadow-glow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-glow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-glow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+}
+
+html[data-theme="light"] .glass-card {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+html[data-theme="light"] .film-grain {
+  opacity: 0.02;
 }
 
 /* ========================
