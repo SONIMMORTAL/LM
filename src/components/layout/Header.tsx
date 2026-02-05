@@ -77,7 +77,7 @@ export function Header() {
                             <div className="relative w-[100px] h-[100px] md:w-[130px] md:h-[130px]">
                                 {/* Static Turntable Base */}
                                 <img
-                                    src="/static.jpg"
+                                    src="/static-logo.jpg"
                                     alt="Turntable"
                                     className="absolute inset-0 w-full h-full object-contain"
                                 />
