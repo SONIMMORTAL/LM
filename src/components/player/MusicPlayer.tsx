@@ -82,6 +82,19 @@ export function MusicPlayer() {
                     const lostCityIndex = data.tracks.findIndex((t: Track) => t.album === "Lost City");
                     if (lostCityIndex >= 0) {
                         setCurrentTrackIndex(lostCityIndex);
+                        // Attempt autoplay for Lost City
+                        const lostCityTrack = data.tracks[lostCityIndex];
+                        if (audioRef.current && lostCityTrack.audio_url) {
+                            audioRef.current.src = lostCityTrack.audio_url;
+                            audioRef.current.volume = 0.8;
+                            // Try to autoplay (may be blocked by browser policy)
+                            audioRef.current.play()
+                                .then(() => setIsPlaying(true))
+                                .catch(() => {
+                                    // Autoplay was blocked - user needs to click play
+                                    console.log("Autoplay blocked - waiting for user interaction");
+                                });
+                        }
                     }
                 }
             } catch (error) {
