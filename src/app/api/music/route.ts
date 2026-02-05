@@ -199,13 +199,43 @@ export async function GET() {
         // Combine database tracks with storage tracks for albums missing from DB
         const allTracks: Track[] = [];
 
-        // Add database tracks if available
+        // Helper to fix broken audio URLs (local paths instead of Supabase URLs)
+        const fixAudioUrl = (url: string | null, albumName: string | null): string => {
+            if (!url) return '';
+
+            // If already a full URL, return as-is
+            if (url.startsWith('http://') || url.startsWith('https://')) {
+                return url;
+            }
+
+            // Lost City tracks have broken paths like "/LOST CITY/1.Desperado.wav"
+            // Need to convert to Supabase URL from Music3 bucket
+            if (albumName === 'Lost City' && url.includes('LOST CITY')) {
+                // Extract just the filename
+                const filename = url.split('/').pop() || '';
+                // Convert .wav to .mp3 if needed (the bucket has .mp3 files)
+                const mp3Filename = filename.replace(/\.wav$/i, '.mp3');
+                return `https://bnjoouzcnxwdxcgcknoe.supabase.co/storage/v1/object/public/Music3/${encodeURIComponent(mp3Filename)}`;
+            }
+
+            // For other albums, try to construct URL from bucket config
+            const albumConfig = Object.values(ALBUMS).find(a => a.name === albumName);
+            if (albumConfig) {
+                const filename = url.split('/').pop() || '';
+                const filePath = albumConfig.path ? `${albumConfig.path}/${filename}` : filename;
+                return `https://bnjoouzcnxwdxcgcknoe.supabase.co/storage/v1/object/public/${albumConfig.bucket}/${encodeURIComponent(filePath)}`;
+            }
+
+            return url;
+        };
+
+        // Add database tracks if available, fixing URLs
         const formattedDbTracks = (dbTracks || []).map(track => ({
             id: track.id,
             title: track.title,
             artist: track.artist,
             duration: track.duration,
-            audio_url: track.audio_url,
+            audio_url: fixAudioUrl(track.audio_url, track.album),
             soundcloud_url: track.soundcloud_url,
             album: track.album,
             price: track.price ? parseFloat(track.price) : null,
