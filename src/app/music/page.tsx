@@ -339,36 +339,20 @@ export default function MusicPage() {
 
                                             {/* Back Cover Art (Live From The Dungeon) */}
                                             {album.name === "Live From The Dungeon" && (
-                                                <>
-                                                    <motion.div
-                                                        className="mt-8 relative aspect-square w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border border-white/10"
-                                                        initial={{ opacity: 0, scale: 0.95 }}
-                                                        whileInView={{ opacity: 1, scale: 1 }}
-                                                        viewport={{ once: true }}
-                                                        transition={{ duration: 0.5 }}
-                                                    >
-                                                        <Image
-                                                            src="/LFTD2.jpg"
-                                                            alt="Live From The Dungeon Back Cover"
-                                                            fill
-                                                            className="object-cover"
-                                                        />
-                                                    </motion.div>
-                                                    <motion.div
-                                                        className="mt-4 relative aspect-square w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border border-white/10"
-                                                        initial={{ opacity: 0, scale: 0.95 }}
-                                                        whileInView={{ opacity: 1, scale: 1 }}
-                                                        viewport={{ once: true }}
-                                                        transition={{ duration: 0.5, delay: 0.1 }}
-                                                    >
-                                                        <Image
-                                                            src="/LFTD3.jpg"
-                                                            alt="Live From The Dungeon Artwork"
-                                                            fill
-                                                            className="object-cover"
-                                                        />
-                                                    </motion.div>
-                                                </>
+                                                <motion.div
+                                                    className="mt-8 relative aspect-square w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+                                                    initial={{ opacity: 0, scale: 0.95 }}
+                                                    whileInView={{ opacity: 1, scale: 1 }}
+                                                    viewport={{ once: true }}
+                                                    transition={{ duration: 0.5 }}
+                                                >
+                                                    <Image
+                                                        src="/LFTD3.jpg"
+                                                        alt="Live From The Dungeon Artwork"
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                </motion.div>
                                             )}
                                         </div>
 
