@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
-import { verifyAdminPassword, createAdminSession } from '@/lib/supabase/admin-auth';
+import { verifyAdminCredentials, createAdminSession } from '@/lib/supabase/admin-auth';
 
 export async function POST(request: Request) {
     try {
-        const { password } = await request.json();
+        const { email, password } = await request.json();
 
-        if (await verifyAdminPassword(password)) {
+        if (await verifyAdminCredentials(email, password)) {
             await createAdminSession();
             return NextResponse.json({ success: true });
         }
 
-        return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
+        return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     } catch {
         return NextResponse.json({ error: 'Server error' }, { status: 500 });
     }

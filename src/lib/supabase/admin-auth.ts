@@ -3,10 +3,16 @@ import { cookies } from 'next/headers';
 // Simple admin authentication using a password
 // For production, consider using Supabase Auth with proper user management
 
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'loafrecords1@gmail.com';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'shadow2026';
 const SESSION_COOKIE_NAME = 'admin_session';
 const SESSION_TOKEN = 'authenticated';
 
+export async function verifyAdminCredentials(email: string, password: string): Promise<boolean> {
+    return email === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+}
+
+// Keep for backwards compatibility
 export async function verifyAdminPassword(password: string): Promise<boolean> {
     return password === ADMIN_PASSWORD;
 }

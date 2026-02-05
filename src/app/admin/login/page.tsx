@@ -2,10 +2,11 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Lock, AlertCircle, Loader2 } from "lucide-react";
+import { Lock, Mail, AlertCircle, Loader2 } from "lucide-react";
 
 // Inner component that uses useSearchParams
 function AdminLoginForm() {
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -22,14 +23,14 @@ function AdminLoginForm() {
             const res = await fetch("/api/admin/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password }),
+                body: JSON.stringify({ email, password }),
             });
 
             if (res.ok) {
                 router.push(from);
                 router.refresh();
             } else {
-                setError("Invalid password");
+                setError("Invalid email or password");
             }
         } catch {
             setError("Something went wrong");
@@ -46,18 +47,31 @@ function AdminLoginForm() {
                         <Lock className="w-8 h-8 text-accent-cyan" />
                     </div>
                     <h1 className="text-2xl font-bold text-foreground">Admin Access</h1>
-                    <p className="text-noir-cloud text-sm mt-1">Enter password to continue</p>
+                    <p className="text-noir-cloud text-sm mt-1">Sign in to continue</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
+                    <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-noir-ash" />
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                            className="w-full pl-10 pr-4 py-3 bg-noir-charcoal border border-noir-smoke rounded-lg text-foreground placeholder:text-noir-ash focus:outline-none focus:border-accent-cyan transition-colors"
+                            autoFocus
+                            disabled={loading}
+                        />
+                    </div>
+
+                    <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-noir-ash" />
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="Password"
-                            className="w-full px-4 py-3 bg-noir-charcoal border border-noir-smoke rounded-lg text-foreground placeholder:text-noir-ash focus:outline-none focus:border-accent-cyan transition-colors"
-                            autoFocus
+                            className="w-full pl-10 pr-4 py-3 bg-noir-charcoal border border-noir-smoke rounded-lg text-foreground placeholder:text-noir-ash focus:outline-none focus:border-accent-cyan transition-colors"
                             disabled={loading}
                         />
                     </div>
@@ -71,7 +85,7 @@ function AdminLoginForm() {
 
                     <button
                         type="submit"
-                        disabled={loading || !password}
+                        disabled={loading || !email || !password}
                         className="w-full py-3 bg-accent-cyan text-noir-void font-semibold rounded-lg hover:bg-accent-cyan/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                     >
                         {loading ? (
