@@ -189,7 +189,7 @@ export async function GET() {
             .from('tracks')
             .select('*')
             .order('album', { ascending: true })
-            .order('title', { ascending: true });
+            .order('created_at', { ascending: true }); // Use created_at for track order
 
         if (dbError) {
             console.error('Database tracks error:', dbError);
