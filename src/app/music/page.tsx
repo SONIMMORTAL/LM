@@ -208,11 +208,11 @@ export default function MusicPage() {
                 onEnded={nextTrack}
             />
 
-            {/* Animated Background */}
+            {/* Animated Background - Hide heavy animations on mobile */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent-cyan/5 via-transparent to-purple-900/10" />
                 <motion.div
-                    className="absolute top-1/4 -left-32 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[120px]"
+                    className="hidden md:block absolute top-1/4 -left-32 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[120px]"
                     animate={{
                         scale: [1, 1.2, 1],
                         opacity: [0.3, 0.5, 0.3],
@@ -220,13 +220,15 @@ export default function MusicPage() {
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                 />
                 <motion.div
-                    className="absolute bottom-1/4 -right-32 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]"
+                    className="hidden md:block absolute bottom-1/4 -right-32 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]"
                     animate={{
                         scale: [1.2, 1, 1.2],
                         opacity: [0.3, 0.5, 0.3],
                     }}
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                 />
+                {/* Mobile Static Background for better perf */}
+                <div className="md:hidden absolute top-0 left-0 w-full h-full bg-gradient-to-b from-accent-cyan/5 to-transparent opacity-50" />
             </div>
 
             {/* Hero Section */}
@@ -275,11 +277,11 @@ export default function MusicPage() {
                                 transition={{ duration: 0.8, delay: albumIndex * 0.2 }}
                                 className="relative scroll-mt-32"
                             >
-                                {/* Album Background Glow */}
-                                <div className={`absolute inset-0 bg-gradient-to-r ${album.gradient} rounded-3xl blur-3xl opacity-50 -z-10`} />
+                                {/* Album Background Glow - Mobile optimized blur */}
+                                <div className={`absolute inset-0 bg-gradient-to-r ${album.gradient} rounded-3xl blur-2xl md:blur-3xl opacity-50 -z-10`} />
 
-                                {/* Album Card */}
-                                <div className="relative bg-gradient-to-br from-noir-charcoal/80 to-noir-slate/40 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden">
+                                {/* Album Card - Reduce backdrop blur on mobile */}
+                                <div className="relative bg-gradient-to-br from-noir-charcoal/80 to-noir-slate/40 backdrop-blur-md md:backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden">
                                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
                                         {/* Album Art Section */}
                                         <div className="lg:col-span-5 p-8 lg:p-12">
@@ -302,6 +304,7 @@ export default function MusicPage() {
                                                         fill
                                                         className="object-cover"
                                                         priority={albumIndex === 0}
+                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                     />
 
                                                     {/* Center Hole / Vinyl Look */}
@@ -370,6 +373,7 @@ export default function MusicPage() {
                                                         alt="Lost City Back Cover"
                                                         fill
                                                         className="object-cover"
+                                                        sizes="(max-width: 768px) 100vw, 384px"
                                                     />
                                                 </motion.div>
                                             )}
@@ -527,6 +531,7 @@ export default function MusicPage() {
                                         alt="Now Playing"
                                         fill
                                         className="object-cover"
+                                        sizes="56px"
                                     />
                                 </motion.div>
 
