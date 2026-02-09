@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, MapPin, Send, Instagram, Youtube, Music2, Disc3, ExternalLink } from "lucide-react";
+import { Mail, MapPin, Send, Instagram, Youtube, Music2, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -22,31 +22,10 @@ const socialLinks = [
         color: "from-red-500 to-red-600",
     },
     {
-        name: "SoundCloud",
-        handle: "loafmuzik",
-        url: "https://soundcloud.com/loafmuzik",
-        icon: Disc3,
-        color: "from-orange-500 to-orange-600",
-    },
-    {
-        name: "Spotify",
-        handle: "Shadow The Great",
-        url: "https://open.spotify.com/artist/2BvJc1CBYB5KRCzJfweIiK",
-        icon: Music2,
-        color: "from-green-500 to-green-600",
-    },
-    {
-        name: "Apple Music",
-        handle: "Loaf Muzik",
-        url: "https://music.apple.com/us/artist/loaf-muzik/1060484178",
-        icon: Music2,
-        color: "from-pink-500 to-red-500",
-    },
-    {
         name: "Facebook",
         handle: "Loaf Records",
         url: "https://www.facebook.com/loafrecords",
-        icon: Music2, // Using Music2 as generic icon or import Facebook if available
+        icon: Music2,
         color: "from-blue-500 to-blue-600",
     },
 ];

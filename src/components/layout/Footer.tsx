@@ -14,14 +14,7 @@ import Letter3DSwap from "@/components/fancy/text/letter-3d-swap";
 const socialLinks = [
     { href: "https://instagram.com/loafrecords", icon: Instagram, label: "Instagram" },
     { href: "https://www.youtube.com/@LoafRecords", icon: Youtube, label: "YouTube" },
-    { href: "https://soundcloud.com/loafmuzik", icon: Disc3, label: "SoundCloud" },
     { href: "https://www.facebook.com/loafrecords", icon: Music2, label: "Facebook" },
-];
-
-const streamingLinks = [
-    { href: "https://open.spotify.com/artist/2BvJc1CBYB5KRCzJfweIiK", label: "Spotify" },
-    { href: "https://music.apple.com/us/artist/loaf-muzik/1060484178", label: "Apple Music" },
-    { href: "https://soundcloud.com/loafmuzik", label: "SoundCloud" },
 ];
 
 const navLinks = [
@@ -104,27 +97,19 @@ export function Footer() {
                         </ul>
                     </div>
 
-                    {/* Streaming Column */}
+                    {/* Music & Shop Column */}
                     <div>
                         <h4 className="text-foreground font-semibold mb-4 uppercase tracking-wider text-sm flex items-center gap-2">
                             <Music2 className="w-4 h-4 text-accent-cyan" />
                             Listen
                         </h4>
-                        <ul className="space-y-3">
-                            {streamingLinks.map((link) => (
-                                <li key={link.label}>
-                                    <a
-                                        href={link.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-noir-cloud hover:text-accent-cyan transition-colors inline-flex items-center gap-1 group"
-                                    >
-                                        {link.label}
-                                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
+                        <Link
+                            href="/music"
+                            className="inline-flex items-center gap-2 text-noir-cloud hover:text-accent-cyan transition-colors font-medium group"
+                        >
+                            Stream the catalog
+                            <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </Link>
 
                         {/* Official Store Link */}
                         <div className="mt-6 pt-4 border-t border-noir-smoke">
