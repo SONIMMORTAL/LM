@@ -78,8 +78,8 @@ export function MusicPlayer() {
                 const data = await res.json();
                 if (data.tracks && data.tracks.length > 0) {
                     setTracks(data.tracks);
-                    // Set initial track to first Lost City track
-                    const lostCityIndex = data.tracks.findIndex((t: Track) => t.album === "Lost City");
+                    // Set initial track to specific "Lost City" song, or fallback to first Lost City album track
+                    const lostCityIndex = data.tracks.findIndex((t: Track) => t.title === "Lost City");
                     if (lostCityIndex >= 0) {
                         setCurrentTrackIndex(lostCityIndex);
                         // Attempt autoplay for Lost City

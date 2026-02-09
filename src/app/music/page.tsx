@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Disc3, Music2, Shuffle } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Disc3, Music2, Shuffle, ChevronDown } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -43,6 +43,9 @@ export default function MusicPage() {
     const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
     const [selectedPurchaseAlbum, setSelectedPurchaseAlbum] = useState<{ name: string; price: number; cover: string; artist: string } | null>(null);
 
+    // Mobile dropdown state
+    const [expandedAlbums, setExpandedAlbums] = useState<Record<string, boolean>>({});
+
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
@@ -65,10 +68,14 @@ export default function MusicPage() {
             const data = await res.json();
             if (data.tracks && data.tracks.length > 0) {
                 setTracks(data.tracks);
-                // Set initial track to first Lost City track
-                const lostCityIndex = data.tracks.findIndex((t: Track) => t.album === "Lost City");
+                // Set initial track to specific "Lost City" song
+                const lostCityIndex = data.tracks.findIndex((t: Track) => t.title === "Lost City");
                 if (lostCityIndex >= 0) {
                     setCurrentTrackIndex(lostCityIndex);
+                } else {
+                    // Fallback to first Lost City album track if specific song not found
+                    const lostCityAlbumIndex = data.tracks.findIndex((t: Track) => t.album === "Lost City");
+                    if (lostCityAlbumIndex >= 0) setCurrentTrackIndex(lostCityAlbumIndex);
                 }
             }
         } catch (error) {
@@ -115,6 +122,13 @@ export default function MusicPage() {
             tracks: tracks.filter(t => t.album === "Live From The Dungeon")
         }
     ];
+
+    const toggleAlbum = (albumName: string) => {
+        setExpandedAlbums(prev => ({
+            ...prev,
+            [albumName]: !prev[albumName]
+        }));
+    };
 
     const togglePlay = () => {
         if (!audioRef.current) return;
@@ -254,11 +268,12 @@ export default function MusicPage() {
                         albums.map((album, albumIndex) => (
                             <motion.div
                                 key={album.name}
+                                id={album.name.toLowerCase().replace(/\s+/g, '-')}
                                 initial={{ opacity: 0, y: 60 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-100px" }}
                                 transition={{ duration: 0.8, delay: albumIndex * 0.2 }}
-                                className="relative"
+                                className="relative scroll-mt-32"
                             >
                                 {/* Album Background Glow */}
                                 <div className={`absolute inset-0 bg-gradient-to-r ${album.gradient} rounded-3xl blur-3xl opacity-50 -z-10`} />
@@ -365,76 +380,91 @@ export default function MusicPage() {
                                         {/* Tracks Section */}
                                         <div className="lg:col-span-7 border-t lg:border-t-0 lg:border-l border-white/10 flex flex-col">
                                             <div className="p-6 lg:p-8 flex-1 flex flex-col min-h-0">
-                                                <h3 className="text-sm font-semibold text-noir-cloud uppercase tracking-wider mb-4 flex-shrink-0">Tracklist</h3>
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <h3 className="text-sm font-semibold text-noir-cloud uppercase tracking-wider flex-shrink-0">Tracklist</h3>
 
-                                                {album.tracks.length > 0 ? (
-                                                    <div className="space-y-1 flex-1 overflow-y-auto custom-scrollbar pr-2">
-                                                        {album.tracks.map((track, idx) => {
-                                                            const globalIndex = getGlobalTrackIndex(track);
-                                                            const isCurrentTrack = currentTrackIndex === globalIndex;
-                                                            const isHovered = hoveredTrack === track.id;
+                                                    {/* Mobile Dropdown Toggle */}
+                                                    <button
+                                                        onClick={() => toggleAlbum(album.name)}
+                                                        className="lg:hidden flex items-center gap-2 text-xs font-bold text-accent-cyan uppercase tracking-wider px-3 py-1.5 rounded-full bg-accent-cyan/10 hover:bg-accent-cyan/20 transition-colors"
+                                                    >
+                                                        {expandedAlbums[album.name] ? "Hide Tracks" : "View Tracks"}
+                                                        <ChevronDown
+                                                            className={`w-4 h-4 transition-transform duration-300 ${expandedAlbums[album.name] ? "rotate-180" : ""}`}
+                                                        />
+                                                    </button>
+                                                </div>
 
-                                                            return (
-                                                                <motion.div
-                                                                    key={track.id}
-                                                                    initial={{ opacity: 0, x: -20 }}
-                                                                    animate={{ opacity: 1, x: 0 }}
-                                                                    transition={{ delay: idx * 0.03 }}
-                                                                    onMouseEnter={() => setHoveredTrack(track.id)}
-                                                                    onMouseLeave={() => setHoveredTrack(null)}
-                                                                    onClick={() => playTrack(globalIndex)}
-                                                                    className={`group relative flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-300 ${isCurrentTrack
-                                                                        ? "bg-gradient-to-r from-accent-cyan/20 to-transparent border-l-2 border-accent-cyan"
-                                                                        : "hover:bg-white/5"
-                                                                        }`}
-                                                                >
-                                                                    {/* Track Number / Play Icon */}
-                                                                    <div className="w-8 flex items-center justify-center">
-                                                                        {isCurrentTrack && isPlaying ? (
-                                                                            <div className="flex items-end gap-0.5 h-4">
-                                                                                <motion.div className="w-1 bg-accent-cyan rounded-full" animate={{ height: ["40%", "100%", "40%"] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0 }} />
-                                                                                <motion.div className="w-1 bg-accent-cyan rounded-full" animate={{ height: ["40%", "100%", "40%"] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.1 }} />
-                                                                                <motion.div className="w-1 bg-accent-cyan rounded-full" animate={{ height: ["40%", "100%", "40%"] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.2 }} />
-                                                                            </div>
-                                                                        ) : isHovered ? (
-                                                                            <Play className="w-4 h-4 text-accent-cyan" fill="currentColor" />
-                                                                        ) : (
-                                                                            <span className={`text-sm font-mono ${isCurrentTrack ? "text-accent-cyan" : "text-noir-ash"}`}>
-                                                                                {(idx + 1).toString().padStart(2, '0')}
-                                                                            </span>
-                                                                        )}
-                                                                    </div>
+                                                <div className={`${expandedAlbums[album.name] ? 'block' : 'hidden'} lg:block transition-all duration-300`}>
+                                                    {album.tracks.length > 0 ? (
+                                                        <div className="space-y-1 flex-1 overflow-y-auto custom-scrollbar pr-2 lg:max-h-[500px]">
+                                                            {album.tracks.map((track, idx) => {
+                                                                const globalIndex = getGlobalTrackIndex(track);
+                                                                const isCurrentTrack = currentTrackIndex === globalIndex;
+                                                                const isHovered = hoveredTrack === track.id;
 
-                                                                    {/* Track Info */}
-                                                                    <div className="flex-1 min-w-0">
-                                                                        <p className={`font-medium truncate transition-colors ${isCurrentTrack ? "text-accent-cyan" : "text-white group-hover:text-accent-cyan"}`}>
-                                                                            {track.title}
-                                                                        </p>
-                                                                        <p className="text-sm text-noir-ash truncate">{track.artist}</p>
-                                                                    </div>
+                                                                return (
+                                                                    <motion.div
+                                                                        key={track.id}
+                                                                        initial={{ opacity: 0, x: -20 }}
+                                                                        animate={{ opacity: 1, x: 0 }}
+                                                                        transition={{ delay: idx * 0.03 }}
+                                                                        onMouseEnter={() => setHoveredTrack(track.id)}
+                                                                        onMouseLeave={() => setHoveredTrack(null)}
+                                                                        onClick={() => playTrack(globalIndex)}
+                                                                        className={`group relative flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-300 ${isCurrentTrack
+                                                                            ? "bg-gradient-to-r from-accent-cyan/20 to-transparent border-l-2 border-accent-cyan"
+                                                                            : "hover:bg-white/5"
+                                                                            }`}
+                                                                    >
+                                                                        {/* Track Number / Play Icon */}
+                                                                        <div className="w-8 flex items-center justify-center">
+                                                                            {isCurrentTrack && isPlaying ? (
+                                                                                <div className="flex items-end gap-0.5 h-4">
+                                                                                    <motion.div className="w-1 bg-accent-cyan rounded-full" animate={{ height: ["40%", "100%", "40%"] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0 }} />
+                                                                                    <motion.div className="w-1 bg-accent-cyan rounded-full" animate={{ height: ["40%", "100%", "40%"] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.1 }} />
+                                                                                    <motion.div className="w-1 bg-accent-cyan rounded-full" animate={{ height: ["40%", "100%", "40%"] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.2 }} />
+                                                                                </div>
+                                                                            ) : isHovered ? (
+                                                                                <Play className="w-4 h-4 text-accent-cyan" fill="currentColor" />
+                                                                            ) : (
+                                                                                <span className={`text-sm font-mono ${isCurrentTrack ? "text-accent-cyan" : "text-noir-ash"}`}>
+                                                                                    {(idx + 1).toString().padStart(2, '0')}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
 
-                                                                    {/* Duration & Price */}
-                                                                    <div className="flex items-center gap-4">
-                                                                        <span className="text-sm text-noir-ash font-mono hidden sm:block">{track.duration || "—"}</span>
-                                                                        {track.price && (
-                                                                            <motion.span
-                                                                                whileHover={{ scale: 1.05 }}
-                                                                                className="px-3 py-1 text-xs font-bold bg-white/10 text-white rounded-full hover:bg-accent-cyan hover:text-noir-void transition-colors"
-                                                                            >
-                                                                                ${track.price.toFixed(2)}
-                                                                            </motion.span>
-                                                                        )}
-                                                                    </div>
-                                                                </motion.div>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                ) : (
-                                                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                                                        <Disc3 className="w-12 h-12 text-noir-smoke mb-4" />
-                                                        <p className="text-noir-ash">Coming Soon</p>
-                                                    </div>
-                                                )}
+                                                                        {/* Track Info */}
+                                                                        <div className="flex-1 min-w-0">
+                                                                            <p className={`font-medium truncate transition-colors ${isCurrentTrack ? "text-accent-cyan" : "text-white group-hover:text-accent-cyan"}`}>
+                                                                                {track.title}
+                                                                            </p>
+                                                                            <p className="text-sm text-noir-ash truncate">{track.artist}</p>
+                                                                        </div>
+
+                                                                        {/* Duration & Price */}
+                                                                        <div className="flex items-center gap-4">
+                                                                            <span className="text-sm text-noir-ash font-mono hidden sm:block">{track.duration || "—"}</span>
+                                                                            {track.price && (
+                                                                                <motion.span
+                                                                                    whileHover={{ scale: 1.05 }}
+                                                                                    className="px-3 py-1 text-xs font-bold bg-white/10 text-white rounded-full hover:bg-accent-cyan hover:text-noir-void transition-colors"
+                                                                                >
+                                                                                    ${track.price.toFixed(2)}
+                                                                                </motion.span>
+                                                                            )}
+                                                                        </div>
+                                                                    </motion.div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex flex-col items-center justify-center py-12 text-center">
+                                                            <Disc3 className="w-12 h-12 text-noir-smoke mb-4" />
+                                                            <p className="text-noir-ash">Coming Soon</p>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
 
                                             {/* YouTube Embed */}

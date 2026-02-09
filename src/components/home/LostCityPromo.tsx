@@ -4,11 +4,27 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Play, ShoppingCart, ExternalLink } from "lucide-react";
+import { Play, ShoppingCart, Headphones } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 export function LostCityPromo() {
     const [isHovered, setIsHovered] = useState(false);
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+    const { addToCart, setIsCartOpen } = useCart();
+
+    const handleBuyAlbum = () => {
+        addToCart({
+            productId: 9999, // Special ID for Lost City digital album
+            variantId: 1,
+            name: "Lost City",
+            variantName: "Digital Album",
+            price: 9.99,
+            currency: "USD",
+            quantity: 1,
+            thumbnail: "/LC1.jpg",
+        });
+        setIsCartOpen(true);
+    };
 
     return (
         <section className="py-20 md:py-32 px-4 sm:px-6 bg-gradient-to-b from-noir-void via-noir-charcoal to-noir-void relative overflow-hidden">
@@ -70,7 +86,10 @@ export function LostCityPromo() {
 
                             {/* Spinning Vinyl */}
                             <motion.div
-                                className="absolute inset-0 z-10"
+                                className="absolute inset-0 z-10 rounded-full overflow-hidden bg-neutral-900"
+                                style={{
+                                    boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8)'
+                                }}
                                 animate={{
                                     x: isHovered ? 60 : 0,
                                     rotate: isHovered ? 360 : 0
@@ -80,23 +99,29 @@ export function LostCityPromo() {
                                     rotate: { duration: 3, repeat: isHovered ? Infinity : 0, ease: "linear" }
                                 }}
                             >
-                                <div className="relative w-full h-full">
-                                    {/* Vinyl Disc */}
+                                {/* CSS Vinyl Grooves */}
+                                <div
+                                    className="absolute inset-0 rounded-full opacity-80"
+                                    style={{
+                                        background: 'repeating-radial-gradient(#111 0, #111 2px, #222 3px, #222 4px)'
+                                    }}
+                                />
+                                {/* Vinyl Shine/Reflection */}
+                                <div
+                                    className="absolute inset-0 rounded-full opacity-40"
+                                    style={{
+                                        background: 'conic-gradient(from 180deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.1) 30deg, transparent 60deg, transparent 120deg, rgba(255,255,255,0.1) 150deg, transparent 180deg)'
+                                    }}
+                                />
+
+                                {/* Center Album Art (on vinyl label) */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] rounded-full overflow-hidden border-4 border-neutral-900 shadow-2xl">
                                     <Image
-                                        src="/vinyl-disc.png"
-                                        alt="Vinyl Record"
+                                        src="/LC1.jpg"
+                                        alt="Lost City"
                                         fill
-                                        className="object-contain drop-shadow-2xl"
+                                        className="object-cover"
                                     />
-                                    {/* Center Album Art (on vinyl label) */}
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[35%] h-[35%] rounded-full overflow-hidden border-2 border-noir-smoke/50">
-                                        <Image
-                                            src="/LC1.jpg"
-                                            alt="Lost City"
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    </div>
                                 </div>
                             </motion.div>
 
@@ -180,23 +205,22 @@ export function LostCityPromo() {
 
                             {/* Buttons */}
                             <div className="flex gap-3 flex-1 sm:justify-end">
-                                <Link href="/music">
-                                    <motion.button
-                                        whileHover={{ scale: 1.03 }}
-                                        whileTap={{ scale: 0.97 }}
-                                        className="px-6 py-3 bg-accent-cyan text-noir-void font-bold rounded-full flex items-center gap-2 shadow-glow-md hover:shadow-glow-lg transition-shadow"
-                                    >
-                                        <ShoppingCart className="w-5 h-5" />
-                                        Buy Album
-                                    </motion.button>
-                                </Link>
-                                <Link href="/music">
+                                <motion.button
+                                    onClick={handleBuyAlbum}
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="px-6 py-3 bg-accent-cyan text-noir-void font-bold rounded-full flex items-center gap-2 shadow-glow-md hover:shadow-glow-lg transition-shadow"
+                                >
+                                    <ShoppingCart className="w-5 h-5" />
+                                    Buy Album
+                                </motion.button>
+                                <Link href="/music#lost-city">
                                     <motion.button
                                         whileHover={{ scale: 1.03 }}
                                         whileTap={{ scale: 0.97 }}
                                         className="px-6 py-3 border border-noir-smoke text-foreground font-medium rounded-full flex items-center gap-2 hover:border-accent-cyan/50 transition-colors"
                                     >
-                                        <ExternalLink className="w-4 h-4" />
+                                        <Headphones className="w-4 h-4" />
                                         Listen
                                     </motion.button>
                                 </Link>
