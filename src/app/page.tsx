@@ -6,6 +6,7 @@ import { ArrowDown, Disc3, ShoppingBag, Users, Play, Volume2, VolumeX } from "lu
 import { useLenis } from "@/hooks/use-lenis";
 import Link from "next/link";
 import MatrixText from "@/components/fancy/text/matrix-text";
+import { LostCityPromo } from "@/components/home/LostCityPromo";
 
 export default function Home() {
   // Initialize smooth scrolling
@@ -149,6 +150,9 @@ export default function Home() {
           <ArrowDown className="w-6 h-6" />
         </motion.div>
       </section>
+
+      {/* Lost City Album Promo */}
+      <LostCityPromo />
 
       {/* Featured Video Section */}
       <section className="py-16 md:py-24 px-4 sm:px-6 bg-noir-charcoal">
