@@ -7,6 +7,7 @@ import { useLenis } from "@/hooks/use-lenis";
 import Link from "next/link";
 import MatrixText from "@/components/fancy/text/matrix-text";
 import { LostCityPromo } from "@/components/home/LostCityPromo";
+import { EnterOverlay } from "@/components/layout/EnterOverlay";
 
 export default function Home() {
   // Initialize smooth scrolling
@@ -15,6 +16,7 @@ export default function Home() {
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isClient, setIsClient] = useState(false);
+  const [hasEntered, setHasEntered] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -27,11 +29,19 @@ export default function Home() {
     }
   };
 
+  const handleEnterSite = () => {
+    setHasEntered(true);
+    // Audio unlock is handled globally by MusicPlayer listening for clicks
+  };
+
   // YouTube URL with mute parameter
   const youtubeUrl = `https://www.youtube.com/embed/OOx9QAeRo8E?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=OOx9QAeRo8E&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
 
   return (
     <div className="relative">
+      {/* Enter Overlay */}
+      {!hasEntered && <EnterOverlay onEnter={handleEnterSite} />}
+
       {/* Hero Section with YouTube Video */}
       <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
         {/* Background Video */}

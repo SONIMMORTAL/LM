@@ -70,7 +70,47 @@ export function MusicPlayer() {
         };
     }, [isExpanded]);
 
-    // Fetch tracks on mount - use /api/music and handle auto-play
+    // Aggressive Auto-Play & Unlock Logic
+    useEffect(() => {
+        // Function to unlock audio context on earliest interaction
+        const unlockAudio = () => {
+            if (audioRef.current) {
+                // Try to play or just load to unlock the context
+                const startPlay = async () => {
+                    try {
+                        if (audioRef.current?.paused) {
+                            await audioRef.current.play();
+                            setIsPlaying(true);
+                        }
+                    } catch (e) {
+                        console.log("Unlock attempt failed (normal if no src yet)", e);
+                    }
+                };
+                startPlay();
+
+                // If we successfully played, remove listeners
+                if (!audioRef.current.paused) {
+                    ['click', 'touchstart', 'touchend', 'pointerup', 'keydown', 'scroll'].forEach(event => {
+                        document.removeEventListener(event, unlockAudio);
+                    });
+                }
+            }
+        };
+
+        // Add listeners immediately to catch ANY early interaction
+        ['click', 'touchstart', 'touchend', 'pointerup', 'keydown', 'scroll'].forEach(event => {
+            document.addEventListener(event, unlockAudio);
+        });
+
+        // Cleanup function
+        return () => {
+            ['click', 'touchstart', 'touchend', 'pointerup', 'keydown', 'scroll'].forEach(event => {
+                document.removeEventListener(event, unlockAudio);
+            });
+        };
+    }, []);
+
+    // Fetch tracks and initialize Lost City
     useEffect(() => {
         async function fetchTracks() {
             try {
@@ -95,43 +135,19 @@ export function MusicPlayer() {
                             if (audioRef.current && lostCityTrack.audio_url) {
                                 audioRef.current.src = lostCityTrack.audio_url;
                                 audioRef.current.volume = 0.8;
-                                setIsPlaying(true);
 
+                                // Attempt immediate play
                                 const playPromise = audioRef.current.play();
                                 if (playPromise !== undefined) {
                                     playPromise
                                         .then(() => {
-                                            console.log("Auto-playing Lost City on Home Page");
+                                            console.log("Auto-play success");
                                             setIsPlaying(true);
                                         })
                                         .catch((error) => {
-                                            console.log("Autoplay blocked:", error);
+                                            console.log("Auto-play blocked initially. Waiting for interaction.", error);
                                             setIsPlaying(false);
-
-                                            // Fallback: Play on first interaction
-                                            const playOnInteraction = () => {
-                                                if (audioRef.current && audioRef.current.paused) {
-                                                    audioRef.current.play()
-                                                        .then(() => {
-                                                            setIsPlaying(true);
-                                                            // Remove listeners once played
-                                                            document.removeEventListener('click', playOnInteraction);
-                                                            document.removeEventListener('touchstart', playOnInteraction);
-                                                            document.removeEventListener('touchend', playOnInteraction);
-                                                            document.removeEventListener('pointerup', playOnInteraction);
-                                                            document.removeEventListener('keydown', playOnInteraction);
-                                                            document.removeEventListener('scroll', playOnInteraction);
-                                                        })
-                                                        .catch(e => console.log("Interaction play failed", e));
-                                                }
-                                            };
-
-                                            document.addEventListener('click', playOnInteraction);
-                                            document.addEventListener('touchstart', playOnInteraction);
-                                            document.addEventListener('touchend', playOnInteraction);
-                                            document.addEventListener('pointerup', playOnInteraction);
-                                            document.addEventListener('keydown', playOnInteraction);
-                                            document.addEventListener('scroll', playOnInteraction);
+                                            // The global listeners from the other useEffect will handle the unlock
                                         });
                                 }
                             }
