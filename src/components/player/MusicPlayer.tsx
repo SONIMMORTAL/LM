@@ -110,48 +110,29 @@ export function MusicPlayer() {
         };
     }, []);
 
-    // Fetch tracks and initialize Lost City
+    // Fetch tracks and sync
     useEffect(() => {
         async function fetchTracks() {
             try {
                 const res = await fetch("/api/music");
                 const data = await res.json();
                 if (data.tracks && data.tracks.length > 0) {
+                    // Update tracks but try to preserve playback state if possible
                     setTracks(data.tracks);
 
                     // Check if we are on the home page
                     const isHomePage = window.location.pathname === "/";
 
-                    // Find Lost City track
+                    // Find Lost City track index in the NEW list
                     const lostCityIndex = data.tracks.findIndex((t: Track) => t.title === "Lost City");
 
                     if (lostCityIndex >= 0) {
-                        // Always set current track to Lost City initially if found
+                        // If we haven't interacted yet, or just to align state
                         setCurrentTrackIndex(lostCityIndex);
 
-                        // Enforce auto-play if on Home Page
-                        if (isHomePage) {
-                            const lostCityTrack = data.tracks[lostCityIndex];
-                            if (audioRef.current && lostCityTrack.audio_url) {
-                                audioRef.current.src = lostCityTrack.audio_url;
-                                audioRef.current.volume = 0.8;
-
-                                // Attempt immediate play
-                                const playPromise = audioRef.current.play();
-                                if (playPromise !== undefined) {
-                                    playPromise
-                                        .then(() => {
-                                            console.log("Auto-play success");
-                                            setIsPlaying(true);
-                                        })
-                                        .catch((error) => {
-                                            console.log("Auto-play blocked initially. Waiting for interaction.", error);
-                                            setIsPlaying(false);
-                                            // The global listeners from the other useEffect will handle the unlock
-                                        });
-                                }
-                            }
-                        }
+                        // If we are already playing (from Enter click), this state update 
+                        // might trigger the track-change effect. 
+                        // We handled that in the track-change effect by checking src equality.
                     }
                 }
             } catch (error) {
@@ -163,16 +144,30 @@ export function MusicPlayer() {
 
     const currentTrack = tracks[currentTrackIndex];
 
-    // Handle track changes
+    // Handle track changes - preventing reload if src is same
     useEffect(() => {
-        if (tracks.length > 0 && isPlaying) {
+        if (tracks.length > 0) {
             const audio = audioRef.current;
             if (audio && currentTrack?.audio_url) {
-                audio.src = currentTrack.audio_url;
-                audio.play().catch(e => console.log("Playback error", e));
+                // Only change src if it's different to prevent reloading/stopping
+                // Normalize URLs for comparison (handling potential encoding differences)
+                const currentSrc = audio.src;
+                const newSrc = new URL(currentTrack.audio_url, window.location.origin).href;
+
+                if (currentSrc !== newSrc) {
+                    audio.src = currentTrack.audio_url;
+                    if (isPlaying) {
+                        audio.play().catch(e => console.log("Playback error", e));
+                    }
+                } else {
+                    // If src is same but we should be playing (e.g. from Enter click)
+                    if (isPlaying && audio.paused) {
+                        audio.play().catch(e => console.log("Playback error", e));
+                    }
+                }
             }
         }
-    }, [currentTrackIndex, tracks]);
+    }, [currentTrackIndex, tracks, isPlaying]);
 
     const togglePlay = () => {
         if (!audioRef.current) return;
