@@ -245,10 +245,7 @@ export default function MusicPage() {
                                 THE SOUND
                             </span>
                         </h1>
-                        <p className="text-noir-cloud/80 max-w-lg mx-auto text-lg">
-                            From the streets of Brooklyn to your speakers.
-                            <span className="text-accent-cyan"> Stream the full catalog.</span>
-                        </p>
+
                     </motion.div>
                 </div>
             </section>

@@ -70,7 +70,7 @@ export function MusicPlayer() {
         };
     }, [isExpanded]);
 
-    // Fetch tracks on mount - use /api/music (same as music page)
+    // Fetch tracks on mount - use /api/music and handle auto-play
     useEffect(() => {
         async function fetchTracks() {
             try {
@@ -78,22 +78,63 @@ export function MusicPlayer() {
                 const data = await res.json();
                 if (data.tracks && data.tracks.length > 0) {
                     setTracks(data.tracks);
-                    // Set initial track to specific "Lost City" song, or fallback to first Lost City album track
+
+                    // Check if we are on the home page
+                    const isHomePage = window.location.pathname === "/";
+
+                    // Find Lost City track
                     const lostCityIndex = data.tracks.findIndex((t: Track) => t.title === "Lost City");
+
                     if (lostCityIndex >= 0) {
+                        // Always set current track to Lost City initially if found
                         setCurrentTrackIndex(lostCityIndex);
-                        // Attempt autoplay for Lost City
-                        const lostCityTrack = data.tracks[lostCityIndex];
-                        if (audioRef.current && lostCityTrack.audio_url) {
-                            audioRef.current.src = lostCityTrack.audio_url;
-                            audioRef.current.volume = 0.8;
-                            // Try to autoplay (may be blocked by browser policy)
-                            audioRef.current.play()
-                                .then(() => setIsPlaying(true))
-                                .catch(() => {
-                                    // Autoplay was blocked - user needs to click play
-                                    console.log("Autoplay blocked - waiting for user interaction");
-                                });
+
+                        // Enforce auto-play if on Home Page
+                        if (isHomePage) {
+                            const lostCityTrack = data.tracks[lostCityIndex];
+                            if (audioRef.current && lostCityTrack.audio_url) {
+                                audioRef.current.src = lostCityTrack.audio_url;
+                                audioRef.current.volume = 0.8;
+                                setIsPlaying(true);
+
+                                const playPromise = audioRef.current.play();
+                                if (playPromise !== undefined) {
+                                    playPromise
+                                        .then(() => {
+                                            console.log("Auto-playing Lost City on Home Page");
+                                            setIsPlaying(true);
+                                        })
+                                        .catch((error) => {
+                                            console.log("Autoplay blocked:", error);
+                                            setIsPlaying(false);
+
+                                            // Fallback: Play on first interaction
+                                            const playOnInteraction = () => {
+                                                if (audioRef.current && audioRef.current.paused) {
+                                                    audioRef.current.play()
+                                                        .then(() => {
+                                                            setIsPlaying(true);
+                                                            // Remove listeners once played
+                                                            document.removeEventListener('click', playOnInteraction);
+                                                            document.removeEventListener('touchstart', playOnInteraction);
+                                                            document.removeEventListener('touchend', playOnInteraction);
+                                                            document.removeEventListener('pointerup', playOnInteraction);
+                                                            document.removeEventListener('keydown', playOnInteraction);
+                                                            document.removeEventListener('scroll', playOnInteraction);
+                                                        })
+                                                        .catch(e => console.log("Interaction play failed", e));
+                                                }
+                                            };
+
+                                            document.addEventListener('click', playOnInteraction);
+                                            document.addEventListener('touchstart', playOnInteraction);
+                                            document.addEventListener('touchend', playOnInteraction);
+                                            document.addEventListener('pointerup', playOnInteraction);
+                                            document.addEventListener('keydown', playOnInteraction);
+                                            document.addEventListener('scroll', playOnInteraction);
+                                        });
+                                }
+                            }
                         }
                     }
                 }

@@ -4,7 +4,7 @@ import "./globals.css";
 import { MusicPlayer } from "@/components/player/MusicPlayer";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { SocialSidebar } from "@/components/layout/SocialSidebar";
+
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/components/auth";
 import { AnalyticsTracker } from "@/components/analytics";
@@ -62,8 +62,8 @@ export default function RootLayout({
               {/* Persistent Music Player - Dynamic Island */}
               <MusicPlayer />
 
-              {/* Social Media Sidebar */}
-              <SocialSidebar />
+              {/* Social Media Sidebar - REMOVED */}
+              {/* <SocialSidebar /> */}
 
               {/* Toast Notifications */}
               <Toaster

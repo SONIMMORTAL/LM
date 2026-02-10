@@ -51,31 +51,9 @@ export function Footer() {
                                 LOAF RECORDS
                             </Letter3DSwap>
                         </Link>
-                        <p className="text-noir-cloud max-w-sm mb-6">
-                            Raw sound. Cinematic soul. Brooklyn noir.
-                            Home of Shadow The Great and Brooklyn&apos;s finest independent artists.
-                        </p>
 
-                        {/* Social Links */}
-                        <div className="flex gap-3">
-                            {socialLinks.map((social) => {
-                                const Icon = social.icon;
-                                return (
-                                    <motion.a
-                                        key={social.label}
-                                        href={social.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        whileHover={{ scale: 1.1, y: -2 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="w-10 h-10 rounded-full bg-noir-slate flex items-center justify-center text-noir-cloud hover:bg-accent-cyan hover:text-noir-void transition-colors"
-                                        aria-label={social.label}
-                                    >
-                                        <Icon className="w-5 h-5" />
-                                    </motion.a>
-                                );
-                            })}
-                        </div>
+
+                        {/* Social Links - REMOVED */}
                     </div>
 
                     {/* Navigation Column */}

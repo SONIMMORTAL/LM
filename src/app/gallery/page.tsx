@@ -301,7 +301,6 @@ export default function GalleryPage() {
                         </h1>
                         <p className="text-noir-cloud max-w-lg mx-auto">
                             Behind the scenes. On stage. In the streets.
-                            A visual journey through Brooklyn noir.
                         </p>
                     </motion.div>
                 </div>

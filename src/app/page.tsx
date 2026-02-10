@@ -61,27 +61,13 @@ export default function Home() {
             src="/0128.mp4"
             className="block md:hidden absolute inset-0 w-full h-full object-cover"
             autoPlay
-            muted={isMuted}
+            muted={true}
             loop
             playsInline
           />
         </div>
 
-        {/* Mute/Unmute Button */}
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          onClick={toggleMute}
-          className="absolute bottom-24 right-6 z-30 p-3 bg-noir-void/70 backdrop-blur-sm border border-noir-smoke rounded-full hover:border-accent-cyan/50 hover:bg-noir-charcoal/80 transition-all group"
-          aria-label={isMuted ? "Unmute" : "Mute"}
-        >
-          {isMuted ? (
-            <VolumeX className="w-5 h-5 text-noir-cloud group-hover:text-accent-cyan transition-colors" />
-          ) : (
-            <Volume2 className="w-5 h-5 text-accent-cyan" />
-          )}
-        </motion.button>
+        {/* Mute/Unmute Button - REMOVED */}
 
         {/* Hero content */}
         <motion.div
