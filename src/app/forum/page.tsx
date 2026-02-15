@@ -259,33 +259,7 @@ export default function ForumPage() {
                 </div>
             </section>
 
-            {/* Community Stats */}
-            <section className="px-6 mt-12">
-                <div className="max-w-5xl mx-auto">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {[
-                            { label: "Members", value: "2,847" },
-                            { label: "Topics", value: "318" },
-                            { label: "Replies", value: "4,521" },
-                            { label: "Online Now", value: "47" },
-                        ].map((stat, i) => (
-                            <motion.div
-                                key={stat.label}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="glass-card p-4 rounded-xl text-center"
-                            >
-                                <div className="text-2xl font-bold text-accent-cyan mb-1">
-                                    {stat.value}
-                                </div>
-                                <div className="text-sm text-noir-cloud">{stat.label}</div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+
             <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
         </div>
     );

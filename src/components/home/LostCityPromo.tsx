@@ -227,24 +227,7 @@ export function LostCityPromo() {
                             </div>
                         </div>
 
-                        {/* Tracklist Teaser */}
-                        <div className="pt-4 border-t border-noir-smoke/50">
-                            <p className="text-noir-ash text-sm uppercase tracking-wider mb-3">Featured Tracks</p>
-                            <div className="flex flex-wrap gap-2">
-                                {["Chess", "Juice", "Live & Direct", "Pray", "Drop Gems"].map((track, i) => (
-                                    <motion.span
-                                        key={track}
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        whileInView={{ opacity: 1, scale: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className="px-3 py-1.5 bg-noir-slate/50 text-noir-cloud text-sm rounded-full border border-noir-smoke/50 hover:border-accent-cyan/30 hover:text-accent-cyan transition-colors cursor-default"
-                                    >
-                                        {track}
-                                    </motion.span>
-                                ))}
-                            </div>
-                        </div>
+
                     </motion.div>
                 </div>
             </div>
