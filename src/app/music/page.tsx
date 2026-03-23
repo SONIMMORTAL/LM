@@ -250,6 +250,52 @@ export default function MusicPage() {
                 </div>
             </section>
 
+            {/* New Release Section */}
+            <section className="relative px-6 pb-20">
+                <div className="max-w-7xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="bg-gradient-to-br from-noir-charcoal/80 to-noir-slate/40 backdrop-blur-xl rounded-3xl border border-accent-cyan/30 overflow-hidden relative shadow-2xl shadow-accent-cyan/10"
+                    >
+                        {/* Glow effect */}
+                        <div className="absolute top-0 left-1/4 w-1/2 h-full bg-accent-cyan/10 blur-[100px] -z-10" />
+
+                        <div className="p-1">
+                            <div className="flex items-center justify-between px-6 pt-6 pb-4">
+                                <div className="flex items-center gap-3">
+                                    <span className="px-3 py-1 bg-accent-cyan/20 text-accent-cyan text-xs font-black uppercase tracking-widest rounded-full border border-accent-cyan/30 flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
+                                        New Release
+                                    </span>
+                                    <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">THE MUNCHIES VOL. 2</h2>
+                                </div>
+                                <a
+                                    href="https://soundcloud.com/loafmuzik/the-munchies-vol-2?utm_source=mobi&utm_campaign=social_sharing"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hidden sm:flex flex-row items-center gap-2 text-sm font-medium text-accent-cyan hover:text-cyan-300 transition-colors"
+                                >
+                                    Listen on SoundCloud <ChevronDown className="w-4 h-4 -rotate-90" />
+                                </a>
+                            </div>
+
+                            <div className="rounded-2xl overflow-hidden bg-noir-void">
+                                <iframe
+                                    width="100%"
+                                    height="350"
+                                    scrolling="no"
+                                    frameBorder="no"
+                                    allow="autoplay"
+                                    src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/loafmuzik/the-munchies-vol-2&color=%2300ffd0&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
+                                ></iframe>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
             {/* Albums Grid */}
             <section className="relative px-6 pb-40">
                 <div className="max-w-7xl mx-auto space-y-24">
