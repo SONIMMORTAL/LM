@@ -50,11 +50,7 @@ export default function ExpandableCards({
     }, []);
 
     useEffect(() => {
-        if (scrollRef.current) {
-            const scrollWidth = scrollRef.current.scrollWidth;
-            const clientWidth = scrollRef.current.clientWidth;
-            scrollRef.current.scrollLeft = (scrollWidth - clientWidth) / 2;
-        }
+        // No longer need to center initial horizontal scroll
     }, []);
 
     const handleCardClick = (id: number) => {
@@ -70,14 +66,14 @@ export default function ExpandableCards({
             } else {
                 setInternalSelected(id);
             }
-            // Center the clicked card in view
+            // Center the clicked card in view using vertical scroll strategy
             setTimeout(() => {
                 const cardElement = document.querySelector(`[data-card-id="${id}"]`);
                 if (cardElement) {
                     cardElement.scrollIntoView({
                         behavior: "smooth",
-                        block: "nearest",
-                        inline: "center",
+                        block: "center",
+                        inline: "nearest",
                     });
                 }
             }, 100);
@@ -95,12 +91,8 @@ export default function ExpandableCards({
             className={`flex w-full flex-col gap-4 overflow-hidden p-2 sm:p-4 ${className}`}
         >
             <div
-                className="scrollbar-hide mx-auto flex w-full overflow-x-auto pt-2 pb-6 sm:pt-4 sm:pb-8 items-center px-2 sm:px-4"
+                className="mx-auto flex w-full flex-wrap justify-center pt-2 pb-6 sm:pt-4 sm:pb-8 gap-4 sm:gap-6 items-center px-2 sm:px-4"
                 ref={scrollRef}
-                style={{
-                    scrollSnapType: "x mandatory",
-                    WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
-                }}
             >
                 {cards.map((card) => (
                     <motion.div
@@ -112,7 +104,7 @@ export default function ExpandableCards({
                         aria-label={`${card.title} card${selectedCard === card.id ? ", expanded" : ""}`}
                         aria-selected={selectedCard === card.id}
                         className={`
-                            relative mr-3 sm:mr-6 cursor-pointer overflow-hidden rounded-2xl sm:rounded-3xl 
+                            relative cursor-pointer overflow-hidden rounded-2xl sm:rounded-3xl 
                             border-2 border-transparent active:border-accent-cyan/50
                             bg-noir-slate shadow-xl transition-colors
                             ${selectedCard === card.id ? 'border-accent-cyan/50 ring-1 ring-accent-cyan/20' : ''}
