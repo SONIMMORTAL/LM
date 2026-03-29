@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/supabase/admin-auth';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
+import { supabaseAdmin } from '@/lib/supabase/admin';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
     try {
@@ -8,9 +11,7 @@ export async function GET() {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        if (!isSupabaseConfigured()) {
-            return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
-        }
+
 
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -18,38 +19,38 @@ export async function GET() {
         const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
         // Get total page views all time
-        const { count: totalViews } = await supabase
+        const { count: totalViews } = await supabaseAdmin
             .from('page_views')
             .select('*', { count: 'exact', head: true });
 
         // Get views today
-        const { count: viewsToday } = await supabase
+        const { count: viewsToday } = await supabaseAdmin
             .from('page_views')
             .select('*', { count: 'exact', head: true })
             .gte('created_at', today.toISOString());
 
         // Get views this month
-        const { count: viewsThisMonth } = await supabase
+        const { count: viewsThisMonth } = await supabaseAdmin
             .from('page_views')
             .select('*', { count: 'exact', head: true })
             .gte('created_at', thisMonth.toISOString());
 
         // Get views last month for comparison
-        const { count: viewsLastMonth } = await supabase
+        const { count: viewsLastMonth } = await supabaseAdmin
             .from('page_views')
             .select('*', { count: 'exact', head: true })
             .gte('created_at', lastMonth.toISOString())
             .lt('created_at', thisMonth.toISOString());
 
         // Get country breakdown
-        const { data: countryData } = await supabase
+        const { data: countryData } = await supabaseAdmin
             .from('page_views')
             .select('country, country_code')
             .not('country', 'is', null);
 
         // Count by country
         const countryCounts: Record<string, { count: number; code: string }> = {};
-        countryData?.forEach((row) => {
+        countryData?.forEach((row: { country: string; country_code: string }) => {
             if (row.country) {
                 if (!countryCounts[row.country]) {
                     countryCounts[row.country] = { count: 0, code: row.country_code || '' };
@@ -68,13 +69,13 @@ export async function GET() {
             .slice(0, 10);
 
         // Get city breakdown
-        const { data: cityData } = await supabase
+        const { data: cityData } = await supabaseAdmin
             .from('page_views')
             .select('city, country')
             .not('city', 'is', null);
 
         const cityCounts: Record<string, { count: number; country: string }> = {};
-        cityData?.forEach((row) => {
+        cityData?.forEach((row: { city: string; country: string }) => {
             if (row.city) {
                 if (!cityCounts[row.city]) {
                     cityCounts[row.city] = { count: 0, country: row.country || '' };
@@ -93,12 +94,12 @@ export async function GET() {
             .slice(0, 10);
 
         // Get page breakdown
-        const { data: pageData } = await supabase
+        const { data: pageData } = await supabaseAdmin
             .from('page_views')
             .select('page');
 
         const pageCounts: Record<string, number> = {};
-        pageData?.forEach((row) => {
+        pageData?.forEach((row: { page: string }) => {
             if (row.page) {
                 pageCounts[row.page] = (pageCounts[row.page] || 0) + 1;
             }
@@ -118,7 +119,7 @@ export async function GET() {
             const dayEnd = new Date(dayStart);
             dayEnd.setDate(dayEnd.getDate() + 1);
 
-            const { count } = await supabase
+            const { count } = await supabaseAdmin
                 .from('page_views')
                 .select('*', { count: 'exact', head: true })
                 .gte('created_at', dayStart.toISOString())

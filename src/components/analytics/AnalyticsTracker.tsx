@@ -10,7 +10,7 @@ export function AnalyticsTracker() {
         // Track page view when route changes
         async function trackPageView() {
             try {
-                await fetch('/api/analytics/track', {
+                await fetch('/api/system/view', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

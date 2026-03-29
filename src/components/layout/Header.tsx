@@ -50,6 +50,18 @@ export function Header() {
         setIsUserMenuOpen(false);
     }, [pathname]);
 
+    // Lock body scroll when mobile menu is open
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "unset";
+        }
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, [isMobileMenuOpen]);
+
     async function handleSignOut() {
         await signOut();
         setIsUserMenuOpen(false);

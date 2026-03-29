@@ -81,9 +81,9 @@ export default function ExpandableCards({
     };
 
     // Responsive card dimensions
-    const cardWidth = isMobile ? 200 : 280;
-    const expandedWidth = isMobile ? 320 : 500;
-    const expandedPanelWidth = isMobile ? 120 : 220;
+    const cardWidth = isMobile ? 340 : 280;
+    const expandedWidth = isMobile ? 340 : 500;
+    const expandedPanelWidth = isMobile ? 160 : 220;
     const cardHeight = isMobile ? 300 : 400;
 
     return (
@@ -91,7 +91,7 @@ export default function ExpandableCards({
             className={`flex w-full flex-col gap-4 overflow-hidden p-2 sm:p-4 ${className}`}
         >
             <div
-                className="mx-auto flex w-full flex-wrap justify-center pt-2 pb-6 sm:pt-4 sm:pb-8 gap-4 sm:gap-6 items-center px-2 sm:px-4"
+                className="mx-auto flex w-full flex-col sm:flex-row sm:flex-wrap justify-center pt-2 pb-6 sm:pt-4 sm:pb-8 gap-4 sm:gap-6 items-center px-2 sm:px-4"
                 ref={scrollRef}
             >
                 {cards.map((card) => (

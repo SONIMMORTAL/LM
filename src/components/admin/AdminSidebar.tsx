@@ -13,7 +13,7 @@ import {
     Menu,
     X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -34,6 +34,18 @@ export function AdminSidebar() {
         router.push("/admin/login");
         router.refresh();
     }
+
+    // Lock body scroll when mobile sidebar is open
+    useEffect(() => {
+        if (mobileOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "unset";
+        }
+        return () => {
+            document.body.style.overflow = "unset";
+        };
+    }, [mobileOpen]);
 
     const isActive = (href: string) => {
         if (href === "/admin") return pathname === "/admin";
