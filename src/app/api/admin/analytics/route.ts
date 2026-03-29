@@ -136,16 +136,54 @@ export async function GET() {
             ? Math.round(((viewsThisMonth || 0) - viewsLastMonth) / viewsLastMonth * 100)
             : null;
 
+        // Get total video plays tracked on the site
+        const { count: totalVideoPlays } = await supabaseAdmin
+            .from('video_plays')
+            .select('*', { count: 'exact', head: true });
+
+        // Get video plays today
+        const { count: videoPlaysToday } = await supabaseAdmin
+            .from('video_plays')
+            .select('*', { count: 'exact', head: true })
+            .gte('created_at', today.toISOString());
+
+        // Get top played videos
+        const { data: videoPlayData } = await supabaseAdmin
+            .from('video_plays')
+            .select('youtube_id, video_title');
+
+        const videoPlayCounts: Record<string, { count: number; title: string }> = {};
+        videoPlayData?.forEach((row: { youtube_id: string; video_title: string }) => {
+            if (row.youtube_id) {
+                if (!videoPlayCounts[row.youtube_id]) {
+                    videoPlayCounts[row.youtube_id] = { count: 0, title: row.video_title || row.youtube_id };
+                }
+                videoPlayCounts[row.youtube_id].count++;
+            }
+        });
+
+        const topVideos = Object.entries(videoPlayCounts)
+            .map(([youtube_id, data]) => ({
+                youtube_id,
+                title: data.title,
+                plays: data.count,
+            }))
+            .sort((a, b) => b.plays - a.plays)
+            .slice(0, 10);
+
         return NextResponse.json({
             overview: {
                 totalViews: totalViews || 0,
                 viewsToday: viewsToday || 0,
                 viewsThisMonth: viewsThisMonth || 0,
                 monthChange,
+                totalVideoPlays: totalVideoPlays || 0,
+                videoPlaysToday: videoPlaysToday || 0,
             },
             topCountries,
             topCities,
             topPages,
+            topVideos,
             recentActivity,
         });
     } catch (error) {

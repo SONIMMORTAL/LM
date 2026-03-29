@@ -100,7 +100,7 @@ const VideoCard = memo(function VideoCard({
     onPlay,
 }: {
     video: Video;
-    onPlay: (youtubeId: string) => void;
+    onPlay: (youtubeId: string, title?: string) => void;
 }) {
     const yId = video.youtube_id || video.youtubeId;
     if (!yId) return null;
@@ -108,7 +108,7 @@ const VideoCard = memo(function VideoCard({
     return (
         <article
             className="group cursor-pointer"
-            onClick={() => onPlay(yId)}
+            onClick={() => onPlay(yId, video.title)}
         >
             {/* Thumbnail */}
             <div className="relative aspect-video rounded-xl overflow-hidden mb-3 bg-noir-slate border border-white/5 shadow-lg group-hover:border-accent-cyan/30 transition-all duration-300">
@@ -148,9 +148,19 @@ export default function VideosPage() {
     const [dbVideos, setDbVideos] = useState<Video[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const handlePlay = useCallback((youtubeId: string) => {
-        setActiveVideo(youtubeId);
+    // Track video play
+    const trackVideoPlay = useCallback((youtubeId: string, title?: string) => {
+        fetch('/api/system/play', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ youtube_id: youtubeId, video_title: title || null }),
+        }).catch(() => {});
     }, []);
+
+    const handlePlay = useCallback((youtubeId: string, title?: string) => {
+        setActiveVideo(youtubeId);
+        trackVideoPlay(youtubeId, title);
+    }, [trackVideoPlay]);
 
     const handleClose = useCallback(() => {
         setActiveVideo(null);
@@ -270,7 +280,7 @@ export default function VideosPage() {
                 <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center pt-20">
                     <div
                         className="space-y-6 cursor-pointer group"
-                        onClick={() => handlePlay(featuredVideo.youtube_id || featuredVideo.youtubeId!)}
+                        onClick={() => handlePlay(featuredVideo.youtube_id || featuredVideo.youtubeId!, featuredVideo.title)}
                     >
                         <span className="inline-block px-3 py-1 rounded-full border border-accent-cyan/50 text-accent-cyan text-xs font-bold tracking-widest uppercase bg-accent-cyan/5 backdrop-blur-sm group-hover:bg-accent-cyan group-hover:text-black transition-colors">
                             Featured
@@ -292,7 +302,7 @@ export default function VideosPage() {
                     {/* Hero Thumbnail Card */}
                     <div
                         className="relative hidden md:block aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 group cursor-pointer"
-                        onClick={() => handlePlay(featuredVideo.youtube_id || featuredVideo.youtubeId!)}
+                        onClick={() => handlePlay(featuredVideo.youtube_id || featuredVideo.youtubeId!, featuredVideo.title)}
                     >
                         <Image
                             src={`https://img.youtube.com/vi/${featuredVideo.youtube_id || featuredVideo.youtubeId}/maxresdefault.jpg`}
@@ -376,7 +386,7 @@ export default function VideosPage() {
                             <div
                                 key={video.id}
                                 className="group cursor-pointer relative"
-                                onClick={() => handlePlay(video.youtube_id || video.youtubeId!)}
+                                onClick={() => handlePlay(video.youtube_id || video.youtubeId!, video.title)}
                             >
                                 <div className="aspect-[4/5] relative rounded-xl overflow-hidden bg-noir-slate border border-white/5 mb-4 shadow-lg group-hover:shadow-accent-cyan/10 transition-shadow">
                                     <Image

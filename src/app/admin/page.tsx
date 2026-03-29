@@ -11,6 +11,7 @@ interface DashboardStats {
     videosCount: number;
     trackPlays: number;
     videoViews: number;
+    videoPlaysToday: number;
 }
 
 export default function AdminDashboard() {
@@ -41,7 +42,8 @@ export default function AdminDashboard() {
                     tracksCount: tracks.length,
                     videosCount: videos.length,
                     trackPlays: tracks.reduce((sum: number, t: { plays: number }) => sum + (t.plays || 0), 0),
-                    videoViews: videos.reduce((sum: number, v: { views: number }) => sum + (v.views || 0), 0),
+                    videoViews: analyticsData?.overview?.totalVideoPlays || 0,
+                    videoPlaysToday: analyticsData?.overview?.videoPlaysToday || 0,
                 });
             } catch (error) {
                 console.error('Failed to fetch dashboard stats:', error);
@@ -69,9 +71,9 @@ export default function AdminDashboard() {
             color: "text-accent-magenta bg-accent-magenta/10"
         },
         {
-            title: "Video Views",
+            title: "Video Plays",
             value: stats?.videoViews?.toLocaleString() || "0",
-            change: `${stats?.videosCount || 0} videos`,
+            change: stats?.videoPlaysToday ? `+${stats.videoPlaysToday} today` : `${stats?.videosCount || 0} videos`,
             icon: Video,
             color: "text-accent-gold bg-accent-gold/10"
         },
