@@ -19,14 +19,30 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Loaf Records | Official Store",
+  metadataBase: new URL("https://loafrecords.shop"),
+  title: {
+    default: "Loaf Records | Official Store",
+    template: "%s | Loaf Records",
+  },
   description: "The official digital flagship for Loaf Records. Brooklyn-born record label bringing raw, cinematic sound to the world.",
   keywords: ["Loaf Records", "Shadow The Great", "Hip Hop", "Brooklyn", "Music", "Merch"],
   authors: [{ name: "Loaf Records" }],
   openGraph: {
     title: "Loaf Records | Official Store",
-    description: "The official digital flagship for Loaf Records.",
+    description: "The official digital flagship for Loaf Records. Brooklyn-born record label bringing raw, cinematic sound to the world.",
+    url: "https://loafrecords.shop",
+    siteName: "Loaf Records",
     type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Loaf Records | Official Store",
+    description: "Brooklyn-born record label bringing raw, cinematic sound to the world.",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

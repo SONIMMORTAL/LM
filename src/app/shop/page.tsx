@@ -1,13 +1,29 @@
-import { motion } from "framer-motion";
 import { ShoppingBag, Star, Check, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { getPrintfulProducts } from "@/lib/printful";
 import { ShopGrid } from "@/components/shop/ShopGrid";
 import { AuroraBackground } from "@/components/ui/AuroraBackground";
 import { TextReveal } from "@/components/ui/TextReveal";
+import type { Metadata } from "next";
 
 // Force dynamic rendering since we are fetching data
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+    title: "Shop | Loaf Records — Official Merch",
+    description: "Browse the official Loaf Records merch store. Limited edition apparel, vinyl, accessories, and more from Shadow The Great. Worldwide shipping.",
+    openGraph: {
+        title: "Shop | Loaf Records — Official Merch",
+        description: "Limited edition apparel, vinyl, accessories, and more from Shadow The Great.",
+        type: "website",
+        siteName: "Loaf Records",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Shop | Loaf Records — Official Merch",
+        description: "Limited edition apparel, vinyl, accessories, and more from Shadow The Great.",
+    },
+};
 
 export default async function ShopPage() {
     // Fetch products from Printful
