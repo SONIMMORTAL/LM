@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/supabase/admin-auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
+export const dynamic = 'force-dynamic';
+
 // GET - Fetch all orders
 export async function GET() {
     try {

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/supabase/admin-auth';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
 import { supabaseAdmin, isServiceRoleConfigured } from '@/lib/supabase/admin';
+
+export const dynamic = 'force-dynamic';
 
 // Extract YouTube ID from various URL formats
 function extractYouTubeId(url: string): string | null {
@@ -102,12 +103,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
     try {
-        if (!isSupabaseConfigured()) {
-            return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
-        }
-
-        // Public read is fine via standard client
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('videos')
             .select('*')
             .order('created_at', { ascending: false });

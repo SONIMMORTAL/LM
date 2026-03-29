@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/supabase/admin-auth';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
 import { supabaseAdmin, isServiceRoleConfigured } from '@/lib/supabase/admin';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
     try {
@@ -85,12 +86,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
     try {
-        if (!isSupabaseConfigured()) {
-            return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
-        }
-
-        // Public read access is allowed via RLS, so generic client is fine
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('tracks')
             .select('*')
             .order('created_at', { ascending: false });

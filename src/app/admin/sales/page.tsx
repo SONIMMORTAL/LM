@@ -2,8 +2,8 @@ import { DollarSign, ShoppingBag, TrendingUp, CreditCard, Package } from "lucide
 import { StatCard } from "@/components/admin/StatCard";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-// Create a revalidation interval (e.g., every 60 seconds)
-export const revalidate = 60;
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic';
 
 async function getSalesData() {
     try {
