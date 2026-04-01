@@ -171,6 +171,62 @@ export async function GET() {
             .sort((a, b) => b.plays - a.plays)
             .slice(0, 10);
 
+        // ─── Daily Page Views (last 30 days) ──────────────────────────
+        const thirtyDaysAgo = new Date(now);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const { data: dailyViewsRaw } = await supabaseAdmin
+            .from('page_views')
+            .select('created_at')
+            .gte('created_at', thirtyDaysAgo.toISOString());
+
+        const dailyViewCounts: Record<string, number> = {};
+        dailyViewsRaw?.forEach((row: { created_at: string }) => {
+            const day = row.created_at.substring(0, 10); // YYYY-MM-DD
+            dailyViewCounts[day] = (dailyViewCounts[day] || 0) + 1;
+        });
+
+        const dailyViews = [];
+        for (let d = new Date(thirtyDaysAgo); d <= now; d.setDate(d.getDate() + 1)) {
+            const key = d.toISOString().substring(0, 10);
+            dailyViews.push({
+                date: key,
+                label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                views: dailyViewCounts[key] || 0,
+            });
+        }
+
+        // ─── Daily Video Plays (last 30 days) ────────────────────────
+        const { data: dailyPlaysRaw } = await supabaseAdmin
+            .from('video_plays')
+            .select('created_at')
+            .gte('created_at', thirtyDaysAgo.toISOString());
+
+        const dailyPlayCounts: Record<string, number> = {};
+        dailyPlaysRaw?.forEach((row: { created_at: string }) => {
+            const day = row.created_at.substring(0, 10);
+            dailyPlayCounts[day] = (dailyPlayCounts[day] || 0) + 1;
+        });
+
+        const dailyPlays = [];
+        for (let d = new Date(thirtyDaysAgo); d <= now; d.setDate(d.getDate() + 1)) {
+            const key = d.toISOString().substring(0, 10);
+            dailyPlays.push({
+                date: key,
+                label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                plays: dailyPlayCounts[key] || 0,
+            });
+        }
+
+        // ─── Hourly Heatmap (page views by day-of-week x hour) ───────
+        const heatmapData: number[][] = Array.from({ length: 7 }, () => Array(24).fill(0));
+        dailyViewsRaw?.forEach((row: { created_at: string }) => {
+            const dt = new Date(row.created_at);
+            const dow = dt.getUTCDay(); // 0=Sun
+            const hour = dt.getUTCHours();
+            heatmapData[dow][hour]++;
+        });
+
         return NextResponse.json({
             overview: {
                 totalViews: totalViews || 0,
@@ -185,6 +241,9 @@ export async function GET() {
             topPages,
             topVideos,
             recentActivity,
+            dailyViews,
+            dailyPlays,
+            heatmapData,
         });
     } catch (error) {
         console.error('Analytics fetch error:', error);
