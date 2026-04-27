@@ -1,34 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, MapPin, Send, Instagram, Youtube, Music2, ExternalLink } from "lucide-react";
-import Link from "next/link";
+import { Send } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-
-const socialLinks = [
-    {
-        name: "Instagram",
-        handle: "@loafrecords",
-        url: "https://instagram.com/loafrecords",
-        icon: Instagram,
-        color: "from-purple-500 to-pink-500",
-    },
-    {
-        name: "YouTube",
-        handle: "@LoafRecords",
-        url: "https://www.youtube.com/@LoafRecords",
-        icon: Youtube,
-        color: "from-red-500 to-red-600",
-    },
-    {
-        name: "Facebook",
-        handle: "Loaf Records",
-        url: "https://www.facebook.com/loafrecords",
-        icon: Music2,
-        color: "from-blue-500 to-blue-600",
-    },
-];
+import { VideoProductionPackages } from "@/components/contact/VideoProductionPackages";
 
 const inquiryTypes = [
     "General Inquiry",
@@ -89,236 +65,113 @@ export default function ContactPage() {
 
     return (
         <div className="min-h-screen pt-24 pb-16">
-            {/* Hero Section */}
-            <section className="px-6 mb-16">
-                <div className="max-w-4xl mx-auto text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                    >
-                        <span className="inline-block mb-4 text-accent-cyan text-sm tracking-[0.3em] uppercase">
-                            Get In Touch
-                        </span>
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter uppercase mb-4">
-                            Contact
-                        </h1>
-                        <p className="text-noir-cloud max-w-lg mx-auto">
-                            For bookings, press inquiries, and business opportunities.
-                            We'd love to hear from you.
-                        </p>
-                    </motion.div>
-                </div>
-            </section>
+            {/* Video Production Packages */}
+            <VideoProductionPackages />
 
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
-                <div className="grid lg:grid-cols-5 gap-8 lg:gap-12">
-                    {/* Contact Form */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="lg:col-span-3"
-                    >
-                        <div className="glass-card p-5 sm:p-8 rounded-2xl">
-                            <h2 className="text-2xl font-bold uppercase tracking-tight mb-6">
-                                Send a Message
-                            </h2>
+            {/* Contact Form */}
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-16">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                >
+                    <div className="bg-gradient-to-br from-zinc-900/80 to-black/90 backdrop-blur-xl border border-white/10 p-5 sm:p-8 rounded-2xl shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-1/4 w-64 h-64 bg-amber-500/5 blur-[100px] rounded-full -z-10 pointer-events-none" />
+                        <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-6 flex items-center gap-3">
+                            <span className="w-8 h-[2px] bg-amber-500"></span>
+                            Send a Message
+                        </h2>
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid sm:grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-sm text-noir-cloud mb-2">
-                                            Your Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-3 bg-noir-charcoal rounded-xl text-foreground placeholder:text-noir-ash focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 border border-noir-smoke"
-                                            placeholder="Enter your name"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm text-noir-cloud mb-2">
-                                            Email Address
-                                        </label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-3 bg-noir-charcoal rounded-xl text-foreground placeholder:text-noir-ash focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 border border-noir-smoke"
-                                            placeholder="your@email.com"
-                                        />
-                                    </div>
-                                </div>
-
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid sm:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm text-noir-cloud mb-2">
-                                        Inquiry Type
+                                        Your Name
                                     </label>
-                                    <select
-                                        name="inquiryType"
-                                        value={formData.inquiryType}
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
                                         onChange={handleChange}
                                         required
-                                        className="w-full px-4 py-3 bg-noir-charcoal rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 border border-noir-smoke appearance-none cursor-pointer"
-                                    >
-                                        <option value="" disabled>
-                                            Select inquiry type
-                                        </option>
-                                        {inquiryTypes.map((type) => (
-                                            <option key={type} value={type}>
-                                                {type}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm text-noir-cloud mb-2">
-                                        Message
-                                    </label>
-                                    <textarea
-                                        name="message"
-                                        value={formData.message}
-                                        onChange={handleChange}
-                                        required
-                                        rows={5}
-                                        className="w-full px-4 py-3 bg-noir-charcoal rounded-xl text-foreground placeholder:text-noir-ash focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 border border-noir-smoke resize-none"
-                                        placeholder="Tell us what you're looking for..."
+                                        className="w-full px-4 py-3 bg-noir-void rounded-xl text-white placeholder:text-noir-ash focus:outline-none focus:ring-2 focus:ring-amber-500/50 border border-white/5 focus:border-amber-500/50 transition-all shadow-inner"
+                                        placeholder="Enter your name"
                                     />
                                 </div>
-
-                                <motion.button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="w-full py-4 bg-accent-cyan text-noir-void font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-accent-cyanMuted transition-colors shadow-glow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {isSubmitting ? (
-                                        <>
-                                            <div className="w-5 h-5 border-2 border-noir-void/30 border-t-noir-void rounded-full animate-spin" />
-                                            Sending...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Send className="w-5 h-5" />
-                                            Send Message
-                                        </>
-                                    )}
-                                </motion.button>
-                            </form>
-                        </div>
-                    </motion.div>
-
-                    {/* Contact Info & Socials */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="lg:col-span-2 space-y-6"
-                    >
-                        {/* Direct Contact */}
-                        <div className="glass-card p-6 rounded-2xl">
-                            <h3 className="text-lg font-bold uppercase tracking-tight mb-4">
-                                Direct Contact
-                            </h3>
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-accent-cyan/10 flex items-center justify-center">
-                                        <Mail className="w-5 h-5 text-accent-cyan" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-noir-cloud">Email</p>
-                                        <a
-                                            href="mailto:loafrecords1@gmail.com"
-                                            className="text-foreground hover:text-accent-cyan transition-colors"
-                                        >
-                                            loafrecords1@gmail.com
-                                        </a>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-accent-cyan/10 flex items-center justify-center">
-                                        <MapPin className="w-5 h-5 text-accent-cyan" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-noir-cloud">Location</p>
-                                        <p className="text-foreground">Brooklyn, NY</p>
-                                    </div>
+                                <div>
+                                    <label className="block text-sm text-noir-cloud mb-2">
+                                        Email Address
+                                    </label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 bg-noir-void rounded-xl text-white placeholder:text-noir-ash focus:outline-none focus:ring-2 focus:ring-amber-500/50 border border-white/5 focus:border-amber-500/50 transition-all shadow-inner"
+                                        placeholder="your@email.com"
+                                    />
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Social Links */}
-                        <div className="glass-card p-6 rounded-2xl">
-                            <h3 className="text-lg font-bold uppercase tracking-tight mb-4">
-                                Follow Us
-                            </h3>
-                            <div className="space-y-3">
-                                {socialLinks.map((social) => (
-                                    <a
-                                        key={social.name}
-                                        href={social.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-3 p-3 rounded-xl bg-noir-charcoal/50 hover:bg-noir-charcoal transition-colors group"
-                                    >
-                                        <div
-                                            className={`w-10 h-10 rounded-full bg-gradient-to-br ${social.color} flex items-center justify-center`}
-                                        >
-                                            <social.icon className="w-5 h-5 text-white" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="font-semibold text-foreground group-hover:text-accent-cyan transition-colors">
-                                                {social.name}
-                                            </p>
-                                            <p className="text-sm text-noir-cloud">{social.handle}</p>
-                                        </div>
-                                        <ExternalLink className="w-4 h-4 text-noir-ash group-hover:text-accent-cyan transition-colors" />
-                                    </a>
-                                ))}
+                            <div>
+                                <label className="block text-sm text-noir-cloud mb-2">
+                                    Inquiry Type
+                                </label>
+                                <select
+                                    name="inquiryType"
+                                    value={formData.inquiryType}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full px-4 py-3 bg-noir-void rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 border border-white/5 focus:border-amber-500/50 appearance-none cursor-pointer transition-all shadow-inner"
+                                >
+                                    <option value="" disabled>
+                                        Select inquiry type
+                                    </option>
+                                    {inquiryTypes.map((type) => (
+                                        <option key={type} value={type}>
+                                            {type}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
-                        </div>
 
-                        {/* Quick Links */}
-                        <div className="glass-card p-6 rounded-2xl">
-                            <h3 className="text-lg font-bold uppercase tracking-tight mb-4">
-                                Quick Links
-                            </h3>
-                            <div className="space-y-2">
-                                <Link
-                                    href="/shop"
-                                    className="block py-2 text-noir-cloud hover:text-accent-cyan transition-colors"
-                                >
-                                    → Official Store
-                                </Link>
-                                <a
-                                    href="/music"
-                                    className="block py-2 text-noir-cloud hover:text-accent-cyan transition-colors"
-                                >
-                                    → Discography
-                                </a>
-                                <a
-                                    href="/videos"
-                                    className="block py-2 text-noir-cloud hover:text-accent-cyan transition-colors"
-                                >
-                                    → Music Videos
-                                </a>
-                                <a
-                                    href="/stoop"
-                                    className="block py-2 text-noir-cloud hover:text-accent-cyan transition-colors"
-                                >
-                                    → The Stoop (Community)
-                                </a>
+                            <div>
+                                <label className="block text-sm text-noir-cloud mb-2">
+                                    Message
+                                </label>
+                                <textarea
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={handleChange}
+                                    required
+                                    rows={5}
+                                    className="w-full px-4 py-3 bg-noir-void rounded-xl text-white placeholder:text-noir-ash focus:outline-none focus:ring-2 focus:ring-amber-500/50 border border-white/5 focus:border-amber-500/50 resize-none transition-all shadow-inner"
+                                    placeholder="Tell us what you're looking for..."
+                                />
                             </div>
-                        </div>
-                    </motion.div>
-                </div>
+
+                            <motion.button
+                                type="submit"
+                                disabled={isSubmitting}
+                                whileTap={{ scale: 0.98 }}
+                                className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-noir-void font-black uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-noir-void/30 border-t-noir-void rounded-full animate-spin" />
+                                        Sending...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Send className="w-5 h-5" />
+                                        Send Message
+                                    </>
+                                )}
+                            </motion.button>
+                        </form>
+                    </div>
+                </motion.div>
             </div>
         </div>
     );

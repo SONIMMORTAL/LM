@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Disc3, Music2, Shuffle, ChevronDown } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { Play, Disc3, Music2, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AlbumPurchaseModal } from "@/components/music/AlbumPurchaseModal";
@@ -34,10 +34,6 @@ export default function MusicPage() {
     const [loading, setLoading] = useState(true);
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [volume, setVolume] = useState(80);
-    const [isMuted, setIsMuted] = useState(false);
     const [activeAlbum, setActiveAlbum] = useState<string | null>(null);
     const [hoveredTrack, setHoveredTrack] = useState<string | null>(null);
     const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
@@ -46,21 +42,20 @@ export default function MusicPage() {
     // Mobile dropdown state
     const [expandedAlbums, setExpandedAlbums] = useState<Record<string, boolean>>({});
 
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+    
+    useEffect(() => { fetchTracks(); }, []);
 
     useEffect(() => {
-        fetchTracks();
-    }, []);
-
-    useEffect(() => {
-        if (tracks.length > 0 && isPlaying) {
-            const audio = audioRef.current;
-            if (audio) {
-                audio.src = tracks[currentTrackIndex].audio_url || "";
-                if (tracks[currentTrackIndex].audio_url) audio.play().catch(e => console.log("Playback error", e));
-            }
+        const handleGlobalState = (e: Event) => {
+            const detail = (e as CustomEvent).detail;
+            setIsPlaying(detail.isPlaying);
+            setCurrentTrackIndex(detail.currentTrackIndex);
+        };
+        if (typeof window !== "undefined") {
+            window.addEventListener('globalPlayerState', handleGlobalState);
+            return () => window.removeEventListener('globalPlayerState', handleGlobalState);
         }
-    }, [currentTrackIndex]);
+    }, []);
 
     async function fetchTracks() {
         try {
@@ -89,6 +84,33 @@ export default function MusicPage() {
 
     // Group tracks by album - filter out Gotham from The Commission
     const albums: Album[] = [
+        {
+            name: "Darkside",
+            artist: "Shadow The Great",
+            cover: "/darkside-cover.jpg",
+            gradient: "from-violet-500/20 via-indigo-600/10 to-slate-900/20",
+            accentColor: "violet",
+            youtubeId: "6-9cYB0_E14",
+            tracks: tracks.filter(t => t.album === "Darkside")
+        },
+        {
+            name: "Lord Knows",
+            artist: "Shadow The Great",
+            cover: "/lord-knows-cover.jpg",
+            gradient: "from-orange-500/20 via-amber-600/10 to-noir-void/20",
+            accentColor: "orange",
+            youtubeId: "QBaz7HbeJHk",
+            tracks: tracks.filter(t => t.album === "Lord Knows")
+        },
+        {
+            name: "Munchies",
+            artist: "Shadow The Great",
+            cover: "/MUNCHIES COVER.jpeg",
+            gradient: "from-yellow-500/20 via-orange-500/10 to-red-900/20",
+            accentColor: "yellow",
+            youtubeId: "rYld-JB5zLY",
+            tracks: tracks.filter(t => t.album === "Munchies")
+        },
         {
             name: "The Commission",
             artist: "Shadow The Great",
@@ -123,6 +145,71 @@ export default function MusicPage() {
         }
     ];
 
+    // YouTube timestamp map — hidden from users, used for deep-linking into videos
+    const youtubeTimestamps: Record<string, number> = {
+        // Darkside
+        "Mayne Tayne (prod. by Tuamie)": 0,
+        "Who is it (prod. by Tuamie)": 160,
+        "Locked up (feat. Rah Tha Ruler, Dj Ruggz)": 248,
+        "Hitmonlee (feat. AR Immortal)": 263,
+        "Break Bread (prod. by Tuamie)": 465,
+        "Song Cry (prod. by Just Blaze)": 519,
+        "Slow Jamz (prod. by Kanye West)": 660,
+        "Gun Hill Freestyle (feat. Casiel)": 777,
+        "Role (prod. by Grandpadre)": 864,
+        "Pootie (feat. AR Immortal & Rah Tha Ruler)": 991,
+        "Call Away (prod. by PEPITO)": 1167,
+        "Bank Roll (prod. by PEPITO)": 1339,
+        "30 Ball (feat. Rah Tha Ruler) [prod. by MIKI]": 1489,
+        "The Fire (prod. by Kanye West)": 1606,
+        "Neva Hurt U (prod. by Tuamie)": 1740,
+        "Change (prod. by Coyote Beatz)": 1805,
+        // Lord Knows
+        "Burly (prod. by Tuamie)": 0,
+        "Break Bread Freestyle (prod. by Tuamie)": 48,
+        "7 Oceans Freestyle (prod. by Tuamie)": 137,
+        "Archie (prod. by King illa)": 193,
+        "Corners (prod. by Coyote Beatz)": 373,
+        "Hustle Freestyle (feat. Rah Tha Ruler)": 496,
+        "Fountain Freestyle (feat. Rah Tha Ruler)": 605,
+        "Book of Doe Freestyle (prod. by Doe)": 926,
+        "Freestyle (prod. by Pepito)": 1080,
+        // Munchies
+        "Ahhh Haa": 0,
+        "Waves": 112,
+        "4 Dilla (prod. by Tuamie)": 210,
+        "Brownsvillan (prod. by Tuamie)": 325,
+        "Runnin": 442,
+        "Full Court Press": 561,
+        "Set it Off": 639,
+        "Zoot": 703,
+        "Peace (prod. by Tuamie)": 800
+    };
+
+    const getGlobalTrackIndex = (track: Track) => {
+        return tracks.findIndex(t => t.id === track.id);
+    };
+
+    const playTrack = (index: number) => {
+        const track = tracks[index];
+        const hasTimestamp = track && youtubeTimestamps[track.title] !== undefined;
+
+        if (hasTimestamp) {
+            // YouTube-only track — pause the global audio player
+            if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent('pauseGlobalPlayer'));
+            }
+        } else {
+            // Audio track — play via global player
+            if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent('playMusic', { detail: { trackIndex: index } }));
+            }
+        }
+
+        setCurrentTrackIndex(index);
+        setIsPlaying(true);
+    };
+
     const toggleAlbum = (albumName: string) => {
         setExpandedAlbums(prev => ({
             ...prev,
@@ -130,84 +217,24 @@ export default function MusicPage() {
         }));
     };
 
-    const togglePlay = () => {
-        if (!audioRef.current) return;
-        if (isPlaying) {
-            audioRef.current.pause();
-        } else {
-            if (!audioRef.current.src && currentTrack?.audio_url) {
-                audioRef.current.src = currentTrack.audio_url;
-            }
-            if (audioRef.current.src) audioRef.current.play().catch(e => console.log("Playback error", e));
-        }
-        setIsPlaying(!isPlaying);
-    };
-
-    const playTrack = (index: number) => {
-        setCurrentTrackIndex(index);
-        setIsPlaying(true);
-    };
-
-    const nextTrack = () => {
-        setCurrentTrackIndex((prev) => (prev + 1) % tracks.length);
-        setIsPlaying(true);
-    };
-
-    const prevTrack = () => {
-        setCurrentTrackIndex((prev) => (prev - 1 + tracks.length) % tracks.length);
-        setIsPlaying(true);
-    };
-
-    const handleTimeUpdate = () => {
-        if (audioRef.current) {
-            setCurrentTime(audioRef.current.currentTime);
-            setDuration(audioRef.current.duration || 0);
-        }
-    };
-
-    const toggleMute = () => {
-        if (audioRef.current) {
-            audioRef.current.muted = !isMuted;
-            setIsMuted(!isMuted);
-        }
-    };
-
-    const formatTime = (seconds: number) => {
-        if (!seconds || isNaN(seconds)) return "0:00";
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    };
-
-    const getGlobalTrackIndex = (track: Track) => {
-        return tracks.findIndex(t => t.id === track.id);
-    };
-
-    const shufflePlay = () => {
-        if (tracks.length === 0) return;
-        const randomIndex = Math.floor(Math.random() * tracks.length);
-        setCurrentTrackIndex(randomIndex);
-        setIsPlaying(true);
-    };
-
     const getAlbumCover = (albumName: string | null | undefined): string => {
         switch (albumName) {
             case "Lost City": return "/LC1.jpg";
             case "More Life": return "/MORE LIFE VINYL.jpg";
             case "Live From The Dungeon": return "/LFTD.jpg";
+            case "Darkside": return "/darkside-cover.jpg";
+            case "Lord Knows": return "/lord-knows-cover.jpg";
+            case "Munchies": return "/MUNCHIES COVER.jpeg";
             case "The Commission":
             default: return "/THE COMMISSION.png";
         }
     };
 
+    
+    
     return (
         <div className="min-h-screen bg-noir-void relative overflow-hidden">
-            <audio
-                ref={audioRef}
-                onTimeUpdate={handleTimeUpdate}
-                onEnded={nextTrack}
-            />
-
+            
             {/* Animated Background - Hide heavy animations on mobile */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent-cyan/5 via-transparent to-purple-900/10" />
@@ -250,51 +277,7 @@ export default function MusicPage() {
                 </div>
             </section>
 
-            {/* New Release Section */}
-            <section className="relative px-6 pb-20">
-                <div className="max-w-7xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="bg-gradient-to-br from-noir-charcoal/80 to-noir-slate/40 backdrop-blur-xl rounded-3xl border border-accent-cyan/30 overflow-hidden relative shadow-2xl shadow-accent-cyan/10"
-                    >
-                        {/* Glow effect */}
-                        <div className="absolute top-0 left-1/4 w-1/2 h-full bg-accent-cyan/10 blur-[100px] -z-10" />
 
-                        <div className="p-1">
-                            <div className="flex items-center justify-between px-6 pt-6 pb-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="px-3 py-1 bg-accent-cyan/20 text-accent-cyan text-xs font-black uppercase tracking-widest rounded-full border border-accent-cyan/30 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
-                                        New Release
-                                    </span>
-                                    <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">THE MUNCHIES VOL. 2</h2>
-                                </div>
-                                <a
-                                    href="https://soundcloud.com/loafmuzik/the-munchies-vol-2?utm_source=mobi&utm_campaign=social_sharing"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hidden sm:flex flex-row items-center gap-2 text-sm font-medium text-accent-cyan hover:text-cyan-300 transition-colors"
-                                >
-                                    Listen on SoundCloud <ChevronDown className="w-4 h-4 -rotate-90" />
-                                </a>
-                            </div>
-
-                            <div className="rounded-2xl overflow-hidden bg-noir-void">
-                                <iframe
-                                    width="100%"
-                                    height="350"
-                                    scrolling="no"
-                                    frameBorder="no"
-                                    allow="autoplay"
-                                    src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/loafmuzik/the-munchies-vol-2&color=%2300ffd0&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
-                                ></iframe>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
 
             {/* Albums Grid */}
             <section className="relative px-6 pb-40">
@@ -346,7 +329,7 @@ export default function MusicPage() {
                                                         alt={album.name}
                                                         fill
                                                         className="object-cover"
-                                                        priority={albumIndex === 0}
+                                                        priority={albumIndex < 2}
                                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                     />
 
@@ -522,7 +505,7 @@ export default function MusicPage() {
                                                             <iframe
                                                                 width="100%"
                                                                 height="100%"
-                                                                src={`https://www.youtube.com/embed/${album.youtubeId}`}
+                                                                src={`https://www.youtube.com/embed/${album.youtubeId}?enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}${currentTrack && currentTrack.album === album.name && youtubeTimestamps[currentTrack.title] !== undefined ? '&start=' + youtubeTimestamps[currentTrack.title] + '&autoplay=1' : ''}`}
                                                                 title={`${album.name} - Music Video`}
                                                                 frameBorder="0"
                                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -541,119 +524,7 @@ export default function MusicPage() {
                 </div>
             </section>
 
-            {/* Premium Fixed Player */}
-            <AnimatePresence>
-                {currentTrack && (
-                    <motion.div
-                        initial={{ y: 100, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: 100, opacity: 0 }}
-                        className="fixed bottom-0 left-0 right-0 z-50"
-                    >
-                        {/* Blur Background */}
-                        <div className="absolute inset-0 bg-noir-charcoal/90 backdrop-blur-xl border-t border-white/10" />
 
-                        {/* Progress Bar (Full Width) */}
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-noir-smoke/50">
-                            <motion.div
-                                className="h-full bg-gradient-to-r from-accent-cyan to-cyan-400"
-                                style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
-                            />
-                        </div>
-
-                        <div className="relative max-w-7xl mx-auto px-6 py-4">
-                            <div className="flex items-center gap-6">
-                                {/* Album Art */}
-                                <motion.div
-                                    className="relative w-14 h-14 rounded-lg overflow-hidden ring-2 ring-white/10 flex-shrink-0"
-                                    animate={isPlaying ? { scale: [1, 1.05, 1] } : {}}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                >
-                                    <Image
-                                        src={getAlbumCover(currentTrack?.album)}
-                                        alt="Now Playing"
-                                        fill
-                                        className="object-cover"
-                                        sizes="56px"
-                                    />
-                                </motion.div>
-
-                                {/* Track Info */}
-                                <div className="flex-1 min-w-0 hidden sm:block">
-                                    <p className="font-semibold text-white truncate">{currentTrack?.title}</p>
-                                    <p className="text-sm text-noir-cloud truncate">{currentTrack?.artist}</p>
-                                </div>
-
-                                {/* Controls */}
-                                <div className="flex items-center gap-3">
-                                    <motion.button
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.9 }}
-                                        onClick={prevTrack}
-                                        className="p-2 text-noir-cloud hover:text-white transition-colors"
-                                    >
-                                        <SkipBack className="w-5 h-5" />
-                                    </motion.button>
-
-                                    <motion.button
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.9 }}
-                                        onClick={togglePlay}
-                                        className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-accent-cyan to-cyan-400 text-noir-void shadow-lg shadow-accent-cyan/30"
-                                    >
-                                        {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" fill="currentColor" />}
-                                    </motion.button>
-
-                                    <motion.button
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.9 }}
-                                        onClick={nextTrack}
-                                        className="p-2 text-noir-cloud hover:text-white transition-colors"
-                                    >
-                                        <SkipForward className="w-5 h-5" />
-                                    </motion.button>
-
-                                    <motion.button
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.9 }}
-                                        onClick={shufflePlay}
-                                        className="p-2 text-noir-cloud hover:text-accent-cyan transition-colors"
-                                        title="Shuffle"
-                                    >
-                                        <Shuffle className="w-5 h-5" />
-                                    </motion.button>
-                                </div>
-
-                                {/* Time & Volume */}
-                                <div className="hidden md:flex items-center gap-4">
-                                    <span className="text-sm text-noir-ash font-mono w-20 text-center">
-                                        {formatTime(currentTime)} / {formatTime(duration)}
-                                    </span>
-
-                                    <div className="flex items-center gap-2">
-                                        <button onClick={toggleMute} className="text-noir-cloud hover:text-white transition-colors">
-                                            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                                        </button>
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="100"
-                                            value={isMuted ? 0 : volume}
-                                            onChange={(e) => {
-                                                const val = Number(e.target.value);
-                                                setVolume(val);
-                                                if (audioRef.current) audioRef.current.volume = val / 100;
-                                                if (val > 0 && isMuted) setIsMuted(false);
-                                            }}
-                                            className="w-24 h-1 bg-noir-smoke rounded-lg appearance-none cursor-pointer accent-accent-cyan"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {/* Purchase Modal */}
             {selectedPurchaseAlbum && (
