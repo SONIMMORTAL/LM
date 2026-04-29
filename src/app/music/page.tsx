@@ -27,6 +27,7 @@ interface Album {
     gradient: string;
     accentColor: string;
     youtubeId?: string;
+    price?: number;
 }
 
 export default function MusicPage() {
@@ -43,7 +44,11 @@ export default function MusicPage() {
     const [expandedAlbums, setExpandedAlbums] = useState<Record<string, boolean>>({});
 
     
-    useEffect(() => { fetchTracks(); }, []);
+    useEffect(() => {
+        let isMounted = true;
+        fetchTracks(isMounted);
+        return () => { isMounted = false; };
+    }, []);
 
     useEffect(() => {
         const handleGlobalState = (e: Event) => {
@@ -57,10 +62,11 @@ export default function MusicPage() {
         }
     }, []);
 
-    async function fetchTracks() {
+    async function fetchTracks(isMounted: boolean = true) {
         try {
             const res = await fetch("/api/music");
             const data = await res.json();
+            if (!isMounted) return;
             if (data.tracks && data.tracks.length > 0) {
                 setTracks(data.tracks);
                 // Set initial track to specific "Lost City" song
@@ -73,10 +79,10 @@ export default function MusicPage() {
                     if (lostCityAlbumIndex >= 0) setCurrentTrackIndex(lostCityAlbumIndex);
                 }
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to fetch tracks:", error);
         } finally {
-            setLoading(false);
+            if (isMounted) setLoading(false);
         }
     }
 
@@ -91,7 +97,8 @@ export default function MusicPage() {
             gradient: "from-violet-500/20 via-indigo-600/10 to-slate-900/20",
             accentColor: "violet",
             youtubeId: "6-9cYB0_E14",
-            tracks: tracks.filter(t => t.album === "Darkside")
+            tracks: tracks.filter(t => t.album === "Darkside"),
+            price: 0
         },
         {
             name: "Lord Knows",
@@ -100,7 +107,8 @@ export default function MusicPage() {
             gradient: "from-orange-500/20 via-amber-600/10 to-noir-void/20",
             accentColor: "orange",
             youtubeId: "QBaz7HbeJHk",
-            tracks: tracks.filter(t => t.album === "Lord Knows")
+            tracks: tracks.filter(t => t.album === "Lord Knows"),
+            price: 0
         },
         {
             name: "Munchies",
@@ -109,7 +117,8 @@ export default function MusicPage() {
             gradient: "from-yellow-500/20 via-orange-500/10 to-red-900/20",
             accentColor: "yellow",
             youtubeId: "rYld-JB5zLY",
-            tracks: tracks.filter(t => t.album === "Munchies")
+            tracks: tracks.filter(t => t.album === "Munchies"),
+            price: 0
         },
         {
             name: "The Commission",
@@ -117,7 +126,8 @@ export default function MusicPage() {
             cover: "/THE COMMISSION.png",
             gradient: "from-amber-500/20 via-orange-600/10 to-red-900/20",
             accentColor: "amber",
-            tracks: tracks.filter(t => (t.album === "The Commission" || (!t.album && t.title !== "Lost City")) && t.title.toUpperCase() !== "GOTHAM")
+            tracks: tracks.filter(t => (t.album === "The Commission" || (!t.album && t.title !== "Lost City")) && t.title.toUpperCase() !== "GOTHAM"),
+            price: 9.99
         },
         {
             name: "Lost City",
@@ -125,7 +135,8 @@ export default function MusicPage() {
             cover: "/LC1.jpg",
             gradient: "from-blue-900/20 via-cyan-900/10 to-slate-900/20",
             accentColor: "cyan",
-            tracks: tracks.filter(t => t.album === "Lost City")
+            tracks: tracks.filter(t => t.album === "Lost City"),
+            price: 9.99
         },
         {
             name: "More Life",
@@ -133,7 +144,8 @@ export default function MusicPage() {
             cover: "/MORE LIFE VINYL.jpg",
             gradient: "from-rose-500/20 via-pink-600/10 to-purple-900/20",
             accentColor: "rose",
-            tracks: tracks.filter(t => t.album === "More Life")
+            tracks: tracks.filter(t => t.album === "More Life"),
+            price: 9.99
         },
         {
             name: "Live From The Dungeon",
@@ -141,7 +153,8 @@ export default function MusicPage() {
             cover: "/LFTD.jpg",
             gradient: "from-emerald-500/20 via-green-600/10 to-teal-900/20",
             accentColor: "emerald",
-            tracks: tracks.filter(t => t.album === "Live From The Dungeon")
+            tracks: tracks.filter(t => t.album === "Live From The Dungeon"),
+            price: 9.99
         }
     ];
 
@@ -362,28 +375,32 @@ export default function MusicPage() {
                                                 <div className="flex items-center justify-center lg:justify-start gap-4 mt-4">
                                                     <span className="text-sm text-noir-ash">{album.tracks.length} tracks</span>
                                                     <span className="text-noir-smoke">•</span>
-                                                    <span className="text-sm text-accent-cyan font-medium">$9.99</span>
+                                                    <span className="text-sm text-accent-cyan font-medium">
+                                                        {album.price === 0 ? "FREE" : `$${album.price?.toFixed(2)}`}
+                                                    </span>
                                                 </div>
                                             </div>
 
                                             {/* Buy Button */}
-                                            <motion.div className="mt-6" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedPurchaseAlbum({
-                                                            name: album.name,
-                                                            price: 9.99,
-                                                            cover: album.cover,
-                                                            artist: album.artist
-                                                        });
-                                                        setPurchaseModalOpen(true);
-                                                    }}
-                                                    className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-gradient-to-r from-accent-cyan to-cyan-400 text-noir-void font-bold rounded-xl shadow-lg shadow-accent-cyan/25 hover:shadow-accent-cyan/40 transition-all"
-                                                >
-                                                    <Music2 className="w-5 h-5" />
-                                                    Buy Album
-                                                </button>
-                                            </motion.div>
+                                            {album.price !== 0 && (
+                                                <motion.div className="mt-6" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedPurchaseAlbum({
+                                                                name: album.name,
+                                                                price: album.price || 9.99,
+                                                                cover: album.cover,
+                                                                artist: album.artist
+                                                            });
+                                                            setPurchaseModalOpen(true);
+                                                        }}
+                                                        className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-gradient-to-r from-accent-cyan to-cyan-400 text-noir-void font-bold rounded-xl shadow-lg shadow-accent-cyan/25 hover:shadow-accent-cyan/40 transition-all"
+                                                    >
+                                                        <Music2 className="w-5 h-5" />
+                                                        Buy Album
+                                                    </button>
+                                                </motion.div>
+                                            )}
 
                                             {/* Back Cover Art (Lost City Exclusive) */}
                                             {album.name === "Lost City" && (
@@ -475,7 +492,7 @@ export default function MusicPage() {
                                                                         {/* Duration & Price */}
                                                                         <div className="flex items-center gap-4">
                                                                             <span className="text-sm text-noir-ash font-mono hidden sm:block">{track.duration || "—"}</span>
-                                                                            {track.price && (
+                                                                            {track.price && album.price !== 0 && (
                                                                                 <motion.span
                                                                                     whileHover={{ scale: 1.05 }}
                                                                                     className="px-3 py-1 text-xs font-bold bg-white/10 text-white rounded-full hover:bg-accent-cyan hover:text-noir-void transition-colors"

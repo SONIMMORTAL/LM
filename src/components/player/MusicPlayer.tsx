@@ -226,10 +226,15 @@ export function MusicPlayer() {
 
     // ── Fetch tracks + restore saved position ───────────────────────
     useEffect(() => {
-        async function fetchTracks() {
+        let isMounted = true;
+
+        async function fetchTracks(isMountedStatus: boolean) {
             try {
                 const res = await fetch("/api/music");
                 const data = await res.json();
+                
+                if (!isMountedStatus) return;
+
                 if (data.tracks?.length > 0) {
                     setTracks(data.tracks);
 
@@ -242,11 +247,13 @@ export function MusicPlayer() {
                         if (idx >= 0) setCurrentTrackIndex(idx);
                     }
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Failed to fetch tracks:", error);
             }
         }
-        fetchTracks();
+        
+        fetchTracks(isMounted);
+        return () => { isMounted = false; };
     }, []);
 
     // ── Periodically persist position to localStorage ───────────────
@@ -440,7 +447,7 @@ function CollapsedPlayer({ track, isPlaying }: { track: Track; isPlaying: boolea
             className="flex items-center gap-3 whitespace-nowrap"
         >
             <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0">
-                <Image src={getAlbumCover(track?.album)} alt={track?.album || "Album"} fill className="object-cover" />
+                <img src={getAlbumCover(track?.album)} alt={track?.album || "Album"} className="object-cover w-full h-full" />
             </div>
             <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-foreground truncate max-w-32">
@@ -513,7 +520,7 @@ function ExpandedPlayer({
             {/* Album art + info */}
             <div className="flex gap-4 mb-4">
                 <motion.div className={cn("relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-glow-sm")}>
-                    <Image src={getAlbumCover(track?.album)} alt={track?.album || "Album"} fill className="object-cover" />
+                    <img src={getAlbumCover(track?.album)} alt={track?.album || "Album"} className="object-cover w-full h-full" />
                     {isPlaying && (
                         <motion.div
                             className="absolute inset-0 rounded-lg border-2 border-accent-cyan/50"
@@ -603,7 +610,7 @@ function ExpandedPlayer({
                                     )}
                                 >
                                     <div className="relative w-8 h-8 rounded overflow-hidden flex-shrink-0">
-                                        <Image src={getAlbumCover(t.album)} alt={t.album || "Album"} fill className="object-cover" />
+                                        <img src={getAlbumCover(t.album)} alt={t.album || "Album"} className="object-cover w-full h-full" />
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p className="text-sm font-medium truncate">{t.title}</p>
