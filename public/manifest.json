@@ -1,0 +1,16 @@
+{
+  "name": "Loaf Records",
+  "short_name": "Loaf",
+  "description": "Brooklyn-born record label bringing raw, cinematic sound to the world.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#00D9FF",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

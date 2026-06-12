@@ -192,9 +192,11 @@ body {
     transform: none;
   }
 
-  /* Faster transitions on touch */
-  * {
-    transition-duration: 0.15s !important;
+  /* Faster transitions on touch — scoped to avoid breaking Framer Motion */
+  button,
+  a,
+  [role="button"] {
+    transition-duration: 0.15s;
   }
 
   /* Active state feedback for touch */
@@ -253,4 +255,9 @@ body {
 
 .animate-scaleIn {
   animation: scaleIn 0.2s ease-out forwards;
+}
+
+@keyframes brandPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
 }

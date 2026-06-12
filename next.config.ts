@@ -2,8 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  reactStrictMode: false,
+  reactStrictMode: false, // Disabled due to Supabase auth lock issues in dev
   reactCompiler: true,
+  compiler: {
+    // Strip console.logs in production, but keep errors for debugging
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
+  },
   images: {
     remotePatterns: [
       {

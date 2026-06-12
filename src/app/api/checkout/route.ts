@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { sendOrderNotification, sendOrderConfirmation } from "@/lib/email";
 import { createPrintfulOrder } from "@/lib/printful";
+import { RateLimiter } from "@/lib/rate-limit";
+
+const limiter = new RateLimiter(3, 60000); // 3 requests per minute for checkout
+
+// Basic HTML escaping
+function sanitize(input: string): string {
+    return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
 
 interface CheckoutItem {
     name: string;
@@ -69,14 +77,39 @@ export async function POST(request: NextRequest) {
     try {
         const body: CheckoutRequest = await request.json();
 
+        // Rate limiting
+        const ip = request.headers.get("x-forwarded-for") || "unknown";
+        const limitResult = limiter.check(`checkout_${ip}`);
+        
+        if (!limitResult.success) {
+            return NextResponse.json(
+                { success: false, error: "Too many checkout attempts. Please try again later." },
+                { status: 429, headers: limitResult.headers }
+            );
+        }
+
         // Validate request
         const validationError = validateRequest(body);
         if (validationError) {
             return NextResponse.json(
                 { success: false, error: validationError },
-                { status: 400 }
+                { status: 400, headers: limitResult.headers }
             );
         }
+
+        // Sanitize string inputs
+        body.customer.name = sanitize(body.customer.name);
+        body.customer.phone = sanitize(body.customer.phone);
+        body.shipping.street = sanitize(body.shipping.street);
+        body.shipping.city = sanitize(body.shipping.city);
+        body.shipping.state = sanitize(body.shipping.state);
+        body.shipping.zip = sanitize(body.shipping.zip);
+        body.shipping.country = sanitize(body.shipping.country);
+        body.items = body.items.map(item => ({
+            ...item,
+            name: sanitize(item.name),
+            variantName: sanitize(item.variantName)
+        }));
 
         // Generate order number and timestamp
         const orderNumber = generateOrderNumber();

@@ -52,8 +52,21 @@ export function Footer() {
                             </Letter3DSwap>
                         </Link>
 
-
-                        {/* Social Links - REMOVED */}
+                        {/* Social Links */}
+                        <div className="flex items-center gap-4 mt-2">
+                            {socialLinks.map((link) => (
+                                <a
+                                    key={link.label}
+                                    href={link.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-noir-ash hover:text-accent-cyan transition-colors"
+                                    aria-label={link.label}
+                                >
+                                    <link.icon className="w-5 h-5" />
+                                </a>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Navigation Column */}

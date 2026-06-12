@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import dynamic from "next/dynamic";
 import "./globals.css";
-import { MusicPlayer } from "@/components/player/MusicPlayer";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/components/auth";
 import { AnalyticsTracker } from "@/components/analytics";
-import { CartSidebar } from "@/components/shop/CartSidebar";
 import { CartProvider } from "@/context/CartContext";
+
+const MusicPlayer = dynamic(() => import("@/components/player/MusicPlayer").then(mod => mod.MusicPlayer));
+const CartSidebar = dynamic(() => import("@/components/shop/CartSidebar").then(mod => mod.CartSidebar));
 import { ThemeProvider } from "@/context/ThemeContext";
 
 const inter = Inter({
@@ -44,6 +46,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function RootLayout({
@@ -53,6 +58,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://www.youtube.com" />
+        <link rel="preconnect" href="https://bnjoouzcnxwdxcgcknoe.supabase.co" />
+      </head>
       <body className={`${inter.variable} font-body antialiased`}>
         <ThemeProvider>
           <AuthProvider>

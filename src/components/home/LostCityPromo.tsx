@@ -14,7 +14,7 @@ export function LostCityPromo() {
 
     const handleBuyAlbum = () => {
         addToCart({
-            productId: 9999, // Special ID for Lost City digital album
+            productId: 9999,
             variantId: 1,
             name: "Lost City",
             variantName: "Digital Album",
@@ -27,38 +27,45 @@ export function LostCityPromo() {
     };
 
     return (
-        <section className="py-20 md:py-32 px-4 sm:px-6 bg-gradient-to-b from-noir-void via-noir-charcoal to-noir-void relative overflow-hidden">
-            {/* Background Effects */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[150px]" />
-                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[150px]" />
-            </div>
+        <section
+            className="py-20 md:py-32 px-4 sm:px-6 relative overflow-hidden"
+            style={{
+                background: "linear-gradient(to bottom, #050505, #1A1A1A 40%, #1A1A1A 60%, #050505)",
+            }}
+        >
+            {/* Ambient glow — CSS gradient, no blur divs */}
+            <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: "radial-gradient(ellipse 50% 40% at 30% 40%, rgba(0,217,255,0.06) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 70% 60%, rgba(30,80,220,0.05) 0%, transparent 70%)",
+                }}
+            />
 
             <div className="max-w-7xl mx-auto relative z-10">
-                {/* Section Header */}
+                {/* Section Header — editorial, not generic */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="text-center mb-12 md:mb-16"
+                    className="text-center mb-14 md:mb-20"
                 >
-                    <span className="inline-block mb-3 text-accent-cyan text-sm tracking-[0.3em] uppercase font-medium">
-                        Featured Album
-                    </span>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase">
+                    <span className="inline-block mb-4 text-accent-cyan text-xs tracking-[0.35em] uppercase font-medium">
                         Out Now
+                    </span>
+                    <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.03em] uppercase">
+                        Lost City
                     </h2>
                 </motion.div>
 
                 {/* Main Content Grid */}
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+                <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
-                    {/* Left Side - Interactive Vinyl */}
+                    {/* Left Side — Interactive Vinyl */}
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
+                        initial={{ opacity: 0, x: -40 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
+                        transition={{ duration: 0.7 }}
                         className="relative flex justify-center lg:justify-end"
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}
@@ -80,18 +87,18 @@ export function LostCityPromo() {
                                     className="object-cover"
                                     priority
                                 />
-                                {/* Sleeve Edge Effect */}
                                 <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-black/40 to-transparent" />
                             </motion.div>
 
-                            {/* Spinning Vinyl */}
+                            {/* Spinning Vinyl — initial offset on mobile to hint at interactivity */}
                             <motion.div
                                 className="absolute inset-0 z-10 rounded-full overflow-hidden bg-neutral-900"
                                 style={{
                                     boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8)'
                                 }}
+                                initial={{ x: 15 }}
                                 animate={{
-                                    x: isHovered ? 60 : 0,
+                                    x: isHovered ? 60 : 15,
                                     rotate: isHovered ? 360 : 0
                                 }}
                                 transition={{
@@ -106,7 +113,7 @@ export function LostCityPromo() {
                                         background: 'repeating-radial-gradient(#111 0, #111 2px, #222 3px, #222 4px)'
                                     }}
                                 />
-                                {/* Vinyl Shine/Reflection */}
+                                {/* Vinyl Shine */}
                                 <div
                                     className="absolute inset-0 rounded-full opacity-40"
                                     style={{
@@ -114,7 +121,7 @@ export function LostCityPromo() {
                                     }}
                                 />
 
-                                {/* Center Album Art (on vinyl label) */}
+                                {/* Center Label */}
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] rounded-full overflow-hidden border-4 border-neutral-900 shadow-2xl">
                                     <Image
                                         src="/LC1.jpg"
@@ -125,64 +132,60 @@ export function LostCityPromo() {
                                 </div>
                             </motion.div>
 
-                            {/* Glow Effect */}
+                            {/* Glow */}
                             <motion.div
-                                className="absolute inset-0 rounded-full bg-accent-cyan/20 blur-3xl -z-10"
+                                className="absolute inset-0 rounded-full -z-10"
+                                style={{
+                                    background: "radial-gradient(circle, rgba(0,217,255,0.15) 0%, transparent 70%)"
+                                }}
                                 animate={{
-                                    opacity: isHovered ? 0.6 : 0.2,
-                                    scale: isHovered ? 1.2 : 1
+                                    opacity: isHovered ? 0.8 : 0.3,
+                                    scale: isHovered ? 1.15 : 1
                                 }}
                                 transition={{ duration: 0.5 }}
                             />
                         </div>
                     </motion.div>
 
-                    {/* Right Side - Video & Info */}
+                    {/* Right Side — Video & Info */}
                     <motion.div
-                        initial={{ opacity: 0, x: 50 }}
+                        initial={{ opacity: 0, x: 40 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
+                        transition={{ duration: 0.7, delay: 0.15 }}
                         className="space-y-6"
                     >
-                        {/* Album Title & Artist */}
+                        {/* Artist line */}
                         <div>
-                            <motion.h3
-                                className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter uppercase bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent"
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                            >
-                                Lost City
-                            </motion.h3>
-                            <p className="text-noir-cloud text-lg mt-2">Shadow The Great</p>
+                            <p className="text-noir-ash text-sm tracking-[0.2em] uppercase mb-1">Shadow The Great</p>
+                            <div className="w-8 h-px bg-accent-cyan/40" />
                         </div>
 
                         {/* Video Container */}
                         <div
-                            className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 group cursor-pointer"
+                            className="relative aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10 group cursor-pointer"
                             onClick={() => setIsVideoPlaying(true)}
                         >
                             {!isVideoPlaying ? (
                                 <>
-                                    {/* Thumbnail */}
                                     <Image
                                         src="/LC2.jpg"
                                         alt="Lost City Video Thumbnail"
                                         fill
                                         className="object-cover"
                                     />
-                                    {/* Play Overlay */}
                                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/30 transition-colors">
                                         <motion.div
-                                            whileHover={{ scale: 1.1 }}
+                                            whileHover={{ scale: 1.08 }}
                                             whileTap={{ scale: 0.95 }}
-                                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-accent-cyan flex items-center justify-center shadow-glow-lg"
+                                            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-accent-cyan/90 backdrop-blur-sm flex items-center justify-center shadow-glow-md"
                                         >
-                                            <Play className="w-8 h-8 sm:w-10 sm:h-10 text-noir-void ml-1" fill="currentColor" />
+                                            <Play className="w-6 h-6 sm:w-7 sm:h-7 text-noir-void ml-0.5" fill="currentColor" />
                                         </motion.div>
                                     </div>
-                                    <span className="absolute bottom-4 left-4 text-sm text-white/80 font-medium">Watch: Lost City (Official Video)</span>
+                                    <span className="absolute bottom-3 left-3 text-xs text-white/70 font-medium tracking-wide">
+                                        Lost City (Official Video)
+                                    </span>
                                 </>
                             ) : (
                                 <iframe
@@ -195,30 +198,28 @@ export function LostCityPromo() {
                             )}
                         </div>
 
-                        {/* Price & CTAs */}
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                            {/* Price Badge */}
-                            <div className="flex items-center gap-3">
-                                <span className="text-3xl font-black text-accent-cyan">$9.99</span>
-                                <span className="text-noir-ash text-sm">Digital Album</span>
+                        {/* Price & CTAs — tighter layout */}
+                        <div className="flex items-center gap-4 flex-wrap">
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-2xl font-black text-accent-cyan">$9.99</span>
+                                <span className="text-noir-ash text-xs tracking-wide uppercase">Digital</span>
                             </div>
 
-                            {/* Buttons */}
-                            <div className="flex gap-3 flex-1 sm:justify-end">
+                            <div className="flex gap-3 ml-auto">
                                 <motion.button
                                     onClick={handleBuyAlbum}
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.97 }}
-                                    className="px-6 py-3 bg-accent-cyan text-noir-void font-bold rounded-full flex items-center gap-2 shadow-glow-md hover:shadow-glow-lg transition-shadow"
+                                    className="px-5 py-2.5 bg-accent-cyan text-noir-void font-bold text-sm tracking-wide uppercase flex items-center gap-2 shadow-glow-md hover:shadow-glow-lg transition-shadow"
                                 >
-                                    <ShoppingCart className="w-5 h-5" />
-                                    Buy Album
+                                    <ShoppingCart className="w-4 h-4" />
+                                    Buy
                                 </motion.button>
                                 <Link href="/music#lost-city">
                                     <motion.button
                                         whileHover={{ scale: 1.03 }}
                                         whileTap={{ scale: 0.97 }}
-                                        className="px-6 py-3 border border-noir-smoke text-foreground font-medium rounded-full flex items-center gap-2 hover:border-accent-cyan/50 transition-colors"
+                                        className="px-5 py-2.5 border border-noir-smoke text-foreground font-medium text-sm tracking-wide uppercase flex items-center gap-2 hover:border-accent-cyan/40 transition-colors"
                                     >
                                         <Headphones className="w-4 h-4" />
                                         Listen
@@ -226,7 +227,6 @@ export function LostCityPromo() {
                                 </Link>
                             </div>
                         </div>
-
 
                     </motion.div>
                 </div>
