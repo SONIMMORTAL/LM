@@ -63,8 +63,47 @@ export default async function ProductPage({ params }: PageProps) {
         notFound();
     }
 
+    // Build Product + Offer JSON-LD schema
+    const { sync_product, sync_variants } = productData;
+    const allImages = [
+        sync_product.thumbnail_url,
+        ...sync_variants.flatMap(v =>
+            v.files
+                ?.filter(f => f.type === "mockup" || f.type === "preview")
+                .map(f => f.preview_url) ?? []
+        ),
+    ].filter(Boolean);
+
+    const offers = sync_variants.map(v => ({
+        "@type": "Offer" as const,
+        price: v.retail_price,
+        priceCurrency: v.currency || "USD",
+        availability: "https://schema.org/InStock",
+        url: `https://loafrecords.com/shop/product/${id}`,
+        name: v.name,
+        itemCondition: "https://schema.org/NewCondition",
+    }));
+
+    const productJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: sync_product.name,
+        image: allImages,
+        description: `${sync_product.name} — Official Loaf Records merch. Limited edition, premium quality streetwear.`,
+        brand: {
+            "@type": "Brand",
+            name: "Loaf Records",
+        },
+        offers: offers.length === 1 ? offers[0] : offers,
+    };
+
     return (
         <div className="min-h-screen pt-24 pb-16">
+            {/* Product JSON-LD Schema */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+            />
             <ProductDetails product={productData} />
         </div>
     );

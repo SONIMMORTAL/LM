@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, ShoppingCart, LogOut, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
+import Image from "next/image";
 import { useAuth, AuthModal } from "@/components/auth";
 import { useCart } from "@/context/CartContext";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -16,8 +16,7 @@ const navItems = [
     { href: "/music", label: "Music" },
     { href: "/videos", label: "Videos" },
     { href: "/shop", label: "Shop" },
-    { href: "/forum", label: "Forum" },
-    { href: "/contact", label: "Contact" },
+    { href: "/loaf-films", label: "Films" },
 ];
 
 export function Header() {
@@ -70,6 +69,9 @@ export function Header() {
     // Don't show header on admin pages (Moved here to satisfy Rules of Hooks)
     if (pathname.startsWith("/admin")) return null;
 
+    // Home is the full-screen menu — it owns the viewport, no chrome
+    if (pathname === "/") return null;
+
     return (
         <>
             <header
@@ -87,12 +89,14 @@ export function Header() {
                             href="/"
                             className="relative z-50 flex items-center group"
                         >
-                            <div className="relative w-[100px] h-[100px] md:w-[130px] md:h-[130px]">
-                                {/* Static Turntable Base */}
-                                <img
+                            <div className="relative w-[52px] h-[52px] md:w-[60px] md:h-[60px] rounded-xl overflow-hidden ring-1 ring-white/10 group-hover:ring-accent-cyan/30 transition-all">
+                                <Image
                                     src="/static-logo.jpg"
-                                    alt="Turntable"
-                                    className="absolute inset-0 w-full h-full object-contain"
+                                    alt="Loaf Records"
+                                    fill
+                                    className="object-cover"
+                                    sizes="60px"
+                                    priority
                                 />
                             </div>
                         </Link>
@@ -160,20 +164,6 @@ export function Header() {
                                                     <p className="text-xs text-noir-ash truncate">{user.email}</p>
                                                 </div>
                                                 <div className="p-1">
-                                                    <Link
-                                                        href="/stoop"
-                                                        className="flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-noir-slate rounded-lg transition-colors"
-                                                        onClick={() => setIsUserMenuOpen(false)}
-                                                    >
-                                                        The Stoop
-                                                    </Link>
-                                                    <Link
-                                                        href="/forum"
-                                                        className="flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-noir-slate rounded-lg transition-colors"
-                                                        onClick={() => setIsUserMenuOpen(false)}
-                                                    >
-                                                        Forum
-                                                    </Link>
                                                     <button
                                                         onClick={handleSignOut}
                                                         className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"

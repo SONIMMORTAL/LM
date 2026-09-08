@@ -17,6 +17,7 @@ interface MatrixTextProps {
     letterAnimationDuration?: number;
     letterInterval?: number;
     textClassName?: string;
+    as?: React.ElementType;
 }
 
 const MatrixText = ({
@@ -26,6 +27,7 @@ const MatrixText = ({
     letterAnimationDuration = 500,
     letterInterval = 100,
     textClassName = "text-4xl md:text-6xl lg:text-7xl",
+    as: Component = "div",
 }: MatrixTextProps) => {
     const [letters, setLetters] = useState<LetterState[]>(() =>
         text.split("").map((char) => ({
@@ -117,7 +119,7 @@ const MatrixText = ({
     );
 
     return (
-        <div
+        <Component
             aria-label={text}
             className={cn("flex items-center justify-center", className)}
         >
@@ -145,7 +147,7 @@ const MatrixText = ({
                     </motion.span>
                 ))}
             </div>
-        </div>
+        </Component>
     );
 };
 

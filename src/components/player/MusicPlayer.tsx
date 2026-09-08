@@ -79,7 +79,7 @@ export function MusicPlayer() {
     const nextTrack = useCallback(() => {
         setCurrentTrackIndex((prev) => (prev + 1) % tracks.length);
         setIsPlaying(true);
-    }, [tracks.length]);
+    }, [tracks]);
 
     const prevTrackFn = useCallback(() => {
         // If more than 3 s in, restart; otherwise go to previous track
@@ -89,7 +89,7 @@ export function MusicPlayer() {
         }
         setCurrentTrackIndex((prev) => (prev - 1 + tracks.length) % tracks.length);
         setIsPlaying(true);
-    }, [tracks.length]);
+    }, [tracks]);
 
     const togglePlay = useCallback(() => {
         if (!audioRef.current) return;
@@ -266,11 +266,19 @@ export function MusicPlayer() {
         return () => { if (saveTimerRef.current) clearInterval(saveTimerRef.current); };
     }, [currentTrackIndex, volume]);
 
-    // ── Handle track changes ────────────────────────────────────────
+    // ── Update audio source when track changes ────────────────────────
     useEffect(() => {
         if (tracks.length === 0) return;
         const audio = audioRef.current;
-        if (!audio || !currentTrack?.audio_url) return;
+        if (!audio) return;
+        
+        if (!currentTrack?.audio_url) {
+            // If the selected track has no audio (e.g. it's a YouTube-driven track), 
+            // ensure any currently playing audio is stopped.
+            audio.pause();
+            audio.src = "";
+            return;
+        }
 
         const currentSrc = audio.src;
         const newSrc = new URL(currentTrack.audio_url, window.location.origin).href;

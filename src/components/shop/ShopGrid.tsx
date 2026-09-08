@@ -1,91 +1,137 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShoppingBag } from "lucide-react";
-import { useState } from "react";
+import { ShoppingBag, ChevronRight } from "lucide-react";
 import type { PrintfulProduct } from "@/lib/printful";
-import ExpandableCards, { Card } from "@/components/ui/ExpandableCards";
+import { ProductCard } from "./ProductCard";
+import { Badge } from "@/components/ui/badge";
 
 interface ShopGridProps {
     products: PrintfulProduct[];
 }
 
-// Map logical categories based on keywords in title
-export function getCategory(product: PrintfulProduct): string {
-    const t = product.name.toLowerCase();
-    // Strict checks for specific albums first
-    if ((t.includes("knowledge born") && t.includes("album")) ||
-        (t.includes("more life") && t.includes("album")) ||
-        t.includes("shinobi warz")) return "Vinyl";
-
-    if (t.includes("vinyl") || t.includes(" lp")) return "Vinyl";
-    if (t.includes("hoodie") || t.includes("shirt") || t.includes("tee") || t.includes("sweat") || t.includes("jacket")) return "Apparel";
-    if (t.includes("cap") || t.includes("hat") || t.includes("beanie") || t.includes("bag") || t.includes("backpack")) return "Accessories";
-    if (t.includes("mug") || t.includes("pillow") || t.includes("blanket") || t.includes("towel")) return "Home";
-    if (t.includes("poster") || t.includes("print") || t.includes("canvas") || t.includes("sticker")) return "Art";
-    return "Apparel"; // Default
-}
-
-const categories = ["All", "Apparel", "Accessories", "Vinyl", "Home", "Art"];
-
 export function ShopGrid({ products }: ShopGridProps) {
-    const [activeCategory, setActiveCategory] = useState("All");
+    // 1. Featured Drop (Lost City, Commission)
+    const featuredDrop = products.filter((p) => {
+        const name = p.name.toLowerCase();
+        return name.includes("lost city") || name.includes("commission");
+    });
 
-    const filteredProducts = activeCategory === "All"
-        ? products
-        : products.filter(p => getCategory(p) === activeCategory);
+    // 2. Best Sellers (Bear, Jeeps, Champion, Dungeon, Puffer, fleece, heavyweight)
+    const bestSellers = products.filter((p) => {
+        if (featuredDrop.includes(p)) return false;
+        const name = p.name.toLowerCase();
+        return (
+            name.includes("bear") ||
+            name.includes("jeep") ||
+            name.includes("champion") ||
+            name.includes("dungeon") ||
+            name.includes("puffer") ||
+            name.includes("shorts") ||
+            name.includes("jacket") ||
+            name.includes("fleece") ||
+            name.includes("heavyweight")
+        );
+    });
 
-    // Transform products to Cards
-    const expandableCards: Card[] = filteredProducts.map(p => {
-        // Safely access price, handling missing variants (products list doesn't have variants)
-        // Price will be displayed on the product detail page
-        return {
-            id: p.id,
-            title: p.name,
-            image: p.thumbnail_url,
-            content: "Official Merch",
-            price: "View Details",
-            actionUrl: `/shop/product/${p.id}`
-        };
+    // 3. For The City (Everything else: Knowledge Born, More Life, Panther, etc.)
+    const forTheCity = products.filter((p) => {
+        return !featuredDrop.includes(p) && !bestSellers.includes(p);
     });
 
     return (
-        <section className="px-1 sm:px-6">
-            <div className="max-w-7xl mx-auto">
-                {/* Category Filter */}
-                <div className="flex justify-center gap-2 mb-8 flex-wrap px-2">
-                    {categories.map((category) => (
-                        <motion.button
-                            key={category}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => setActiveCategory(category)}
-                            className={`
-                              px-4 py-2 rounded-full text-sm font-medium transition-all
-                              ${activeCategory === category
-                                    ? "bg-accent-cyan text-noir-void"
-                                    : "bg-noir-slate text-noir-cloud hover:text-foreground"
-                                }
-                            `}
-                        >
-                            {category}
-                        </motion.button>
-                    ))}
-                </div>
+        <div className="space-y-20 px-4 sm:px-6">
+            {/* 1. FEATURED DROP */}
+            {featuredDrop.length > 0 && (
+                <section aria-labelledby="featured-drop-heading">
+                    <div className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div>
+                            <Badge variant="outline" className="text-accent-cyan border-accent-cyan/20 tracking-[0.25em] uppercase mb-4 rounded-full px-4 py-1 bg-accent-cyan/5">
+                                New Arrival
+                            </Badge>
+                            <h2
+                                id="featured-drop-heading"
+                                className="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-white font-display"
+                            >
+                                Featured Drop
+                            </h2>
+                            <p className="text-noir-cloud text-sm mt-1">
+                                Limited quantities. Lost City and Commission drop.
+                            </p>
+                        </div>
+                    </div>
 
-                {filteredProducts.length > 0 ? (
-                    <div className="w-full">
-                        <ExpandableCards
-                            cards={expandableCards}
-                            className="min-h-[500px]"
-                        />
+                    <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {featuredDrop.map((product) => (
+                            <ProductCard key={product.id} product={product} />
+                        ))}
                     </div>
-                ) : (
-                    <div className="text-center py-20 text-noir-cloud">
-                        <ShoppingBag className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                        <p>No products found in this category.</p>
+                </section>
+            )}
+
+            {/* 2. BEST SELLERS */}
+            {bestSellers.length > 0 && (
+                <section aria-labelledby="best-sellers-heading">
+                    <div className="max-w-7xl mx-auto mb-8">
+                        <div>
+                            <Badge variant="outline" className="text-accent-cyan border-accent-cyan/20 tracking-[0.25em] uppercase mb-4 rounded-full px-4 py-1 bg-accent-cyan/5">
+                                Customer Favorites
+                            </Badge>
+                            <h2
+                                id="best-sellers-heading"
+                                className="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-white font-display"
+                            >
+                                Best Sellers
+                            </h2>
+                            <p className="text-noir-cloud text-sm mt-1">
+                                Loaf Records essentials. Bear gear and heavyweight fleece.
+                            </p>
+                        </div>
                     </div>
-                )}
-            </div>
-        </section>
+
+                    <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {bestSellers.map((product) => (
+                            <ProductCard key={product.id} product={product} />
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* 3. FOR THE CITY */}
+            {forTheCity.length > 0 && (
+                <section aria-labelledby="for-the-city-heading">
+                    <div className="max-w-7xl mx-auto mb-8">
+                        <div>
+                            <Badge variant="outline" className="text-accent-cyan border-accent-cyan/20 tracking-[0.25em] uppercase mb-4 rounded-full px-4 py-1 bg-accent-cyan/5">
+                                Brooklyn Originals
+                            </Badge>
+                            <h2
+                                id="for-the-city-heading"
+                                className="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-white font-display"
+                            >
+                                For The City
+                            </h2>
+                            <p className="text-noir-cloud text-sm mt-1">
+                                Knowledge Born and More Life collectibles for the streets.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {forTheCity.map((product) => (
+                            <ProductCard key={product.id} product={product} />
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {products.length === 0 && (
+                <div className="text-center py-20 text-noir-cloud max-w-md mx-auto">
+                    <ShoppingBag className="w-12 h-12 mx-auto mb-4 opacity-50 text-accent-cyan" />
+                    <p className="text-lg font-semibold text-white">No products found.</p>
+                    <p className="text-sm mt-2">Check back soon for the next drop.</p>
+                </div>
+            )}
+        </div>
     );
 }

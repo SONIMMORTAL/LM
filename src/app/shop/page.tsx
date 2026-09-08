@@ -1,6 +1,6 @@
 import { ShoppingBag, Star, Check, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { getPrintfulProducts } from "@/lib/printful";
+import { getPrintfulProducts, getPrintfulProduct, type PrintfulProductDetails } from "@/lib/printful";
 import { ShopGrid } from "@/components/shop/ShopGrid";
 import { AuroraBackground } from "@/components/ui/AuroraBackground";
 import { TextReveal } from "@/components/ui/TextReveal";
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ShopPage() {
-    // Fetch products from Printful
+    // Fetch products from Printful (now cached and lightning fast)
     const products = await getPrintfulProducts();
 
     return (

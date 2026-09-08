@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Geist, Bebas_Neue } from "next/font/google";
 import dynamic from "next/dynamic";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
@@ -13,9 +13,19 @@ import { CartProvider } from "@/context/CartContext";
 const MusicPlayer = dynamic(() => import("@/components/player/MusicPlayer").then(mod => mod.MusicPlayer));
 const CartSidebar = dynamic(() => import("@/components/shop/CartSidebar").then(mod => mod.CartSidebar));
 import { ThemeProvider } from "@/context/ThemeContext";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  variable: "--font-druk",
   subsets: ["latin"],
   display: "swap",
 });
@@ -26,12 +36,16 @@ export const metadata: Metadata = {
     default: "Loaf Records | Official Store",
     template: "%s | Loaf Records",
   },
-  description: "The official digital flagship for Loaf Records. Brooklyn-born record label bringing raw, cinematic sound to the world.",
+  description: "The official home of Loaf Records. Brooklyn-born independent record label. Music, merch, and films.",
   keywords: ["Loaf Records", "Shadow The Great", "Hip Hop", "Brooklyn", "Music", "Merch"],
   authors: [{ name: "Loaf Records" }],
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Loaf Records | Official Store",
-    description: "The official digital flagship for Loaf Records. Brooklyn-born record label bringing raw, cinematic sound to the world.",
+    description: "The official home of Loaf Records. Brooklyn-born independent record label. Music, merch, and films.",
     url: "https://loafrecords.shop",
     siteName: "Loaf Records",
     type: "website",
@@ -40,7 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Loaf Records | Official Store",
-    description: "Brooklyn-born record label bringing raw, cinematic sound to the world.",
+    description: "Brooklyn-born independent record label. Music, merch, and films.",
   },
   robots: {
     index: true,
@@ -57,9 +71,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className={cn("dark", "font-sans", geist.variable, bebasNeue.variable)} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://www.youtube.com" />
+        <link rel="preconnect" href="https://www.youtube-nocookie.com" />
         <link rel="preconnect" href="https://bnjoouzcnxwdxcgcknoe.supabase.co" />
       </head>
       <body className={`${inter.variable} font-body antialiased`}>

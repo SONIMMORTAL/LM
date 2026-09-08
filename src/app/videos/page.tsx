@@ -1,8 +1,15 @@
 "use client";
 
-import { Play, X, Loader2 } from "lucide-react";
+import { Play, Loader2 } from "lucide-react";
 import Image from "next/image";
-import { useState, useCallback, memo, useEffect } from "react";
+import { useState, useCallback, useRef, memo, useEffect } from "react";
+
+/*
+ * Theater screen — the blank TV in the artwork. The rect is measured
+ * as % of the 1536x1024 scene; the screen area is black in the art,
+ * so the 16:9 player centered inside it blends seamlessly.
+ */
+const SCREEN_RECT = { left: 28.5, top: 21.3, width: 43.1, height: 30.7 };
 
 // Video type definition
 interface Video {
@@ -144,9 +151,22 @@ const VideoCard = memo(function VideoCard({
 });
 
 export default function VideosPage() {
-    const [activeVideo, setActiveVideo] = useState<string | null>(null);
     const [dbVideos, setDbVideos] = useState<Video[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    // What's on the theater screen, and whether the user hit play yet
+    const [screenVideo, setScreenVideo] = useState<{ id: string; title?: string } | null>(null);
+    const [isWatching, setIsWatching] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const theaterRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const mq = window.matchMedia("(max-width: 767px)");
+        const update = () => setIsMobile(mq.matches);
+        update();
+        mq.addEventListener("change", update);
+        return () => mq.removeEventListener("change", update);
+    }, []);
 
     // Track video play
     const trackVideoPlay = useCallback((youtubeId: string, title?: string) => {
@@ -157,14 +177,22 @@ export default function VideosPage() {
         }).catch(() => {});
     }, []);
 
+    // Any play anywhere on the page loads the video onto the theater screen
     const handlePlay = useCallback((youtubeId: string, title?: string) => {
-        setActiveVideo(youtubeId);
+        setScreenVideo({ id: youtubeId, title });
+        setIsWatching(true);
         trackVideoPlay(youtubeId, title);
     }, [trackVideoPlay]);
 
-    const handleClose = useCallback(() => {
-        setActiveVideo(null);
-    }, []);
+    // After the screen swaps, glide the viewer back up to the theater.
+    // (Scrolling inside handlePlay gets cancelled by the re-render.)
+    useEffect(() => {
+        if (!screenVideo) return;
+        const el = theaterRef.current;
+        if (!el) return;
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: Math.max(top - 12, 0), behavior: "smooth" });
+    }, [screenVideo]);
 
     // Fetch videos from API
     useEffect(() => {
@@ -260,69 +288,109 @@ export default function VideosPage() {
         }
     ];
 
+    // What's on screen right now (falls back to the featured video)
+    const onScreen = screenVideo ?? {
+        id: featuredVideo.youtube_id || featuredVideo.youtubeId!,
+        title: featuredVideo.title,
+    };
+    const showInlineFrame = isWatching && !isMobile;
+
     return (
         <div className="min-h-screen bg-noir-void text-foreground selection:bg-accent-cyan/30">
-            {/* HERO SECTION - FEATURED VIDEO */}
-            <section className="relative h-[80vh] w-full flex items-center justify-center overflow-hidden">
-                {/* Background Blur */}
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src={`https://img.youtube.com/vi/${featuredVideo.youtube_id || featuredVideo.youtubeId}/maxresdefault.jpg`}
-                        alt="Hero Background"
-                        fill
-                        className="object-cover opacity-30 blur-xl scale-110"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-noir-void via-noir-void/50 to-transparent" />
-                </div>
-
-                {/* Hero Content */}
-                <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center pt-20">
-                    <div
-                        className="space-y-6 cursor-pointer group"
-                        onClick={() => handlePlay(featuredVideo.youtube_id || featuredVideo.youtubeId!, featuredVideo.title)}
-                    >
-                        <span className="inline-block px-3 py-1 rounded-full border border-accent-cyan/50 text-accent-cyan text-xs font-bold tracking-widest uppercase bg-accent-cyan/5 backdrop-blur-sm group-hover:bg-accent-cyan group-hover:text-black transition-colors">
-                            Featured
-                        </span>
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-none uppercase drop-shadow-2xl group-hover:text-accent-cyan transition-colors">
-                            {featuredVideo.title.split('|')[0].replace("LOAF MUZIK - ", "").replace("Official Video", "")}
-                        </h1>
-                        <p className="text-lg text-noir-cloud max-w-lg border-l-2 border-accent-cyan pl-4 group-hover:border-white transition-colors">
-                            {featuredVideo.description}
-                        </p>
-                        <button
-                            className="group flex items-center gap-4 bg-foreground text-noir-void px-8 py-4 rounded-full font-bold hover:bg-accent-cyan transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(0,255,255,0.3)]"
-                        >
-                            <Play className="w-6 h-6 fill-current" />
-                            <span>Watch Now</span>
-                        </button>
-                    </div>
-
-                    {/* Hero Thumbnail Card */}
-                    <div
-                        className="relative hidden md:block aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 group cursor-pointer"
-                        onClick={() => handlePlay(featuredVideo.youtube_id || featuredVideo.youtubeId!, featuredVideo.title)}
-                    >
+            {/* THEATER — whatever you pick plays on the big screen */}
+            <section
+                ref={theaterRef}
+                aria-label="Loaf Records screening room"
+                className="relative pt-16 md:pt-20 scroll-mt-16 flex justify-center overflow-hidden"
+            >
+                <div className="relative w-full max-w-[150vh]">
+                    <div className="relative aspect-[3/2] w-full select-none">
                         <Image
-                            src={`https://img.youtube.com/vi/${featuredVideo.youtube_id || featuredVideo.youtubeId}/maxresdefault.jpg`}
-                            alt="Featured Thumbnail"
+                            src="/scenes/theater-scene.jpg"
+                            alt="The Loaf Records crew watching the big screen"
                             fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            priority
+                            quality={85}
+                            sizes="(max-width: 1536px) 100vw, 1536px"
+                            className="object-contain"
                         />
-                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                            <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 group-hover:scale-125 transition-transform duration-300">
-                                <Play className="w-6 h-6 text-white translate-x-0.5" fill="currentColor" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                {/* Scroll Indicator */}
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
-                    <div className="w-px h-16 bg-gradient-to-b from-transparent via-white to-transparent" />
+                        {/* The screen inlay */}
+                        <div
+                            className="absolute bg-black overflow-hidden"
+                            style={{
+                                left: `${SCREEN_RECT.left}%`,
+                                top: `${SCREEN_RECT.top}%`,
+                                width: `${SCREEN_RECT.width}%`,
+                                height: `${SCREEN_RECT.height}%`,
+                            }}
+                        >
+                            {showInlineFrame ? (
+                                <iframe
+                                    key={onScreen.id}
+                                    src={`https://www.youtube.com/embed/${onScreen.id}?autoplay=1&modestbranding=1&rel=0`}
+                                    className="absolute inset-0 h-full w-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    title={onScreen.title || "Video Player"}
+                                />
+                            ) : (
+                                <button
+                                    onClick={() => handlePlay(onScreen.id, onScreen.title)}
+                                    className="group absolute inset-0 block h-full w-full cursor-pointer"
+                                    aria-label={`Play ${onScreen.title || "video"}`}
+                                >
+                                    <Image
+                                        src={`https://img.youtube.com/vi/${onScreen.id}/maxresdefault.jpg`}
+                                        alt=""
+                                        fill
+                                        sizes="45vw"
+                                        className="object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                                    />
+                                    <span className="absolute inset-0 flex items-center justify-center">
+                                        <span className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-black/50 border border-white/25 backdrop-blur-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-accent-cyan group-hover:border-accent-cyan">
+                                            <Play className="h-5 w-5 sm:h-7 sm:w-7 text-white group-hover:text-black translate-x-0.5" fill="currentColor" />
+                                        </span>
+                                    </span>
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Fade into the page */}
+                        <div
+                            aria-hidden
+                            className="absolute inset-x-0 bottom-0 h-[14%] pointer-events-none"
+                            style={{
+                                background:
+                                    "linear-gradient(to top, var(--color-noir-void) 0%, transparent 100%)",
+                            }}
+                        />
+                    </div>
                 </div>
             </section>
+
+            {/* Mobile player — the theater screen is too small to watch on a phone */}
+            {isWatching && isMobile && (
+                <section className="px-4 -mt-2 pb-4">
+                    <div className="relative aspect-video w-full overflow-hidden rounded-xl ring-1 ring-white/10 shadow-2xl">
+                        <iframe
+                            key={onScreen.id}
+                            src={`https://www.youtube.com/embed/${onScreen.id}?autoplay=1&modestbranding=1&rel=0`}
+                            className="absolute inset-0 h-full w-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            title={onScreen.title || "Video Player"}
+                        />
+                    </div>
+                </section>
+            )}
+
+            {/* Now showing caption */}
+            <div className="flex justify-center px-6 pb-6">
+                <p className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase text-noir-ash text-center">
+                    Now showing · <span className="text-noir-cloud">{(onScreen.title || "").split("|")[0].trim()}</span>
+                </p>
+            </div>
 
             {/* MAIN CATALOG */}
             <section className="relative py-24 px-6 z-10">
@@ -416,33 +484,6 @@ export default function VideosPage() {
                 </div>
             </section>
 
-            {/* Video Modal */}
-            {activeVideo && (
-                <div
-                    className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-300"
-                    onClick={handleClose}
-                >
-                    <div
-                        className="w-full max-w-6xl aspect-video relative shadow-2xl rounded-xl overflow-hidden ring-1 ring-white/10 animate-in zoom-in-95 duration-300"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <iframe
-                            src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&modestbranding=1&rel=0`}
-                            className="w-full h-full"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            title="Video Player"
-                        />
-                    </div>
-                    <button
-                        onClick={handleClose}
-                        className="absolute top-6 right-6 p-3 text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-full transition-all"
-                        aria-label="Close"
-                    >
-                        <X className="w-8 h-8" />
-                    </button>
-                </div>
-            )}
         </div>
     );
 }

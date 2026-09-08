@@ -8,6 +8,7 @@ export interface PrintfulProduct {
     is_ignored: boolean;
 }
 
+
 export interface PrintfulProductDetails {
     sync_product: PrintfulProduct;
     sync_variants: {
@@ -25,6 +26,29 @@ export interface PrintfulProductDetails {
             image: string;
             name: string;
         };
+        color?: string;
+        size?: string;
+        availability_status?: string;
+        files?: {
+            id: number;
+            type: string;
+            hash: string;
+            url: string | null;
+            filename: string;
+            mime_type: string;
+            size: number;
+            width: number;
+            height: number;
+            dpi: number | null;
+            status: string;
+            created: number;
+            thumbnail_url: string;
+            preview_url: string;
+            visible: boolean;
+            is_temporary: boolean;
+            message: string;
+            stitch_count_tier: number | null;
+        }[];
     }[];
 }
 
@@ -46,7 +70,7 @@ export async function getPrintfulProducts() {
                 "X-PF-Store-Id": storeId,
                 "Content-Type": "application/json",
             },
-            next: { revalidate: 0 } // No cache for now to ensure all products load
+            next: { revalidate: 3600 }
         });
 
         if (!response.ok) {
@@ -54,7 +78,7 @@ export async function getPrintfulProducts() {
         }
 
         const data = await response.json();
-        return data.result as PrintfulProduct[];
+        return (data.result as PrintfulProduct[]);
     } catch (error) {
         console.error("Failed to fetch Printful products:", error);
         return [];
@@ -84,7 +108,9 @@ export async function getPrintfulProduct(id: number) {
         }
 
         const data = await response.json();
-        return data.result as PrintfulProductDetails;
+        const details = data.result as PrintfulProductDetails;
+        
+        return details;
     } catch (error) {
         console.error(`Failed to fetch Printful product ${id}:`, error);
         return null;

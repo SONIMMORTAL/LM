@@ -8,6 +8,20 @@ const nextConfig: NextConfig = {
     // Strip console.logs in production, but keep errors for debugging
     removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
   },
+  async redirects() {
+    return [
+      {
+        source: '/forum',
+        destination: '/vip',
+        permanent: true,
+      },
+      {
+        source: '/stoop',
+        destination: '/vip',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

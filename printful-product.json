@@ -1,0 +1,4392 @@
+{
+  "code": 200,
+  "result": {
+    "sync_product": {
+      "id": 401419855,
+      "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f",
+      "name": "Men’s Commission box tee",
+      "variants": 35,
+      "synced": 35,
+      "thumbnail_url": "https://static.wixstatic.com/media/48a102_7b83790c155e4cae8f0efcbc0146e2e7~mv2.jpg/v1/fit/w_2000,h_2000,q_90/file.jpg",
+      "is_ignored": false
+    },
+    "sync_variants": [
+      {
+        "id": 5046419915,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:af811d8a-0b08-435c-8905-b3a63129b477",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Black / S",
+        "synced": true,
+        "variant_id": 23577,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23577",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23577,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23578_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Black / S)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095577,
+            "type": "mockup",
+            "hash": "a453f00367bd73d2cd843831407a5a1a",
+            "url": null,
+            "filename": "mens-box-tee-black-back-690e4acf119d1.jpg",
+            "mime_type": "image/jpeg",
+            "size": 327384,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "S",
+        "color": "Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419916,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:bfb89735-a50a-4fff-abc9-c322db25d82b",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Black / M",
+        "synced": true,
+        "variant_id": 23578,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23578",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23578,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23578_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Black / M)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095577,
+            "type": "mockup",
+            "hash": "a453f00367bd73d2cd843831407a5a1a",
+            "url": null,
+            "filename": "mens-box-tee-black-back-690e4acf119d1.jpg",
+            "mime_type": "image/jpeg",
+            "size": 327384,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "M",
+        "color": "Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419917,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:eefff76b-e859-49cf-ad12-3b2c1d25ef63",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Black / L",
+        "synced": true,
+        "variant_id": 23579,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23579",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23579,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23578_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Black / L)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095577,
+            "type": "mockup",
+            "hash": "a453f00367bd73d2cd843831407a5a1a",
+            "url": null,
+            "filename": "mens-box-tee-black-back-690e4acf119d1.jpg",
+            "mime_type": "image/jpeg",
+            "size": 327384,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "L",
+        "color": "Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419918,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:2548fa2c-7f7b-4e2f-a855-2def9866b2ce",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Black / XL",
+        "synced": true,
+        "variant_id": 23580,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23580",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23580,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23578_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Black / XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095577,
+            "type": "mockup",
+            "hash": "a453f00367bd73d2cd843831407a5a1a",
+            "url": null,
+            "filename": "mens-box-tee-black-back-690e4acf119d1.jpg",
+            "mime_type": "image/jpeg",
+            "size": 327384,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "XL",
+        "color": "Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419919,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:91a3e2a6-36fb-4922-8097-c1cb06beaa51",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Black / 2XL",
+        "synced": true,
+        "variant_id": 23581,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "32.50",
+        "sku": "690E48F77A83B_23581",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23581,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23578_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Black / 2XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095577,
+            "type": "mockup",
+            "hash": "a453f00367bd73d2cd843831407a5a1a",
+            "url": null,
+            "filename": "mens-box-tee-black-back-690e4acf119d1.jpg",
+            "mime_type": "image/jpeg",
+            "size": 327384,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "2XL",
+        "color": "Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419920,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:ca3a6726-f3b3-4a35-abd1-c3e1007f2180",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Black / 3XL",
+        "synced": true,
+        "variant_id": 23582,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "33.50",
+        "sku": "690E48F77A83B_23582",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23582,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23578_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Black / 3XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095577,
+            "type": "mockup",
+            "hash": "a453f00367bd73d2cd843831407a5a1a",
+            "url": null,
+            "filename": "mens-box-tee-black-back-690e4acf119d1.jpg",
+            "mime_type": "image/jpeg",
+            "size": 327384,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "3XL",
+        "color": "Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419921,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:8f20d21f-8e92-4714-a408-e87a33a5b96e",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Black / 4XL",
+        "synced": true,
+        "variant_id": 23583,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "36.00",
+        "sku": "690E48F77A83B_23583",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23583,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23578_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Black / 4XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095577,
+            "type": "mockup",
+            "hash": "a453f00367bd73d2cd843831407a5a1a",
+            "url": null,
+            "filename": "mens-box-tee-black-back-690e4acf119d1.jpg",
+            "mime_type": "image/jpeg",
+            "size": 327384,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a45/a453f00367bd73d2cd843831407a5a1a_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "4XL",
+        "color": "Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419922,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:723e004b-65a2-48b9-9b13-40bbfa0c654f",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Navy Blazer / S",
+        "synced": true,
+        "variant_id": 23584,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23584",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23584,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23584_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Navy Blazer / S)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095578,
+            "type": "mockup",
+            "hash": "b89a32ed74b172412a931c6d063986f4",
+            "url": null,
+            "filename": "mens-box-tee-navy-blazer-back-690e4acf11ece.jpg",
+            "mime_type": "image/jpeg",
+            "size": 331665,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "S",
+        "color": "Navy Blazer",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419923,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:c2c4774a-7e69-485e-a1c1-841ff4ec9d17",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Navy Blazer / M",
+        "synced": true,
+        "variant_id": 23585,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23585",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23585,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23584_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Navy Blazer / M)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095578,
+            "type": "mockup",
+            "hash": "b89a32ed74b172412a931c6d063986f4",
+            "url": null,
+            "filename": "mens-box-tee-navy-blazer-back-690e4acf11ece.jpg",
+            "mime_type": "image/jpeg",
+            "size": 331665,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "M",
+        "color": "Navy Blazer",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419924,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:78a081a2-131d-41ec-a40b-55903d42af69",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Navy Blazer / L",
+        "synced": true,
+        "variant_id": 23586,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23586",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23586,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23584_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Navy Blazer / L)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095578,
+            "type": "mockup",
+            "hash": "b89a32ed74b172412a931c6d063986f4",
+            "url": null,
+            "filename": "mens-box-tee-navy-blazer-back-690e4acf11ece.jpg",
+            "mime_type": "image/jpeg",
+            "size": 331665,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "L",
+        "color": "Navy Blazer",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419925,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:9acf0a1f-67ff-4fd7-9857-5787ffceb563",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Navy Blazer / XL",
+        "synced": true,
+        "variant_id": 23587,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23587",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23587,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23584_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Navy Blazer / XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095578,
+            "type": "mockup",
+            "hash": "b89a32ed74b172412a931c6d063986f4",
+            "url": null,
+            "filename": "mens-box-tee-navy-blazer-back-690e4acf11ece.jpg",
+            "mime_type": "image/jpeg",
+            "size": 331665,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "XL",
+        "color": "Navy Blazer",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419926,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:272e3a34-f9c1-4740-ae3c-ad20d6c13bfb",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Navy Blazer / 2XL",
+        "synced": true,
+        "variant_id": 23588,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "32.50",
+        "sku": "690E48F77A83B_23588",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23588,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23584_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Navy Blazer / 2XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095578,
+            "type": "mockup",
+            "hash": "b89a32ed74b172412a931c6d063986f4",
+            "url": null,
+            "filename": "mens-box-tee-navy-blazer-back-690e4acf11ece.jpg",
+            "mime_type": "image/jpeg",
+            "size": 331665,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "2XL",
+        "color": "Navy Blazer",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419927,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:751cb4a8-2738-4a4d-a351-ec59464ebcde",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Navy Blazer / 3XL",
+        "synced": true,
+        "variant_id": 23589,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "33.50",
+        "sku": "690E48F77A83B_23589",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23589,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23584_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Navy Blazer / 3XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095578,
+            "type": "mockup",
+            "hash": "b89a32ed74b172412a931c6d063986f4",
+            "url": null,
+            "filename": "mens-box-tee-navy-blazer-back-690e4acf11ece.jpg",
+            "mime_type": "image/jpeg",
+            "size": 331665,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "3XL",
+        "color": "Navy Blazer",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419928,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:6fc80a9b-2a46-464f-8560-c5f36198b6c2",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Navy Blazer / 4XL",
+        "synced": true,
+        "variant_id": 23590,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "36.00",
+        "sku": "690E48F77A83B_23590",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23590,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23584_1767360507.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Navy Blazer / 4XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095578,
+            "type": "mockup",
+            "hash": "b89a32ed74b172412a931c6d063986f4",
+            "url": null,
+            "filename": "mens-box-tee-navy-blazer-back-690e4acf11ece.jpg",
+            "mime_type": "image/jpeg",
+            "size": 331665,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/b89/b89a32ed74b172412a931c6d063986f4_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "4XL",
+        "color": "Navy Blazer",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419929,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:7a0ca887-aa73-4087-aeb4-408e2db75099",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage Black / S",
+        "synced": true,
+        "variant_id": 23591,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23591",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23591,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23597_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage Black / S)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095579,
+            "type": "mockup",
+            "hash": "a8ac90dfdad09bdaeebe7164e7b9291d",
+            "url": null,
+            "filename": "mens-box-tee-vintage-black-back-690e4acf12a95.jpg",
+            "mime_type": "image/jpeg",
+            "size": 337188,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "S",
+        "color": "Vintage Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419930,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:fc36bed0-75cf-4517-a86c-ffa7a33b085a",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage Black / M",
+        "synced": true,
+        "variant_id": 23592,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23592",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23592,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23597_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage Black / M)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095579,
+            "type": "mockup",
+            "hash": "a8ac90dfdad09bdaeebe7164e7b9291d",
+            "url": null,
+            "filename": "mens-box-tee-vintage-black-back-690e4acf12a95.jpg",
+            "mime_type": "image/jpeg",
+            "size": 337188,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "M",
+        "color": "Vintage Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419931,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:e8f385db-4b03-4abb-b1c1-0a270a06b059",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage Black / L",
+        "synced": true,
+        "variant_id": 23593,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23593",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23593,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23597_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage Black / L)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095579,
+            "type": "mockup",
+            "hash": "a8ac90dfdad09bdaeebe7164e7b9291d",
+            "url": null,
+            "filename": "mens-box-tee-vintage-black-back-690e4acf12a95.jpg",
+            "mime_type": "image/jpeg",
+            "size": 337188,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "L",
+        "color": "Vintage Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419932,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:40a10b9f-318b-4f56-a4c3-8e5f61162430",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage Black / XL",
+        "synced": true,
+        "variant_id": 23594,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23594",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23594,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23597_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage Black / XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095579,
+            "type": "mockup",
+            "hash": "a8ac90dfdad09bdaeebe7164e7b9291d",
+            "url": null,
+            "filename": "mens-box-tee-vintage-black-back-690e4acf12a95.jpg",
+            "mime_type": "image/jpeg",
+            "size": 337188,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "XL",
+        "color": "Vintage Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419933,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:c19a3b3c-16cf-42cc-bc3b-2988a08e9685",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage Black / 2XL",
+        "synced": true,
+        "variant_id": 23595,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "32.50",
+        "sku": "690E48F77A83B_23595",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23595,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23597_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage Black / 2XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095579,
+            "type": "mockup",
+            "hash": "a8ac90dfdad09bdaeebe7164e7b9291d",
+            "url": null,
+            "filename": "mens-box-tee-vintage-black-back-690e4acf12a95.jpg",
+            "mime_type": "image/jpeg",
+            "size": 337188,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "2XL",
+        "color": "Vintage Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419934,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:fe88d455-3977-4f19-9303-691b9c3bee93",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage Black / 3XL",
+        "synced": true,
+        "variant_id": 23596,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "33.50",
+        "sku": "690E48F77A83B_23596",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23596,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23597_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage Black / 3XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095579,
+            "type": "mockup",
+            "hash": "a8ac90dfdad09bdaeebe7164e7b9291d",
+            "url": null,
+            "filename": "mens-box-tee-vintage-black-back-690e4acf12a95.jpg",
+            "mime_type": "image/jpeg",
+            "size": 337188,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "3XL",
+        "color": "Vintage Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419935,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:b4292534-a6c4-45cd-bbe1-8fa3a6382957",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage Black / 4XL",
+        "synced": true,
+        "variant_id": 23597,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "36.00",
+        "sku": "690E48F77A83B_23597",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23597,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23597_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage Black / 4XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095579,
+            "type": "mockup",
+            "hash": "a8ac90dfdad09bdaeebe7164e7b9291d",
+            "url": null,
+            "filename": "mens-box-tee-vintage-black-back-690e4acf12a95.jpg",
+            "mime_type": "image/jpeg",
+            "size": 337188,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/a8a/a8ac90dfdad09bdaeebe7164e7b9291d_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "4XL",
+        "color": "Vintage Black",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419936,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:69ca7bcf-4417-442b-aa9b-51d935ffca10",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage White / S",
+        "synced": true,
+        "variant_id": 23598,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23598",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23598,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23603_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage White / S)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095580,
+            "type": "mockup",
+            "hash": "671df60c0860ca77becd0e9a29f8f041",
+            "url": null,
+            "filename": "mens-box-tee-vintage-white-back-690e4acf13d21.jpg",
+            "mime_type": "image/jpeg",
+            "size": 214990,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "S",
+        "color": "Vintage White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419937,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:f9a5eba0-5e27-4493-aa9a-094dedd2e45f",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage White / M",
+        "synced": true,
+        "variant_id": 23599,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23599",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23599,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23603_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage White / M)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095580,
+            "type": "mockup",
+            "hash": "671df60c0860ca77becd0e9a29f8f041",
+            "url": null,
+            "filename": "mens-box-tee-vintage-white-back-690e4acf13d21.jpg",
+            "mime_type": "image/jpeg",
+            "size": 214990,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "M",
+        "color": "Vintage White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419938,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:e0e14bac-635d-4da1-8f82-20177e1c8f93",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage White / L",
+        "synced": true,
+        "variant_id": 23600,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23600",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23600,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23603_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage White / L)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095580,
+            "type": "mockup",
+            "hash": "671df60c0860ca77becd0e9a29f8f041",
+            "url": null,
+            "filename": "mens-box-tee-vintage-white-back-690e4acf13d21.jpg",
+            "mime_type": "image/jpeg",
+            "size": 214990,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "L",
+        "color": "Vintage White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419939,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:ae557bea-6083-49d2-8262-85fa4cb4873e",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage White / XL",
+        "synced": true,
+        "variant_id": 23601,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23601",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23601,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23603_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage White / XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095580,
+            "type": "mockup",
+            "hash": "671df60c0860ca77becd0e9a29f8f041",
+            "url": null,
+            "filename": "mens-box-tee-vintage-white-back-690e4acf13d21.jpg",
+            "mime_type": "image/jpeg",
+            "size": 214990,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "XL",
+        "color": "Vintage White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419940,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:ec2e8f35-403e-4d0f-8ae6-3f0f482f77f8",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage White / 2XL",
+        "synced": true,
+        "variant_id": 23602,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "32.50",
+        "sku": "690E48F77A83B_23602",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23602,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23603_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage White / 2XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095580,
+            "type": "mockup",
+            "hash": "671df60c0860ca77becd0e9a29f8f041",
+            "url": null,
+            "filename": "mens-box-tee-vintage-white-back-690e4acf13d21.jpg",
+            "mime_type": "image/jpeg",
+            "size": 214990,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "2XL",
+        "color": "Vintage White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419941,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:189be70d-c70c-44eb-85e6-4200318a78df",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage White / 3XL",
+        "synced": true,
+        "variant_id": 23603,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "33.50",
+        "sku": "690E48F77A83B_23603",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23603,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23603_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage White / 3XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095580,
+            "type": "mockup",
+            "hash": "671df60c0860ca77becd0e9a29f8f041",
+            "url": null,
+            "filename": "mens-box-tee-vintage-white-back-690e4acf13d21.jpg",
+            "mime_type": "image/jpeg",
+            "size": 214990,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "3XL",
+        "color": "Vintage White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419942,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:daf6184b-dfe7-470e-83cf-21f29976cb5b",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / Vintage White / 4XL",
+        "synced": true,
+        "variant_id": 23604,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "36.00",
+        "sku": "690E48F77A83B_23604",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23604,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23603_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (Vintage White / 4XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095580,
+            "type": "mockup",
+            "hash": "671df60c0860ca77becd0e9a29f8f041",
+            "url": null,
+            "filename": "mens-box-tee-vintage-white-back-690e4acf13d21.jpg",
+            "mime_type": "image/jpeg",
+            "size": 214990,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/671/671df60c0860ca77becd0e9a29f8f041_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "4XL",
+        "color": "Vintage White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419943,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:a6eb4b6b-05d2-4a95-8f8e-8eb50c9fdcb8",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / White / S",
+        "synced": true,
+        "variant_id": 23605,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23605",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23605,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23605_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (White / S)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095581,
+            "type": "mockup",
+            "hash": "135835b1545ba2b8db5a768153b23973",
+            "url": null,
+            "filename": "mens-box-tee-white-back-690e4acf156af.jpg",
+            "mime_type": "image/jpeg",
+            "size": 167091,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "S",
+        "color": "White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419944,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:4d156840-58b8-4768-8f4f-ea665f1ecb0f",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / White / M",
+        "synced": true,
+        "variant_id": 23606,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23606",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23606,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23605_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (White / M)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095581,
+            "type": "mockup",
+            "hash": "135835b1545ba2b8db5a768153b23973",
+            "url": null,
+            "filename": "mens-box-tee-white-back-690e4acf156af.jpg",
+            "mime_type": "image/jpeg",
+            "size": 167091,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "M",
+        "color": "White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419945,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:86506295-1d7d-49d4-90bb-85684bcdc1d0",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / White / L",
+        "synced": true,
+        "variant_id": 23607,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23607",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23607,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23605_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (White / L)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095581,
+            "type": "mockup",
+            "hash": "135835b1545ba2b8db5a768153b23973",
+            "url": null,
+            "filename": "mens-box-tee-white-back-690e4acf156af.jpg",
+            "mime_type": "image/jpeg",
+            "size": 167091,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "L",
+        "color": "White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419946,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:b1323203-3feb-45a4-a29d-24c6caf7e7fb",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / White / XL",
+        "synced": true,
+        "variant_id": 23608,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "30.00",
+        "sku": "690E48F77A83B_23608",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23608,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23605_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (White / XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095581,
+            "type": "mockup",
+            "hash": "135835b1545ba2b8db5a768153b23973",
+            "url": null,
+            "filename": "mens-box-tee-white-back-690e4acf156af.jpg",
+            "mime_type": "image/jpeg",
+            "size": 167091,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "XL",
+        "color": "White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419947,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:0a3a60db-b391-454e-852f-87ffe290ef61",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / White / 2XL",
+        "synced": true,
+        "variant_id": 23609,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "32.50",
+        "sku": "690E48F77A83B_23609",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23609,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23605_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (White / 2XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095581,
+            "type": "mockup",
+            "hash": "135835b1545ba2b8db5a768153b23973",
+            "url": null,
+            "filename": "mens-box-tee-white-back-690e4acf156af.jpg",
+            "mime_type": "image/jpeg",
+            "size": 167091,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "2XL",
+        "color": "White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419948,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:ec55044f-2909-413c-9c36-78dd6317c9fe",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / White / 3XL",
+        "synced": true,
+        "variant_id": 23610,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "33.50",
+        "sku": "690E48F77A83B_23610",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23610,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23605_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (White / 3XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095581,
+            "type": "mockup",
+            "hash": "135835b1545ba2b8db5a768153b23973",
+            "url": null,
+            "filename": "mens-box-tee-white-back-690e4acf156af.jpg",
+            "mime_type": "image/jpeg",
+            "size": 167091,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "3XL",
+        "color": "White",
+        "availability_status": "active"
+      },
+      {
+        "id": 5046419949,
+        "external_id": "640dec4b-dbb9-498f-9d18-6d3c8b6e243f:02059708-92a9-42da-bcdf-972cb16c61df",
+        "sync_product_id": 401419855,
+        "name": "Men’s Commission box tee / White / 4XL",
+        "synced": true,
+        "variant_id": 23611,
+        "main_category_id": 24,
+        "warehouse_product_id": null,
+        "warehouse_product_variant_id": null,
+        "retail_price": "36.00",
+        "sku": "690E48F77A83B_23611",
+        "currency": "USD",
+        "product": {
+          "variant_id": 23611,
+          "product_id": 917,
+          "image": "https://files.cdn.printful.com/products/917/23605_1767360509.jpg",
+          "name": "Men's Box Tee | Cotton Heritage MC1087 (White / 4XL)"
+        },
+        "files": [
+          {
+            "id": 899084712,
+            "type": "front",
+            "hash": "46baa4d010d90ca55fff566f02d70f8a",
+            "url": null,
+            "filename": "cover-3.jpeg",
+            "mime_type": "image/jpeg",
+            "size": 3989492,
+            "width": 3000,
+            "height": 3000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762542879,
+            "thumbnail_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/46b/46baa4d010d90ca55fff566f02d70f8a_preview.png",
+            "visible": true,
+            "is_temporary": false,
+            "message": "",
+            "options": [],
+            "stitch_count_tier": null
+          },
+          {
+            "id": 899095581,
+            "type": "mockup",
+            "hash": "135835b1545ba2b8db5a768153b23973",
+            "url": null,
+            "filename": "mens-box-tee-white-back-690e4acf156af.jpg",
+            "mime_type": "image/jpeg",
+            "size": 167091,
+            "width": 2000,
+            "height": 2000,
+            "dpi": null,
+            "status": "ok",
+            "created": 1762544340,
+            "thumbnail_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_thumb.png",
+            "preview_url": "https://files.cdn.printful.com/files/135/135835b1545ba2b8db5a768153b23973_preview.png",
+            "visible": false,
+            "is_temporary": false,
+            "message": "",
+            "stitch_count_tier": null
+          }
+        ],
+        "options": [
+          {
+            "id": "embroidery_type",
+            "value": "flat"
+          },
+          {
+            "id": "thread_colors",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors",
+            "value": []
+          },
+          {
+            "id": "thread_colors_3d",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_left",
+            "value": []
+          },
+          {
+            "id": "thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_chest_center",
+            "value": []
+          },
+          {
+            "id": "thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_large_front",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_left_top",
+            "value": []
+          },
+          {
+            "id": "thread_colors_sleeve_right_top",
+            "value": []
+          },
+          {
+            "id": "text_thread_colors_sleeve_right_top",
+            "value": []
+          }
+        ],
+        "is_ignored": false,
+        "size": "4XL",
+        "color": "White",
+        "availability_status": "active"
+      }
+    ]
+  },
+  "extra": []
+}
