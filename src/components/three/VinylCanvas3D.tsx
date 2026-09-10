@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import * as THREE from "three";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,22 @@ export interface VinylCanvas3DProps {
   className?: string;
   /** Callback fired when user scratches/spins manually */
   onInteract?: (velocity: number) => void;
+  /**
+   * Live platter telemetry, written every frame. A ref rather than a callback
+   * because the audio engine samples this at 60fps and must not drag React
+   * through a re-render to do it.
+   */
+  platterRef?: React.RefObject<PlatterTelemetry | null>;
+  /** Fired once when the listener grabs the platter, before any movement. */
+  onScratchStart?: () => void;
+  /** Fired once when they let go. */
+  onScratchEnd?: () => void;
+}
+
+export interface PlatterTelemetry {
+  /** rad/s. 3.49 is 33 1/3 RPM. Negative means the record is running backwards. */
+  angularVelocity: number;
+  isDragging: boolean;
 }
 
 /**
@@ -77,6 +94,9 @@ export function VinylCanvas3D({
   deckMode = false,
   className,
   onInteract,
+  platterRef,
+  onScratchStart,
+  onScratchEnd,
 }: VinylCanvas3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -91,6 +111,7 @@ export function VinylCanvas3D({
     isDragging: false,
     dragStartAngle: 0,
     lastAngle: 0,
+    lastMoveAt: 0,
     targetTiltX: 0,
     targetTiltY: 0,
     currentTiltX: 0,
@@ -98,6 +119,18 @@ export function VinylCanvas3D({
     isVisible: true,
     reducedMotion: false,
   });
+
+  /**
+   * Callbacks live in a ref so they can change identity freely. They used to sit
+   * in the scene effect's dependency array, which meant a parent passing an
+   * inline arrow tore down and rebuilt the whole WebGL context on every frame
+   * of a scratch.
+   */
+  const callbacksRef = useRef({ onInteract, onScratchStart, onScratchEnd });
+
+  useEffect(() => {
+    callbacksRef.current = { onInteract, onScratchStart, onScratchEnd };
+  }, [onInteract, onScratchStart, onScratchEnd]);
 
   useEffect(() => {
     stateRef.current.isPlaying = isPlaying;
@@ -125,8 +158,8 @@ export function VinylCanvas3D({
       if (!gl) { setHasWebGL(false); return; }
     } catch { setHasWebGL(false); return; }
 
-    let width = container.clientWidth || 300;
-    let height = container.clientHeight || 300;
+    const width = container.clientWidth || 300;
+    const height = container.clientHeight || 300;
 
     // ═══════════════════════════════════════════════════════════════
     //  SCENE + RENDERER (shared by both modes)
@@ -337,7 +370,13 @@ export function VinylCanvas3D({
 
       // Rotation physics
       if (state.isDragging) {
-        // Dragging overrides playback
+        // Dragging overrides playback. A hand resting on the record holds it
+        // still, so with no movement to report the platter has to wind down —
+        // otherwise it coasts on the last velocity and the music plays on
+        // under a stationary hand.
+        if (time - state.lastMoveAt > 40) {
+          state.angularVelocity = THREE.MathUtils.lerp(state.angularVelocity, 0, delta * 30);
+        }
       } else if (state.isPlaying) {
         const targetVelocity = 3.49 * state.speed; // 33⅓ RPM
         state.angularVelocity = THREE.MathUtils.lerp(state.angularVelocity, targetVelocity, delta * 4);
@@ -346,6 +385,14 @@ export function VinylCanvas3D({
       }
 
       state.rotation += state.angularVelocity * delta;
+
+      // Hand the platter's motion to whoever is listening (the audio engine).
+      if (platterRef) {
+        platterRef.current = {
+          angularVelocity: state.angularVelocity,
+          isDragging: state.isDragging,
+        };
+      }
 
       // Apply spin to the correct axis
       if (spinAxis === "z") {
@@ -419,7 +466,9 @@ export function VinylCanvas3D({
       const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
       stateRef.current.isDragging = true;
       stateRef.current.lastAngle = getAngleFromCenter(clientX, clientY);
+      stateRef.current.lastMoveAt = performance.now();
       setIsDragging(true);
+      callbacksRef.current.onScratchStart?.();
     };
 
     const handlePointerMove = (e: MouseEvent | TouchEvent) => {
@@ -443,7 +492,8 @@ export function VinylCanvas3D({
         stateRef.current.rotation += angleDelta;
         stateRef.current.angularVelocity = angleDelta / 0.016;
         stateRef.current.lastAngle = currentAngle;
-        onInteract?.(stateRef.current.angularVelocity);
+        stateRef.current.lastMoveAt = performance.now();
+        callbacksRef.current.onInteract?.(stateRef.current.angularVelocity);
       }
     };
 
@@ -451,6 +501,7 @@ export function VinylCanvas3D({
       if (stateRef.current.isDragging) {
         stateRef.current.isDragging = false;
         setIsDragging(false);
+        callbacksRef.current.onScratchEnd?.();
       }
     };
 
@@ -460,7 +511,35 @@ export function VinylCanvas3D({
       handlePointerUp();
     };
 
+    // ── Keyboard scratching ─────────────────────────────────────────
+    // Arrow keys drive the same angularVelocity the pointer does, so the audio
+    // engine can't tell the difference between a hand and a keyboard.
+    const KEY_SCRATCH_VELOCITY = 9;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!interactive) return;
+      const direction = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (direction === 0) return;
+
+      e.preventDefault();
+      if (!stateRef.current.isDragging) {
+        stateRef.current.isDragging = true;
+        setIsDragging(true);
+        callbacksRef.current.onScratchStart?.();
+      }
+      stateRef.current.angularVelocity = KEY_SCRATCH_VELOCITY * direction;
+      stateRef.current.lastMoveAt = performance.now();
+      callbacksRef.current.onInteract?.(stateRef.current.angularVelocity);
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") handlePointerUp();
+    };
+
     const domElement = renderer.domElement;
+    container.addEventListener("keydown", handleKeyDown);
+    container.addEventListener("keyup", handleKeyUp);
+    container.addEventListener("blur", handlePointerUp);
     domElement.addEventListener("mousedown", handlePointerDown);
     window.addEventListener("mousemove", handlePointerMove);
     window.addEventListener("mouseup", handlePointerUp);
@@ -477,6 +556,9 @@ export function VinylCanvas3D({
       observer.disconnect();
       resizeObserver.disconnect();
 
+      container.removeEventListener("keydown", handleKeyDown);
+      container.removeEventListener("keyup", handleKeyUp);
+      container.removeEventListener("blur", handlePointerUp);
       domElement.removeEventListener("mousedown", handlePointerDown);
       window.removeEventListener("mousemove", handlePointerMove);
       window.removeEventListener("mouseup", handlePointerUp);
@@ -493,7 +575,7 @@ export function VinylCanvas3D({
         container.removeChild(domElement);
       }
     };
-  }, [coverUrl, interactive, enableParallax, deckMode, onInteract]);
+  }, [coverUrl, interactive, enableParallax, deckMode, platterRef]);
 
   // Fallback for non-WebGL devices
   if (!hasWebGL) {
@@ -505,11 +587,13 @@ export function VinylCanvas3D({
         )}
         style={{ width: size ? `${size}px` : "100%", height: size ? `${size}px` : "100%" }}
       >
-        <img
+        <Image
           src={coverUrl}
           alt="Vinyl record"
+          fill
+          sizes="(max-width: 768px) 40vw, 340px"
           className={cn(
-            "w-full h-full object-cover rounded-full",
+            "object-cover rounded-full",
             isPlaying && "animate-spin"
           )}
           style={{ animationDuration: "2s" }}
@@ -523,8 +607,16 @@ export function VinylCanvas3D({
       ref={containerRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      tabIndex={interactive ? 0 : undefined}
+      role={interactive ? "application" : undefined}
+      aria-label={
+        interactive
+          ? "Turntable platter. Hold the left and right arrow keys to scratch the record."
+          : undefined
+      }
       className={cn(
         "relative select-none touch-none cursor-grab active:cursor-grabbing",
+        interactive && "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-cyan",
         className
       )}
       style={{

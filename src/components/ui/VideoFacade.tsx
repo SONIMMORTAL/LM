@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { claimAudio, onAudioClaim } from "@/lib/audio-bus";
 
 interface VideoFacadeProps {
     youtubeId: string;
@@ -11,7 +12,6 @@ interface VideoFacadeProps {
     className?: string;
     aspectRatio?: string;
     startTime?: number;
-    forcePlay?: boolean;
 }
 
 export function VideoFacade({
@@ -20,17 +20,19 @@ export function VideoFacade({
     className,
     aspectRatio = "aspect-video",
     startTime,
-    forcePlay,
 }: VideoFacadeProps) {
-    const [userPlaying, setUserPlaying] = useState(false);
-    
-    useEffect(() => {
-        if (forcePlay || startTime !== undefined) {
-            setUserPlaying(true);
-        }
-    }, [forcePlay, startTime]);
+    // A facade only ever opens because someone clicked it. It used to activate
+    // itself whenever a startTime was passed, which meant landing on the music
+    // page mounted an autoplaying YouTube iframe on top of the mini player.
+    const [isPlaying, setIsPlaying] = useState(false);
 
-    const isPlaying = userPlaying;
+    // Stand down if the mini player or the decks take the room.
+    useEffect(() => onAudioClaim("video", () => setIsPlaying(false)), []);
+
+    const startWatching = () => {
+        claimAudio("video");
+        setIsPlaying(true);
+    };
 
     return (
         <div
@@ -41,7 +43,7 @@ export function VideoFacade({
             )}
         >
             {!isPlaying ? (
-                <div onClick={() => setUserPlaying(true)} className="relative w-full h-full">
+                <div onClick={startWatching} className="relative w-full h-full">
                     <Image
                         src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
                         alt={title}

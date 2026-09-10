@@ -2,28 +2,30 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Disc, Sparkles } from "lucide-react";
+import { Disc, Scissors, Sparkles, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { VinylCanvas3D } from "@/components/three/VinylCanvas3D";
-import { useState } from "react";
+import { useScratchDecks } from "@/hooks/use-scratch-decks";
+import { useCallback, useState } from "react";
 
 /*
  * The DJ-booth scene. The artwork has two blank turntable platters;
  * we composite real spinning records onto them using 3D WebGL canvases.
  *
- * Coordinates derived from detailed scan and rim analysis of dj-scene.jpg (1536×1024):
- *   Left Platter:
- *     True center: cx = 31.38% (481px), cy = 64.55% (661px)
- *     Width: w = 12.0% (snug fit inside the outer rim of 11.45% diameter)
- *     Aspect ratio: scaleY = 0.59
- *   Right Platter:
- *     True center: cx = 65.36% (1004px), cy = 63.77% (653px)
- *     Width: w = 13.5% (snug fit inside the outer rim of 14.32% diameter)
- *     Aspect ratio: scaleY = 0.73
+ * Coordinates come from a pixel-level ellipse fit of the pure-black platter
+ * wells in dj-scene.jpg (1536×1024), so they match the painted perspective:
+ *   Left Platter:  center (481, 657) → cx 31.33%, cy 64.12%
+ *                  well 166px across, squashed to 0.65, major axis tilted 15°
+ *                  counter-clockwise (right edge sits higher than the left).
+ *   Right Platter: center (1002, 643) → cx 65.22%, cy 62.83%
+ *                  well 168px across, squashed to 0.67, tilt ~2°.
+ * `w` is a touch wider than the well so the record covers the mat and meets
+ * the inner edge of the strobe ring, as it would on a real deck.
+ * CSS rotate() is clockwise-positive, so a counter-clockwise tilt is negative.
  */
 const DECKS = [
-    { cx: 31.38, cy: 61.20, w: 12.0, scaleY: 0.58, rotate: 14 }, // left turntable platter
-    { cx: 65.36, cy: 63.77, w: 13.5, scaleY: 0.73, rotate: 0 },  // right turntable platter
+    { cx: 31.28, cy: 64.30, w: 11.9, scaleY: 0.65, rotate: -15 }, // left turntable platter
+    { cx: 65.20, cy: 62.95, w: 12.0, scaleY: 0.67, rotate: 2 },   // right turntable platter
 ] as const;
 
 interface DJSceneHeroProps {
@@ -37,6 +39,14 @@ interface DJSceneHeroProps {
     nowPlaying?: string;
     /** Trigger 3D studio inspect modal */
     onInspect3D?: () => void;
+    /** Stream URL cued on the left deck — grabbing the platter scratches it */
+    leftSource?: string | null;
+    /** Stream URL cued on the right deck */
+    rightSource?: string | null;
+    /** What's on the left deck, shown on its slipmat label */
+    leftLabel?: string;
+    /** What's on the right deck */
+    rightLabel?: string;
 }
 
 export function DJSceneHero({
@@ -45,9 +55,33 @@ export function DJSceneHero({
     isPlaying,
     nowPlaying,
     onInspect3D,
+    leftSource = null,
+    rightSource = null,
+    leftLabel,
+    rightLabel,
 }: DJSceneHeroProps) {
+    const deckLabels = [leftLabel, rightLabel];
     const [use3DDecks, setUse3DDecks] = useState(true);
     const vinyls = [leftVinyl, rightVinyl];
+
+    const {
+        platterRefs,
+        status,
+        isLive,
+        crossfade,
+        isCut,
+        armDeck,
+        setCrossfade,
+        setCut,
+        stopDecks,
+    } = useScratchDecks({ sources: [leftSource, rightSource] });
+
+    const armLeft = useCallback(() => { void armDeck(0); }, [armDeck]);
+    const armRight = useCallback(() => { void armDeck(1); }, [armDeck]);
+
+    // Once the decks are live they own the platters: they keep turning at 33 1/3
+    // under the listener's hand rather than following the page player.
+    const plattersSpinning = isLive ? !isCut : isPlaying;
 
     return (
         <section
@@ -82,10 +116,12 @@ export function DJSceneHero({
                                 <div className="aspect-square w-full">
                                     <VinylCanvas3D
                                         coverUrl={vinyls[i]}
-                                        isPlaying={isPlaying}
+                                        isPlaying={plattersSpinning}
                                         interactive={true}
                                         enableParallax={false}
                                         deckMode={true}
+                                        platterRef={platterRefs[i]}
+                                        onScratchStart={i === 0 ? armLeft : armRight}
                                         className="w-full h-full"
                                     />
                                 </div>
@@ -93,7 +129,7 @@ export function DJSceneHero({
                                 <div
                                     className={cn(
                                         "vinyl-rotor aspect-square w-full",
-                                        isPlaying && "vinyl-rotor-on"
+                                        plattersSpinning && "vinyl-rotor-on"
                                     )}
                                 >
                                     <AnimatePresence mode="wait">
@@ -121,6 +157,21 @@ export function DJSceneHero({
                             )}
                         </div>
                     ))}
+
+                    {/* What each deck is holding */}
+                    {DECKS.map((deck, i) =>
+                        deckLabels[i] ? (
+                            <div
+                                key={`label-${i}`}
+                                className="absolute z-20 -translate-x-1/2 pointer-events-none"
+                                style={{ left: `${deck.cx}%`, top: `${deck.cy + 7.5}%` }}
+                            >
+                                <span className="whitespace-nowrap rounded-full bg-black/75 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.2em] text-noir-cloud backdrop-blur-sm">
+                                    {i === 0 ? "A" : "B"} · {deckLabels[i]}
+                                </span>
+                            </div>
+                        ) : null
+                    )}
 
                     {/* Bottom fade into the page */}
                     <div
@@ -152,6 +203,84 @@ export function DJSceneHero({
                             <span>{use3DDecks ? "3D Decks (Active)" : "2D Decks"}</span>
                         </button>
                     </div>
+
+                    {/* Mixer — appears once a platter has been grabbed */}
+                    <AnimatePresence>
+                        {(isLive || status === "arming") && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 12 }}
+                                className="absolute bottom-[6%] left-4 sm:left-6 z-20 flex items-center gap-3 rounded-2xl border border-white/10 bg-black/80 px-4 py-3 backdrop-blur-md shadow-2xl"
+                            >
+                                {status === "arming" ? (
+                                    <span className="text-[10px] tracking-[0.3em] uppercase text-noir-cloud font-mono animate-pulse">
+                                        Cueing record…
+                                    </span>
+                                ) : (
+                                    <>
+                                        <button
+                                            onPointerDown={() => setCut(true)}
+                                            onPointerUp={() => setCut(false)}
+                                            onPointerLeave={() => isCut && setCut(false)}
+                                            onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") setCut(true); }}
+                                            onKeyUp={(e) => { if (e.key === " " || e.key === "Enter") setCut(false); }}
+                                            aria-pressed={isCut}
+                                            aria-label="Cut — hold to kill the sound"
+                                            title="Hold to cut"
+                                            className={cn(
+                                                "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-mono transition-colors",
+                                                isCut
+                                                    ? "bg-accent-cyan text-black border-accent-cyan"
+                                                    : "bg-white/5 text-noir-cloud border-white/15 hover:text-white hover:bg-white/10"
+                                            )}
+                                        >
+                                            <Scissors className="w-3.5 h-3.5" />
+                                            <span>Cut</span>
+                                        </button>
+
+                                        <div className="flex items-center gap-2">
+                                            <span aria-hidden className="text-[10px] font-mono text-noir-ash">A</span>
+                                            <input
+                                                type="range"
+                                                min={0}
+                                                max={1}
+                                                step={0.01}
+                                                value={crossfade}
+                                                onChange={(e) => setCrossfade(parseFloat(e.target.value))}
+                                                aria-label="Crossfader — blend between the left and right deck"
+                                                className="w-24 sm:w-32 accent-accent-cyan cursor-ew-resize"
+                                            />
+                                            <span aria-hidden className="text-[10px] font-mono text-noir-ash">B</span>
+                                        </div>
+
+                                        <button
+                                            onClick={stopDecks}
+                                            aria-label="Stop the decks"
+                                            title="Stop the decks"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-noir-cloud hover:text-white border border-white/15 text-xs font-mono transition-colors"
+                                        >
+                                            <Square className="w-3 h-3" />
+                                            <span>Stop</span>
+                                        </button>
+                                    </>
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Invitation / failure notice */}
+                    {!isLive && status !== "arming" && (leftSource || rightSource) && (
+                        <div className="absolute bottom-[6%] left-4 sm:left-6 z-20 pointer-events-none">
+                            <span className="text-[10px] tracking-[0.25em] uppercase text-noir-ash font-mono">
+                                {status === "unsupported"
+                                    ? "Scratching needs a newer browser"
+                                    : status === "error"
+                                        ? "Deck unavailable"
+                                        : "Drag a record to scratch"}
+                            </span>
+                        </div>
+                    )}
 
                     {/* Now-playing chip */}
                     <AnimatePresence>

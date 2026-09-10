@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { claimAudio, onAudioClaim, setMasterVolume } from "@/lib/audio-bus";
 
 interface Track {
     id: string;
@@ -65,6 +66,12 @@ export function MusicPlayer() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
     const [duration, setDuration] = useState(0);
+    /*
+     * The elapsed time used to be read straight off audioRef during render, so
+     * it only refreshed when some other state happened to re-render the
+     * player. The timeupdate handler already has the number — keep it.
+     */
+    const [currentTime, setCurrentTime] = useState(0);
     const [volume, setVolume] = useState(0.8);
     const [isMuted, setIsMuted] = useState(false);
     const [prevVolume, setPrevVolume] = useState(0.8);
@@ -72,6 +79,8 @@ export function MusicPlayer() {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const playerRef = useRef<HTMLDivElement>(null);
     const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    /** Consecutive tracks that failed to load, so we stop rather than loop. */
+    const failureCountRef = useRef(0);
 
     const currentTrack = tracks[currentTrackIndex];
 
@@ -125,17 +134,24 @@ export function MusicPlayer() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [isExpanded]);
 
-    // ── Audio context unlock on first interaction ───────────────────
+    // NOTE: there used to be an "unlock audio on first interaction" effect here
+    // that started playback on the first click anywhere on the page. It meant
+    // that touching a turntable — or any nav link — silently started the last
+    // restored track over the top of whatever else was playing. Audio now only
+    // ever starts from a deliberate press of a transport control.
+
+    // ── Publish the level so the decks track this slider ────────────
     useEffect(() => {
-        const unlockAudio = () => {
-            if (audioRef.current?.paused && audioRef.current?.src) {
-                audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-            }
-            events.forEach(e => document.removeEventListener(e, unlockAudio));
-        };
-        const events = ['click', 'touchstart', 'pointerup', 'keydown'];
-        events.forEach(e => document.addEventListener(e, unlockAudio, { once: false }));
-        return () => events.forEach(e => document.removeEventListener(e, unlockAudio));
+        setMasterVolume(isMuted ? 0 : volume);
+    }, [volume, isMuted]);
+
+    // ── Yield to the decks / video embeds ───────────────────────────
+    useEffect(() => {
+        return onAudioClaim("player", () => {
+            const audio = audioRef.current;
+            if (audio && !audio.paused) audio.pause();
+            setIsPlaying(false);
+        });
     }, []);
 
     // ── Sync state → music page via CustomEvent ─────────────────────
@@ -195,6 +211,16 @@ export function MusicPlayer() {
         return () => window.removeEventListener('pauseGlobalPlayer', handler);
     }, []);
 
+    const toggleMuteFn = useCallback(() => {
+        if (isMuted) {
+            setVolume(prevVolume); setIsMuted(false);
+            if (audioRef.current) audioRef.current.volume = prevVolume;
+        } else {
+            setPrevVolume(volume); setVolume(0); setIsMuted(true);
+            if (audioRef.current) audioRef.current.volume = 0;
+        }
+    }, [isMuted, prevVolume, volume]);
+
     // ── Keyboard shortcuts ──────────────────────────────────────────
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {
@@ -222,7 +248,7 @@ export function MusicPlayer() {
         };
         document.addEventListener("keydown", onKeyDown);
         return () => document.removeEventListener("keydown", onKeyDown);
-    }, [togglePlay, nextTrack, prevTrackFn]);
+    }, [togglePlay, nextTrack, prevTrackFn, toggleMuteFn]);
 
     // ── Fetch tracks + restore saved position ───────────────────────
     useEffect(() => {
@@ -247,7 +273,7 @@ export function MusicPlayer() {
                         if (idx >= 0) setCurrentTrackIndex(idx);
                     }
                 }
-            } catch (error: any) {
+            } catch (error) {
                 console.error("Failed to fetch tracks:", error);
             }
         }
@@ -311,16 +337,6 @@ export function MusicPlayer() {
     }, [currentTrack, togglePlay, nextTrack, prevTrackFn]);
 
     // ── Mute helpers ────────────────────────────────────────────────
-    const toggleMuteFn = useCallback(() => {
-        if (isMuted) {
-            setVolume(prevVolume); setIsMuted(false);
-            if (audioRef.current) audioRef.current.volume = prevVolume;
-        } else {
-            setPrevVolume(volume); setVolume(0); setIsMuted(true);
-            if (audioRef.current) audioRef.current.volume = 0;
-        }
-    }, [isMuted, prevVolume, volume]);
-
     const handleVolumeChange = (newVolume: number) => {
         setVolume(newVolume);
         setIsMuted(newVolume === 0);
@@ -337,6 +353,7 @@ export function MusicPlayer() {
         if (audioRef.current) {
             const current = audioRef.current.currentTime;
             const total = audioRef.current.duration || 0;
+            setCurrentTime(current);
             setDuration(total);
             setProgress(total > 0 ? (current / total) * 100 : 0);
         }
@@ -356,7 +373,7 @@ export function MusicPlayer() {
         return `${mins}:${secs.toString().padStart(2, "0")}`;
     };
 
-    const currentTimeDisplay = formatTime(audioRef.current?.currentTime || 0);
+    const currentTimeDisplay = formatTime(currentTime);
     const totalTimeDisplay = formatTime(duration);
 
     if (tracks.length === 0) return null;
@@ -371,7 +388,27 @@ export function MusicPlayer() {
                 onTimeUpdate={handleTimeUpdate}
                 onEnded={nextTrack}
                 onPause={() => setIsPlaying(false)}
-                onPlay={() => setIsPlaying(true)}
+                onPlay={() => {
+                    // Every path that starts this element converges here, so
+                    // this is the honest place to take the room.
+                    claimAudio("player");
+                    failureCountRef.current = 0;
+                    setIsPlaying(true);
+                }}
+                onError={() => {
+                    // A track whose file is missing from storage used to stall
+                    // the player on a dead entry. Step over it instead — but
+                    // give up once we've been round the whole catalogue, so a
+                    // wholesale outage can't spin.
+                    if (tracks.length === 0) return;
+                    failureCountRef.current += 1;
+                    if (failureCountRef.current >= tracks.length) {
+                        failureCountRef.current = 0;
+                        setIsPlaying(false);
+                        return;
+                    }
+                    setCurrentTrackIndex((prev) => (prev + 1) % tracks.length);
+                }}
             />
 
             <motion.div
@@ -455,7 +492,7 @@ function CollapsedPlayer({ track, isPlaying }: { track: Track; isPlaying: boolea
             className="flex items-center gap-3 whitespace-nowrap"
         >
             <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0">
-                <img src={getAlbumCover(track?.album)} alt={track?.album || "Album"} className="object-cover w-full h-full" />
+                <Image src={getAlbumCover(track?.album)} alt={track?.album || "Album"} fill sizes="32px" className="object-cover" />
             </div>
             <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-foreground truncate max-w-32">
@@ -528,7 +565,7 @@ function ExpandedPlayer({
             {/* Album art + info */}
             <div className="flex gap-4 mb-4">
                 <motion.div className={cn("relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-glow-sm")}>
-                    <img src={getAlbumCover(track?.album)} alt={track?.album || "Album"} className="object-cover w-full h-full" />
+                    <Image src={getAlbumCover(track?.album)} alt={track?.album || "Album"} fill sizes="64px" className="object-cover" />
                     {isPlaying && (
                         <motion.div
                             className="absolute inset-0 rounded-lg border-2 border-accent-cyan/50"
@@ -618,7 +655,7 @@ function ExpandedPlayer({
                                     )}
                                 >
                                     <div className="relative w-8 h-8 rounded overflow-hidden flex-shrink-0">
-                                        <img src={getAlbumCover(t.album)} alt={t.album || "Album"} className="object-cover w-full h-full" />
+                                        <Image src={getAlbumCover(t.album)} alt={t.album || "Album"} fill sizes="32px" className="object-cover" />
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p className="text-sm font-medium truncate">{t.title}</p>

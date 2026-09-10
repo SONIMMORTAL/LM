@@ -1,27 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Play, Pause, Volume2, Sparkles, Disc } from "lucide-react";
 import { VinylCanvas3D } from "./VinylCanvas3D";
 import type { Track } from "@/lib/tracks-server";
 import { cn } from "@/lib/utils";
 
+export interface InspectableAlbum {
+  name: string;
+  artist: string;
+  cover: string;
+  vinylUrl?: string;
+  tracks: Track[];
+  price?: number;
+}
+
 export interface VinylInspectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  album: {
-    name: string;
-    artist: string;
-    cover: string;
-    vinylUrl?: string;
-    tracks: Track[];
-    price?: number;
-  } | null;
+  album: InspectableAlbum | null;
   isPlaying: boolean;
   currentTrackTitle?: string;
   onPlayTrack: (trackIndex: number) => void;
-  onOpenPurchaseModal?: (album: any) => void;
+  onOpenPurchaseModal?: (album: InspectableAlbum) => void;
 }
 
 export function VinylInspectModal({
@@ -33,7 +35,6 @@ export function VinylInspectModal({
   onPlayTrack,
   onOpenPurchaseModal,
 }: VinylInspectModalProps) {
-  const [scratchRate, setScratchRate] = useState<number>(0);
 
   // Close on Escape key
   useEffect(() => {
@@ -96,7 +97,6 @@ export function VinylInspectModal({
                   isPlaying={isPlaying}
                   interactive={true}
                   enableParallax={true}
-                  onInteract={(vel) => setScratchRate(Math.abs(vel))}
                   className="w-full h-full"
                 />
               </div>
