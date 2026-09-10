@@ -2,68 +2,81 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { X, ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 // Gallery data with real images
 const galleryItems = [
     {
-        id: "1",
+        id: "crew-portrait",
         type: "image" as const,
-        src: "/gallery-rooftop.png",
-        alt: "Brooklyn rooftop session",
+        src: "/gallery/crew-portrait.jpg",
+        alt: "Two members of the Loaf Records crew",
         size: "large",
     },
     {
-        id: "2",
+        id: "graffiti-wall-portrait",
         type: "image" as const,
-        src: "/gallery-studio.png",
-        alt: "Studio recording session",
+        src: "/gallery/graffiti-wall-portrait.jpg",
+        alt: "Portrait in front of a painted wall",
+        size: "medium",
+    },
+    {
+        id: "loaf-films-tag",
+        type: "image" as const,
+        src: "/gallery/loaf-films-tag.jpg",
+        alt: "The Loaf Films tag",
         size: "small",
     },
     {
-        id: "3",
+        id: "blackbook-character",
         type: "image" as const,
-        src: "/gallery-concert.png",
-        alt: "Live performance",
+        src: "/gallery/blackbook-character.jpg",
+        alt: "Character piece in a blackbook",
         size: "small",
     },
     {
-        id: "4",
+        id: "camo-portrait",
+        type: "image" as const,
+        src: "/gallery/camo-portrait.jpg",
+        alt: "Portrait in camo on a parked car",
+        size: "medium",
+    },
+    {
+        id: "bench-piece",
+        type: "image" as const,
+        src: "/gallery/bench-piece.jpg",
+        alt: "Painted piece laid out on a bench",
+        size: "small",
+    },
+    {
+        id: "legendes-du-graff",
+        type: "image" as const,
+        src: "/gallery/legendes-du-graff.jpg",
+        alt: "Légendes du Graff disc menu",
+        size: "small",
+    },
+    {
+        id: "shadow",
         type: "image" as const,
         src: "/SHDW.avif",
         alt: "Shadow The Great",
         size: "medium",
     },
     {
-        id: "5",
-        type: "image" as const,
-        src: "/gallery-street.png",
-        alt: "Brooklyn streets",
-        size: "small",
-    },
-    {
-        id: "6",
+        id: "vinyl",
         type: "image" as const,
         src: "/gallery-vinyl.png",
         alt: "Vinyl collection",
-        size: "medium",
+        size: "small",
     },
     {
-        id: "7",
+        id: "more-life",
         type: "image" as const,
         src: "/MORE LIFE VINYL.jpg",
         alt: "More Life album",
         size: "small",
-    },
-    {
-        id: "8",
-        type: "video" as const,
-        src: null,
-        youtubeId: "41Zx0etfnkM",
-        alt: "Jeeps music video",
-        size: "large",
     },
 ];
 
@@ -76,8 +89,6 @@ function BentoItem({
     index: number;
     onClick: () => void;
 }) {
-    const [isPlaying, setIsPlaying] = useState(false);
-
     const sizeClasses = {
         small: "col-span-1 row-span-1",
         medium: "col-span-1 md:col-span-1 row-span-1 md:row-span-2",
@@ -96,7 +107,6 @@ function BentoItem({
                 sizeClasses[item.size as keyof typeof sizeClasses]
             )}
         >
-            {/* Image/Video Content */}
             {item.src ? (
                 <Image
                     src={item.src}
@@ -105,18 +115,6 @@ function BentoItem({
                     className="object-cover"
                     sizes="(max-width: 768px) 50vw, 25vw"
                 />
-            ) : item.type === "video" ? (
-                <div className="absolute inset-0 bg-noir-charcoal flex items-center justify-center">
-                    <div className="relative w-full h-full">
-                        <Image
-                            src={`https://img.youtube.com/vi/${(item as any).youtubeId}/maxresdefault.jpg`}
-                            alt={item.alt}
-                            fill
-                            className="object-cover opacity-70"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                        />
-                    </div>
-                </div>
             ) : (
                 <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-12 h-12 rounded-full bg-noir-smoke/30 flex items-center justify-center">
@@ -138,27 +136,8 @@ function BentoItem({
                 <p className="text-foreground font-medium text-sm">
                     {item.alt}
                 </p>
-                <span className="text-accent-cyan text-xs uppercase tracking-wider mt-1">
-                    {item.type}
-                </span>
             </div>
 
-            {/* Video play button */}
-            {item.type === "video" && (
-                <motion.div
-                    initial={false}
-                    animate={{ scale: isPlaying ? 0.9 : 1 }}
-                    className="absolute inset-0 flex items-center justify-center"
-                >
-                    <div className="w-16 h-16 rounded-full bg-accent-cyan/90 flex items-center justify-center shadow-glow-md group-hover:scale-110 transition-transform">
-                        {isPlaying ? (
-                            <Pause className="w-6 h-6 text-noir-void" />
-                        ) : (
-                            <Play className="w-6 h-6 text-noir-void ml-1" />
-                        )}
-                    </div>
-                </motion.div>
-            )}
 
             {/* Glow effect on hover */}
             <div className="absolute inset-0 border-2 border-accent-cyan/0 group-hover:border-accent-cyan/30 rounded-2xl transition-colors duration-300" />
@@ -220,17 +199,7 @@ function Lightbox({
                 className="relative max-w-4xl max-h-[80vh] w-full mx-4"
                 onClick={(e) => e.stopPropagation()}
             >
-                {currentItem.type === "video" && (currentItem as any).youtubeId ? (
-                    <div className="aspect-video bg-noir-charcoal rounded-2xl overflow-hidden">
-                        <iframe
-                            src={`https://www.youtube.com/embed/${(currentItem as any).youtubeId}`}
-                            className="w-full h-full"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            title={currentItem.alt}
-                        />
-                    </div>
-                ) : currentItem.src ? (
+                {currentItem.src ? (
                     <div className="relative aspect-square md:aspect-video bg-noir-charcoal rounded-2xl overflow-hidden">
                         <Image
                             src={currentItem.src}
