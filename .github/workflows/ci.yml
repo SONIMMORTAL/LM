@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 23.x for the native TypeScript test runner (--experimental-strip-types)
+          node-version: '23.x'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Advisory for now: 24 pre-existing errors remain (mostly
+      # react-hooks/set-state-in-effect and no-explicit-any), which need real
+      # refactors rather than a sweep. Drop continue-on-error once they're at 0
+      # so lint gates like the rest.
+      - name: Lint (advisory)
+        continue-on-error: true
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        # Build needs these present, not valid — the pages that talk to Supabase
+        # are request-time rendered, so nothing here calls out during the build.
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: build-placeholder
+          SUPABASE_SERVICE_ROLE_KEY: build-placeholder
+        run: npm run build

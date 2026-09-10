@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, DollarSign, Loader2, CheckCircle } from 'lucide-react';
@@ -68,8 +69,8 @@ export function AlbumPurchaseModal({ isOpen, onClose, album }: AlbumPurchaseModa
             if (!response.ok) throw new Error(data.error || 'Something went wrong');
             if (data.success) setSuccess(true);
 
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Something went wrong");
         } finally {
             setIsLoading(false);
         }
@@ -95,7 +96,7 @@ export function AlbumPurchaseModal({ isOpen, onClose, album }: AlbumPurchaseModa
                     >
                         <div className="relative h-48 bg-zinc-800 overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-zinc-900 z-10" />
-                            <img src={album.cover} alt={album.name} className="w-full h-full object-cover opacity-50 blur-sm" />
+                            <Image src={album.cover} alt="" fill sizes="672px" quality={70} className="object-cover opacity-50 blur-sm" />
                             <button onClick={onClose} className="absolute top-6 right-6 z-20 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white/50 hover:text-white transition-colors">
                                 <X size={24} />
                             </button>
@@ -113,7 +114,7 @@ export function AlbumPurchaseModal({ isOpen, onClose, album }: AlbumPurchaseModa
                                     </div>
                                     <h3 className="text-xl font-bold text-white">Purchase Pending!</h3>
                                     <p className="text-base text-zinc-400">
-                                        Thank you. We'll email you the download link shortly.
+                                        Thank you. We&apos;ll email you the download link shortly.
                                     </p>
                                     <button onClick={onClose} className="mt-6 w-full py-3 px-4 bg-zinc-800 text-white rounded-xl">Close</button>
                                 </div>
@@ -210,7 +211,7 @@ export function AlbumPurchaseModal({ isOpen, onClose, album }: AlbumPurchaseModa
                                             <div className="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-4">
                                                 <div className="text-sm text-zinc-400">
                                                     <p className="mb-2">Send <span className="text-white font-bold">${price}</span> to <span className="text-green-500 font-bold">{process.env.NEXT_PUBLIC_CASHAPP_CASHTAG || "$LoafRecords"}</span></p>
-                                                    <p className="text-xs opacity-70">Include "{album.name}" in note.</p>
+                                                    <p className="text-xs opacity-70">Include &quot;{album.name}&quot; in note.</p>
                                                 </div>
                                                 <input
                                                     type="text"

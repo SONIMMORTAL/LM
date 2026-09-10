@@ -1,13 +1,18 @@
+import { SITE_URL } from "@/lib/site";
 import { getTracks } from "@/lib/tracks-server";
 import { MusicPageClient } from "@/components/music/MusicPageClient";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
+// Catalogue is cached in tracks-server and revalidated on admin edits.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
     title: "Music | Loaf Records — Official Releases",
     description: "Listen to the official discography of Shadow The Great and Loaf Records releases. Stream tracks, view official videos, and buy digital albums.",
     openGraph: {
+        images: [
+            { url: "/og/og-default.jpg", width: 1200, height: 630, alt: "The Loaf Records DJ booth" },
+        ],
         title: "Music | Loaf Records — Official Releases",
         description: "Official releases from Shadow The Great and Loaf Records. Stream catalog, buy digital downloads.",
         type: "website",
@@ -24,7 +29,7 @@ export default async function MusicPage() {
         "@context": "https://schema.org",
         "@type": "MusicGroup",
         name: "Shadow The Great",
-        url: "https://loafrecords.com/music",
+        url: `${SITE_URL}/music`,
         genre: ["Hip-Hop", "Rap", "East Coast"],
         description: "Shadow The Great is a Brooklyn-born recording artist, songwriter, and founder of Loaf Records.",
         foundingLocation: {
@@ -37,13 +42,13 @@ export default async function MusicPage() {
             roleName: "Lead Artist",
         },
         album: [
-            { "@type": "MusicAlbum", name: "Lost City", url: "https://loafrecords.com/music/lost-city" },
-            { "@type": "MusicAlbum", name: "The Commission", url: "https://loafrecords.com/music/the-commission" },
-            { "@type": "MusicAlbum", name: "Darkside", url: "https://loafrecords.com/music/darkside" },
-            { "@type": "MusicAlbum", name: "Munchies", url: "https://loafrecords.com/music/munchies" },
-            { "@type": "MusicAlbum", name: "Lord Knows", url: "https://loafrecords.com/music/lord-knows" },
-            { "@type": "MusicAlbum", name: "More Life", url: "https://loafrecords.com/music/more-life" },
-            { "@type": "MusicAlbum", name: "Live From The Dungeon", url: "https://loafrecords.com/music/live-from-the-dungeon" },
+            { "@type": "MusicAlbum", name: "Lost City", url: `${SITE_URL}/music/lost-city` },
+            { "@type": "MusicAlbum", name: "The Commission", url: `${SITE_URL}/music/the-commission` },
+            { "@type": "MusicAlbum", name: "Darkside", url: `${SITE_URL}/music/darkside` },
+            { "@type": "MusicAlbum", name: "Munchies", url: `${SITE_URL}/music/munchies` },
+            { "@type": "MusicAlbum", name: "Lord Knows", url: `${SITE_URL}/music/lord-knows` },
+            { "@type": "MusicAlbum", name: "More Life", url: `${SITE_URL}/music/more-life` },
+            { "@type": "MusicAlbum", name: "Live From The Dungeon", url: `${SITE_URL}/music/live-from-the-dungeon` },
         ],
         sameAs: [
             "https://www.youtube.com/@LoafRecords",

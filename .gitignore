@@ -39,5 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Large local-only media: kept out of the web root so it is never served,
+# and out of git so it is never deployed.
+local-assets/
 public/LOST CITY.zip
 public/LOST CITY/

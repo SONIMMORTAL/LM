@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/site";
 import { Inter, Geist, Bebas_Neue } from "next/font/google";
 import dynamic from "next/dynamic";
 import "./globals.css";
@@ -31,7 +32,7 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://loafrecords.shop"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Loaf Records | Official Store",
     template: "%s | Loaf Records",
@@ -46,15 +47,27 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Loaf Records | Official Store",
     description: "The official home of Loaf Records. Brooklyn-born independent record label. Music, merch, and films.",
-    url: "https://loafrecords.shop",
+    url: SITE_URL,
     siteName: "Loaf Records",
     type: "website",
     locale: "en_US",
+    // Without this every link pasted into a message, a story or a Discord
+    // channel renders as a blank card. Pages that want their own picture
+    // override `images` in their own metadata.
+    images: [
+      {
+        url: "/og/og-default.jpg",
+        width: 1200,
+        height: 630,
+        alt: "The Loaf Records crew around the decks",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Loaf Records | Official Store",
     description: "Brooklyn-born independent record label. Music, merch, and films.",
+    images: ["/og/og-default.jpg"],
   },
   robots: {
     index: true,

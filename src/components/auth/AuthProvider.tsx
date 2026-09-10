@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase/client";
 
@@ -34,6 +34,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
     const isConfigured = isSupabaseConfigured();
 
+    const fetchProfile = useCallback(async (userId: string) => {
+        try {
+            const { data, error } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", userId)
+                .single();
+
+            if (error && error.code !== 'PGRST116') {
+                console.error("Error fetching profile:", error);
+            }
+            setProfile(data as Profile | null);
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+        }
+    }, []);
+
     useEffect(() => {
         if (!isConfigured) {
             setLoading(false);
@@ -65,24 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         );
 
         return () => subscription.unsubscribe();
-    }, [isConfigured]);
-
-    async function fetchProfile(userId: string) {
-        try {
-            const { data, error } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", userId)
-                .single();
-
-            if (error && error.code !== 'PGRST116') {
-                console.error("Error fetching profile:", error);
-            }
-            setProfile(data as Profile | null);
-        } catch (error) {
-            console.error("Error fetching profile:", error);
-        }
-    }
+    }, [isConfigured, fetchProfile]);
 
     async function signUp(email: string, password: string, username?: string) {
         if (!isConfigured) {

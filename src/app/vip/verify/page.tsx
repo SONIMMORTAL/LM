@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Check, Crown } from "lucide-react";
 import Link from "next/link";
@@ -19,13 +19,41 @@ export default function VipVerifyPage() {
         inputRefs.current[0]?.focus();
     }, []);
 
+    const handleVerify = useCallback(async () => {
+        const fullCode = code.join("");
+        if (fullCode.length !== 6) return;
+
+        setIsVerifying(true);
+        setError("");
+
+        // Simulate verification
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // For demo: accept any 6-digit code
+        // In production, this would verify against Supabase Auth
+        if (fullCode === "000000") {
+            setError("Invalid code. Please try again.");
+            setIsVerifying(false);
+            setCode(["", "", "", "", "", ""]);
+            inputRefs.current[0]?.focus();
+        } else {
+            setIsVerified(true);
+            setIsVerifying(false);
+
+            // Redirect after animation
+            setTimeout(() => {
+                // In production: router.push('/vip/content')
+            }, 2000);
+        }
+    }, [code]);
+
     // Auto-submit when all digits entered
     useEffect(() => {
         const fullCode = code.join("");
         if (fullCode.length === 6 && !code.includes("")) {
             handleVerify();
         }
-    }, [code]);
+    }, [code, handleVerify]);
 
     const handleChange = (index: number, value: string) => {
         // Only allow single digit
@@ -72,33 +100,6 @@ export default function VipVerifyPage() {
         }
     };
 
-    const handleVerify = async () => {
-        const fullCode = code.join("");
-        if (fullCode.length !== 6) return;
-
-        setIsVerifying(true);
-        setError("");
-
-        // Simulate verification
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // For demo: accept any 6-digit code
-        // In production, this would verify against Supabase Auth
-        if (fullCode === "000000") {
-            setError("Invalid code. Please try again.");
-            setIsVerifying(false);
-            setCode(["", "", "", "", "", ""]);
-            inputRefs.current[0]?.focus();
-        } else {
-            setIsVerified(true);
-            setIsVerifying(false);
-
-            // Redirect after animation
-            setTimeout(() => {
-                // In production: router.push('/vip/content')
-            }, 2000);
-        }
-    };
 
     return (
         <div className="min-h-screen pt-24 pb-16 flex items-center justify-center">

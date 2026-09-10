@@ -187,11 +187,19 @@ export function Header() {
                             )}
                             <button
                                 onClick={() => setIsCartOpen(true)}
+                                aria-label={
+                                    cartCount > 0
+                                        ? `Open cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`
+                                        : "Open cart, empty"
+                                }
                                 className="relative p-2 text-foreground hover:text-accent-cyan transition-colors"
                             >
-                                <ShoppingCart className="w-5 h-5" />
+                                <ShoppingCart className="w-5 h-5" aria-hidden="true" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent-cyan text-noir-void text-xs font-bold rounded-full flex items-center justify-center">
+                                    <span
+                                        aria-hidden="true"
+                                        className="absolute -top-1 -right-1 w-5 h-5 bg-accent-cyan text-noir-void text-xs font-bold rounded-full flex items-center justify-center"
+                                    >
                                         {cartCount}
                                     </span>
                                 )}
@@ -204,7 +212,7 @@ export function Header() {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="relative z-50 md:hidden p-2 text-foreground"
+                            className="relative z-50 md:hidden p-2.5 text-foreground"
                             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                         >
                             <AnimatePresence mode="wait">

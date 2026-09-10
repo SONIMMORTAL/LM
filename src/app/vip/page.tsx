@@ -123,6 +123,7 @@ export default function VipPage() {
                                         type="text"
                                         value={phoneOrEmail}
                                         onChange={(e) => setPhoneOrEmail(e.target.value)}
+                                        aria-label="Phone number or email"
                                         placeholder="Phone number or email"
                                         className="w-full px-4 py-3 bg-noir-charcoal rounded-xl text-foreground placeholder:text-noir-ash focus:outline-none focus:ring-2 focus:ring-amber-500/50 border border-noir-smoke"
                                     />

@@ -1,9 +1,11 @@
+import { SITE_URL } from "@/lib/site";
 import { getTracks } from "@/lib/tracks-server";
 import { AlbumDetailsClient } from "@/components/music/AlbumDetailsClient";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
+// Catalogue is cached in tracks-server and revalidated on admin edits.
+export const revalidate = 300;
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -121,7 +123,7 @@ export default async function AlbumReleasePage({ params }: PageProps) {
         "@context": "https://schema.org",
         "@type": "MusicAlbum",
         "name": album.name,
-        "image": `https://loafrecords.com${album.cover}`, // fallback site domain
+        "image": `${SITE_URL}${album.cover}`, // fallback site domain
         "byArtist": {
             "@type": "MusicGroup",
             "name": album.artist
@@ -132,7 +134,7 @@ export default async function AlbumReleasePage({ params }: PageProps) {
             "price": album.price,
             "priceCurrency": "USD",
             "availability": "https://schema.org/InStock",
-            "url": `https://loafrecords.com/music/${slug}`
+            "url": `${SITE_URL}/music/${slug}`
         } : undefined,
         "track": albumTracks.map((t, idx) => ({
             "@type": "MusicRecording",

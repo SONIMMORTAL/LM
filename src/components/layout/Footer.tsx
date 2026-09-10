@@ -73,7 +73,7 @@ export function Footer() {
                                     href={link.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-noir-ash hover:text-accent-cyan transition-colors"
+                                    className="inline-flex h-11 w-11 items-center justify-center -m-2 text-noir-ash hover:text-accent-cyan transition-colors"
                                     aria-label={link.label}
                                 >
                                     <link.icon className="w-5 h-5" />
@@ -87,12 +87,12 @@ export function Footer() {
                         <h4 className="text-foreground font-semibold mb-4 uppercase tracking-wider text-sm">
                             Navigate
                         </h4>
-                        <ul className="space-y-3">
+                        <ul className="space-y-1">
                             {navLinks.map((link) => (
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-noir-cloud hover:text-accent-cyan transition-colors"
+                                        className="inline-flex min-h-11 items-center text-noir-cloud hover:text-accent-cyan transition-colors"
                                     >
                                         {link.label}
                                     </Link>
@@ -143,6 +143,9 @@ export function Footer() {
                         </span>
                     </div>
                 </div>
+
+                {/* Clearance so the floating player never parks on the last row */}
+                <div aria-hidden className="h-24 sm:h-0" />
             </div>
         </footer>
     );

@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/site";
 import { getPrintfulProduct } from "@/lib/printful";
 import { ProductDetails } from "@/components/shop/ProductDetails";
 import { notFound } from "next/navigation";
@@ -79,7 +80,7 @@ export default async function ProductPage({ params }: PageProps) {
         price: v.retail_price,
         priceCurrency: v.currency || "USD",
         availability: "https://schema.org/InStock",
-        url: `https://loafrecords.com/shop/product/${id}`,
+        url: `${SITE_URL}/shop/product/${id}`,
         name: v.name,
         itemCondition: "https://schema.org/NewCondition",
     }));

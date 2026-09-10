@@ -16,6 +16,18 @@ interface Letter3DSwapProps {
     loopDelay?: number;
 }
 
+/**
+ * A stable 0..1 scatter for a given letter position.
+ *
+ * The "random" stagger used to call Math.random() while rendering, so the same
+ * word animated differently on every re-render and the server and client
+ * disagreed. Hashing the index looks just as scattered, stays put, and is pure.
+ */
+function scatterFor(index: number) {
+    const x = Math.sin(index * 12.9898 + 78.233) * 43758.5453;
+    return x - Math.floor(x);
+}
+
 export default function Letter3DSwap({
     children,
     mainClassName = "",
@@ -30,7 +42,14 @@ export default function Letter3DSwap({
 }: Letter3DSwapProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(containerRef, { once: false, amount: 0.5 });
-    const [isFlipped, setIsFlipped] = useState(false);
+    /*
+     * Only the interval owns state now. Whether a letter is flipped is derived
+     * from "are we in view" plus "how many times has the loop ticked", so
+     * entering view flips immediately without an effect writing state during
+     * render.
+     */
+    const [flipCount, setFlipCount] = useState(0);
+    const isFlipped = isInView && flipCount % 2 === 0;
 
     const letters = useMemo(() => children.split(""), [children]);
 
@@ -44,26 +63,20 @@ export default function Letter3DSwap({
                 const center = (total - 1) / 2;
                 return Math.abs(index - center) * staggerDuration;
             case "random":
-                return Math.random() * staggerDuration * total;
+                return scatterFor(index) * staggerDuration * total;
             case "first":
             default:
                 return index * staggerDuration;
         }
     };
 
-    // Trigger animation when in view
-    useEffect(() => {
-        if (isInView) {
-            setIsFlipped(true);
-        }
-    }, [isInView]);
-
-    // Loop animation
+    // Loop animation — setState lives in the interval callback, which is what
+    // an effect is actually for.
     useEffect(() => {
         if (!loop || !isInView) return;
 
         const interval = setInterval(() => {
-            setIsFlipped((prev) => !prev);
+            setFlipCount((count) => count + 1);
         }, loopDelay);
 
         return () => clearInterval(interval);

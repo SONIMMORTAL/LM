@@ -42,7 +42,7 @@ export default function ContactPage() {
             if (response.ok && data.success) {
                 toast.success(
                     <span>
-                        Message sent! <strong>We'll get back to you soon.</strong>
+                        Message sent! <strong>We&apos;ll get back to you soon.</strong>
                     </span>
                 );
                 setFormData({ name: "", email: "", inquiryType: "", message: "" });
@@ -65,6 +65,8 @@ export default function ContactPage() {
 
     return (
         <div className="min-h-screen pt-24 pb-16">
+            <h1 className="sr-only">Contact Loaf Records</h1>
+
             {/* Video Production Packages */}
             <VideoProductionPackages />
 
@@ -85,10 +87,11 @@ export default function ContactPage() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid sm:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm text-noir-cloud mb-2">
+                                    <label htmlFor="contact-name" className="block text-sm text-noir-cloud mb-2">
                                         Your Name
                                     </label>
                                     <input
+                                        id="contact-name"
                                         type="text"
                                         name="name"
                                         value={formData.name}
@@ -99,10 +102,11 @@ export default function ContactPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm text-noir-cloud mb-2">
+                                    <label htmlFor="contact-email" className="block text-sm text-noir-cloud mb-2">
                                         Email Address
                                     </label>
                                     <input
+                                        id="contact-email"
                                         type="email"
                                         name="email"
                                         value={formData.email}
@@ -115,10 +119,11 @@ export default function ContactPage() {
                             </div>
 
                             <div>
-                                <label className="block text-sm text-noir-cloud mb-2">
+                                <label htmlFor="contact-inquiry" className="block text-sm text-noir-cloud mb-2">
                                     Inquiry Type
                                 </label>
                                 <select
+                                    id="contact-inquiry"
                                     name="inquiryType"
                                     value={formData.inquiryType}
                                     onChange={handleChange}
@@ -137,10 +142,11 @@ export default function ContactPage() {
                             </div>
 
                             <div>
-                                <label className="block text-sm text-noir-cloud mb-2">
+                                <label htmlFor="contact-message" className="block text-sm text-noir-cloud mb-2">
                                     Message
                                 </label>
                                 <textarea
+                                    id="contact-message"
                                     name="message"
                                     value={formData.message}
                                     onChange={handleChange}

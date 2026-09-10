@@ -1,15 +1,20 @@
+import { SITE_URL } from "@/lib/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Loaf Films | Cinematic Music Video Production — Brooklyn, NY",
     description: "Loaf Films is a Brooklyn-based music video and commercial production company by Loaf Records. Cinema-grade visuals for independent and label-signed artists. Bronze, Silver, and Gold packages available.",
     openGraph: {
+        images: [
+            { url: "/og/og-videos.jpg", width: 1200, height: 630, alt: "The Loaf Records screening room" },
+        ],
         title: "Loaf Films | Cinematic Music Video Production",
         description: "Brooklyn-born cinematic execution. We shoot raw, concept-driven music videos and commercial films that reflect visual soul.",
         type: "website",
         siteName: "Loaf Records",
     },
     twitter: {
+        images: ["/og/og-videos.jpg"],
         card: "summary_large_image",
         title: "Loaf Films | Cinematic Music Video Production",
         description: "Brooklyn-born cinematic execution. We shoot raw, concept-driven music videos and commercial films.",
@@ -23,7 +28,7 @@ const loafFilmsJsonLd = {
         {
             "@type": "Organization",
             name: "Loaf Films",
-            url: "https://loafrecords.com/loaf-films",
+            url: `${SITE_URL}/loaf-films`,
             description: "Loaf Films is the cinematic production arm of Loaf Records, specializing in music videos and commercial films for independent artists.",
             foundingLocation: {
                 "@type": "Place",
@@ -32,7 +37,7 @@ const loafFilmsJsonLd = {
             parentOrganization: {
                 "@type": "Organization",
                 name: "Loaf Records",
-                url: "https://loafrecords.com",
+                url: SITE_URL,
             },
             knowsAbout: [
                 "Music Video Production",
@@ -51,7 +56,7 @@ const loafFilmsJsonLd = {
                 price: "1500.00",
                 priceCurrency: "USD",
                 availability: "https://schema.org/InStock",
-                url: "https://loafrecords.com/loaf-films#booking",
+                url: `${SITE_URL}/loaf-films#booking`,
             },
         },
         {
@@ -64,7 +69,7 @@ const loafFilmsJsonLd = {
                 price: "3000.00",
                 priceCurrency: "USD",
                 availability: "https://schema.org/InStock",
-                url: "https://loafrecords.com/loaf-films#booking",
+                url: `${SITE_URL}/loaf-films#booking`,
             },
         },
         {
@@ -77,7 +82,7 @@ const loafFilmsJsonLd = {
                 price: "6000.00",
                 priceCurrency: "USD",
                 availability: "https://schema.org/InStock",
-                url: "https://loafrecords.com/loaf-films#booking",
+                url: `${SITE_URL}/loaf-films#booking`,
             },
         },
         {

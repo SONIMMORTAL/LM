@@ -75,7 +75,7 @@ export function CartSidebar() {
                                         </div>
                                         <h3 className="text-lg font-medium text-foreground">Your cart is empty</h3>
                                         <p className="text-noir-cloud max-w-xs">
-                                            Looks like you haven't added any gear yet. Check out the latest drop.
+                                            Looks like you haven&apos;t added any gear yet. Check out the latest drop.
                                         </p>
                                         <button
                                             onClick={() => setIsCartOpen(false)}

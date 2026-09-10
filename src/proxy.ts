@@ -1,43 +1,32 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+/**
+ * Next 16 renamed `middleware.ts` to `proxy.ts`. This file MUST live inside
+ * `src/` because the project uses a src directory — a copy at the repo root is
+ * silently ignored, which is how the /admin gate below went unenforced.
+ *
+ * Security headers are NOT set here. They live in next.config.ts `headers()`
+ * so they also cover static assets, which this matcher deliberately skips.
+ */
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    
-    // Create the response object so we can add headers to it
-    let response = NextResponse.next();
 
-    // Only protect /admin routes (except login)
+    // Gate /admin behind the admin session cookie, but never the login page
+    // itself or there would be no way in.
     if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
         const session = request.cookies.get('admin_session');
 
         if (session?.value !== 'authenticated') {
             const loginUrl = new URL('/admin/login', request.url);
             loginUrl.searchParams.set('from', pathname);
-            response = NextResponse.redirect(loginUrl);
+            return NextResponse.redirect(loginUrl);
         }
     }
 
-    // Add security headers to the response
-    const securityHeaders = {
-        'X-DNS-Prefetch-Control': 'on',
-        'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
-        'X-Frame-Options': 'DENY',
-        'X-Content-Type-Options': 'nosniff',
-        'Referrer-Policy': 'strict-origin-when-cross-origin',
-        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-    };
-
-    Object.entries(securityHeaders).forEach(([key, value]) => {
-        response.headers.set(key, value);
-    });
-
-    return response;
+    return NextResponse.next();
 }
 
-// Apply middleware to all routes except Next.js internals and static files
 export const config = {
-    matcher: [
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-    ],
+    matcher: ['/admin/:path*'],
 };

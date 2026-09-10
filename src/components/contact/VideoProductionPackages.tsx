@@ -82,7 +82,7 @@ const packages = [
     }
 ];
 
-function ScissorsIcon(props: any) {
+function ScissorsIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg
             {...props}
@@ -260,7 +260,7 @@ export function VideoProductionPackages() {
                 >
                     <div className="text-center md:text-left flex flex-col items-center md:items-start">
                         <div className="flex items-center gap-4 mb-2">
-                            <h4 className="text-xl md:text-2xl text-amber-500 font-serif italic mb-1">Let's Bring</h4>
+                            <h4 className="text-xl md:text-2xl text-amber-500 font-serif italic mb-1">Let&apos;s Bring</h4>
                         </div>
                         <h3 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter flex items-center justify-center md:justify-start gap-3 flex-wrap">
                             YOUR VISION <span className="font-serif italic text-amber-500 font-normal">TO LIFE.</span>

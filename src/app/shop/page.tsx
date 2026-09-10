@@ -13,12 +13,16 @@ export const metadata: Metadata = {
     title: "Shop | Loaf Records — Official Merch",
     description: "Browse the official Loaf Records merch store. Limited edition apparel, vinyl, accessories, and more from Shadow The Great. Worldwide shipping.",
     openGraph: {
+        images: [
+            { url: "/og/og-default.jpg", width: 1200, height: 630, alt: "Loaf Records official merch" },
+        ],
         title: "Shop | Loaf Records — Official Merch",
         description: "Limited edition apparel, vinyl, accessories, and more from Shadow The Great.",
         type: "website",
         siteName: "Loaf Records",
     },
     twitter: {
+        images: ["/og/og-default.jpg"],
         card: "summary_large_image",
         title: "Shop | Loaf Records — Official Merch",
         description: "Limited edition apparel, vinyl, accessories, and more from Shadow The Great.",

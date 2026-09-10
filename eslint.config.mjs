@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // One-off CommonJS maintenance scripts — they are meant to use require().
+    "scripts/**",
   ]),
 ]);
 
