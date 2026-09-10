@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/supabase/admin-auth';
 import { supabaseAdmin, isServiceRoleConfigured } from '@/lib/supabase/admin';
+import { revalidateTracks } from '@/lib/tracks-server';
 
 export const dynamic = 'force-dynamic';
 
@@ -77,6 +78,8 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to save track' }, { status: 500 });
         }
 
+        revalidateTracks();
+
         return NextResponse.json({ success: true, track: data });
     } catch (error) {
         console.error('Upload error:', error);
@@ -130,6 +133,8 @@ export async function DELETE(request: NextRequest) {
             console.error('Delete error:', error);
             return NextResponse.json({ error: 'Failed to delete track' }, { status: 500 });
         }
+
+        revalidateTracks();
 
         return NextResponse.json({ success: true });
     } catch (error) {

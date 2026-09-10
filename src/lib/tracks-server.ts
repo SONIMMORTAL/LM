@@ -1,5 +1,7 @@
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache';
 import { supabaseAdmin, isServiceRoleConfigured } from '@/lib/supabase/admin';
 import { ALBUMS, AlbumConfig } from '@/lib/albums';
+import { streamUrlFor } from '@/lib/stream-token';
 
 export interface Track {
     id: string;
@@ -11,6 +13,23 @@ export interface Track {
     album: string | null;
     price: number | null;
     plays: number;
+}
+
+/** Cache tag for the track catalogue — see revalidateTracks(). */
+export const TRACKS_CACHE_TAG = 'tracks';
+
+const TRACKS_CACHE_SECONDS = 300;
+
+const SUPABASE_PUBLIC_PREFIX = process.env.NEXT_PUBLIC_SUPABASE_URL
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/`
+    : '';
+
+function safeDecode(value: string): string {
+    try {
+        return decodeURIComponent(value);
+    } catch {
+        return value;
+    }
 }
 
 function parseTrackName(filename: string): { title: string; artist: string } {
@@ -36,7 +55,6 @@ function parseTrackName(filename: string): { title: string; artist: string } {
 }
 
 async function fetchTracksFromStorageForAlbums(albumsToFetch: AlbumConfig[]): Promise<Track[]> {
-    const allTracks: Track[] = [];
     const audioExtensions = ['mp3', 'wav', 'm4a', 'ogg', 'flac'];
 
     const getTrackNumber = (filename: string): number => {
@@ -44,9 +62,10 @@ async function fetchTracksFromStorageForAlbums(albumsToFetch: AlbumConfig[]): Pr
         return match ? parseInt(match[1], 10) : 999;
     };
 
-    for (const album of albumsToFetch) {
-        console.log(`Fetching tracks for ${album.name} from bucket: ${album.bucket}, path: ${album.path || 'root'}`);
-
+    // One round-trip per album, all in flight at once. These used to run in a
+    // sequential await loop, which put every album's latency on the critical
+    // path of the music page render.
+    const perAlbum = await Promise.all(albumsToFetch.map(async (album): Promise<Track[]> => {
         const { data: files, error: filesError } = await supabaseAdmin.storage
             .from(album.bucket)
             .list(album.path || undefined, {
@@ -55,12 +74,11 @@ async function fetchTracksFromStorageForAlbums(albumsToFetch: AlbumConfig[]): Pr
 
         if (filesError) {
             console.error(`Error fetching tracks for ${album.name}:`, filesError);
-            continue;
+            return [];
         }
 
         if (!files || files.length === 0) {
-            console.log(`No files found for ${album.name}`);
-            continue;
+            return [];
         }
 
         const sortedFiles = files
@@ -70,34 +88,66 @@ async function fetchTracksFromStorageForAlbums(albumsToFetch: AlbumConfig[]): Pr
             })
             .sort((a, b) => getTrackNumber(a.name) - getTrackNumber(b.name));
 
-        const tracks = sortedFiles.map((file, index) => {
+        return sortedFiles.map((file, index) => {
             const { title, artist } = parseTrackName(file.name);
             const filePath = album.path ? `${album.path}/${file.name}` : file.name;
-
-            const { data: { publicUrl } } = supabaseAdmin.storage
-                .from(album.bucket)
-                .getPublicUrl(filePath);
 
             return {
                 id: file.id || `${album.id}-${index}`,
                 title,
                 artist,
                 duration: null,
-                audio_url: publicUrl,
+                audio_url: streamUrlFor(album.bucket, filePath),
                 soundcloud_url: null,
                 album: album.name,
                 price: 1.00,
                 plays: 0
             };
         });
+    }));
 
-        allTracks.push(...tracks);
-    }
-
-    return allTracks;
+    return perAlbum.flat();
 }
 
-export async function getTracks(): Promise<Track[]> {
+/**
+ * Resolve whatever the `tracks` table has stored in `audio_url` into a
+ * streaming URL. Anything that points at our own Supabase storage goes through
+ * the signed /api/stream route; genuinely external links (SoundCloud and the
+ * like) are left as they are.
+ */
+function toStreamUrl(url: string | null, albumName: string | null): string {
+    if (!url) return '';
+
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        if (SUPABASE_PUBLIC_PREFIX && url.startsWith(SUPABASE_PUBLIC_PREFIX)) {
+            const rest = url.slice(SUPABASE_PUBLIC_PREFIX.length);
+            const slash = rest.indexOf('/');
+            if (slash > 0) {
+                return streamUrlFor(
+                    safeDecode(rest.slice(0, slash)),
+                    safeDecode(rest.slice(slash + 1))
+                );
+            }
+        }
+        return url;
+    }
+
+    if (albumName === 'Lost City' && url.includes('LOST CITY')) {
+        const filename = (url.split('/').pop() || '').replace(/\.wav$/i, '.mp3');
+        return streamUrlFor('Music3', safeDecode(filename));
+    }
+
+    const albumConfig = Object.values(ALBUMS).find(a => a.name === albumName);
+    if (albumConfig) {
+        const filename = safeDecode(url.split('/').pop() || '');
+        const filePath = albumConfig.path ? `${albumConfig.path}/${filename}` : filename;
+        return streamUrlFor(albumConfig.bucket, filePath);
+    }
+
+    return url;
+}
+
+async function loadTracks(): Promise<Track[]> {
     try {
         if (!isServiceRoleConfigured()) {
             console.warn('Supabase service role is not configured');
@@ -116,28 +166,6 @@ export async function getTracks(): Promise<Track[]> {
 
         const allTracks: Track[] = [];
 
-        const fixAudioUrl = (url: string | null, albumName: string | null): string => {
-            if (!url) return '';
-            if (url.startsWith('http://') || url.startsWith('https://')) {
-                return url;
-            }
-
-            if (albumName === 'Lost City' && url.includes('LOST CITY')) {
-                const filename = url.split('/').pop() || '';
-                const mp3Filename = filename.replace(/\.wav$/i, '.mp3');
-                return `https://bnjoouzcnxwdxcgcknoe.supabase.co/storage/v1/object/public/Music3/${encodeURIComponent(mp3Filename)}`;
-            }
-
-            const albumConfig = Object.values(ALBUMS).find(a => a.name === albumName);
-            if (albumConfig) {
-                const filename = url.split('/').pop() || '';
-                const filePath = albumConfig.path ? `${albumConfig.path}/${filename}` : filename;
-                return `https://bnjoouzcnxwdxcgcknoe.supabase.co/storage/v1/object/public/${albumConfig.bucket}/${encodeURIComponent(filePath)}`;
-            }
-
-            return url;
-        };
-
         const formattedDbTracks = (dbTracks || [])
             .filter(track => track.album !== 'Lost City')
             .map(track => ({
@@ -145,7 +173,7 @@ export async function getTracks(): Promise<Track[]> {
                 title: track.title,
                 artist: track.artist,
                 duration: track.duration,
-                audio_url: fixAudioUrl(track.audio_url, track.album),
+                audio_url: toStreamUrl(track.audio_url, track.album),
                 soundcloud_url: track.soundcloud_url,
                 album: track.album,
                 price: track.price ? parseFloat(track.price) : null,
@@ -169,4 +197,26 @@ export async function getTracks(): Promise<Track[]> {
         console.error('getTracks server-side helper error:', error);
         return [];
     }
+}
+
+/**
+ * The catalogue changes only when the admin edits it, so serve it from the
+ * data cache rather than re-listing every storage bucket on each request.
+ * Admin writes call revalidateTracks() to publish immediately.
+ */
+const getCachedTracks = unstable_cache(loadTracks, ['tracks-catalogue'], {
+    revalidate: TRACKS_CACHE_SECONDS,
+    tags: [TRACKS_CACHE_TAG],
+});
+
+export async function getTracks(): Promise<Track[]> {
+    return getCachedTracks();
+}
+
+/** Publish admin catalogue edits without waiting for the cache window. */
+export function revalidateTracks() {
+    // Drop the cached catalogue, then the rendered pages built from it.
+    revalidateTag(TRACKS_CACHE_TAG, 'max');
+    revalidatePath('/music');
+    revalidatePath('/music/[slug]', 'page');
 }
