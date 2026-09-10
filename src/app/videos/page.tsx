@@ -2,7 +2,9 @@
 
 import { Play, Loader2 } from "lucide-react";
 import Image from "next/image";
-import { useState, useCallback, useRef, memo, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { VhsTape } from "@/components/videos/VhsTape";
+import { claimAudio, onAudioClaim } from "@/lib/audio-bus";
 
 /*
  * Theater screen — the blank TV in the artwork. The rect is measured
@@ -102,53 +104,7 @@ const staticVideos: Video[] = [
 ];
 
 // Memoized video card
-const VideoCard = memo(function VideoCard({
-    video,
-    onPlay,
-}: {
-    video: Video;
-    onPlay: (youtubeId: string, title?: string) => void;
-}) {
-    const yId = video.youtube_id || video.youtubeId;
-    if (!yId) return null;
 
-    return (
-        <article
-            className="group cursor-pointer"
-            onClick={() => onPlay(yId, video.title)}
-        >
-            {/* Thumbnail */}
-            <div className="relative aspect-video rounded-xl overflow-hidden mb-3 bg-noir-slate border border-white/5 shadow-lg group-hover:border-accent-cyan/30 transition-all duration-300">
-                <Image
-                    src={`https://img.youtube.com/vi/${yId}/hqdefault.jpg`}
-                    alt={video.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                />
-
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
-
-                {/* Play Button */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity">
-                    <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-accent-cyan group-hover:border-accent-cyan transition-all duration-300">
-                        <Play className="w-6 h-6 text-white group-hover:text-black ml-0.5" fill="currentColor" />
-                    </div>
-                </div>
-            </div>
-
-            {/* Info */}
-            <h3 className="font-bold text-white group-hover:text-accent-cyan transition-colors duration-200 line-clamp-1 text-lg tracking-tight">
-                {video.title}
-            </h3>
-            <p className="text-noir-cloud text-sm line-clamp-1 opacity-70">
-                {video.description}
-            </p>
-        </article>
-    );
-});
 
 export default function VideosPage() {
     const [dbVideos, setDbVideos] = useState<Video[]>([]);
@@ -178,11 +134,25 @@ export default function VideosPage() {
     }, []);
 
     // Any play anywhere on the page loads the video onto the theater screen
+    // The theater is a sound source like any other: take the room when a tape
+    // goes in, and stop if the mini player or the decks take it back.
+    useEffect(() => onAudioClaim("video", () => setIsWatching(false)), []);
+
     const handlePlay = useCallback((youtubeId: string, title?: string) => {
+        claimAudio("video");
         setScreenVideo({ id: youtubeId, title });
         setIsWatching(true);
         trackVideoPlay(youtubeId, title);
     }, [trackVideoPlay]);
+
+    // Arriving from "Watch on the big screen" over on the music page: the
+    // record's video is named in the URL, so put it straight on the screen
+    // instead of dropping the visitor at the top of a page of tapes.
+    useEffect(() => {
+        const requested = new URLSearchParams(window.location.search).get("v");
+        if (!requested || !/^[\w-]{6,20}$/.test(requested)) return;
+        handlePlay(requested);
+    }, [handlePlay]);
 
     // After the screen swaps, glide the viewer back up to the theater.
     // (Scrolling inside handlePlay gets cancelled by the re-render.)
@@ -297,6 +267,8 @@ export default function VideosPage() {
 
     return (
         <div className="min-h-screen bg-noir-void text-foreground selection:bg-accent-cyan/30">
+            <h1 className="sr-only">Videos — Loaf Records</h1>
+
             {/* THEATER — whatever you pick plays on the big screen */}
             <section
                 ref={theaterRef}
@@ -329,7 +301,17 @@ export default function VideosPage() {
                                 <iframe
                                     key={onScreen.id}
                                     src={`https://www.youtube.com/embed/${onScreen.id}?autoplay=1&modestbranding=1&rel=0`}
-                                    className="absolute inset-0 h-full w-full"
+                                    /*
+                                     * The painted screen is wider than 16:9, so an
+                                     * iframe stretched to fill it leaves YouTube
+                                     * pillarboxing the video — invisible on a dark
+                                     * music video, glaring on a mixtape upload with
+                                     * a white background. Size to the width and let
+                                     * the extra height crop, so the picture covers
+                                     * the screen the same way the still does.
+                                     */
+                                    className="absolute left-0 top-1/2 w-full -translate-y-1/2"
+                                    style={{ aspectRatio: "16 / 9" }}
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen
                                     title={onScreen.title || "Video Player"}
@@ -398,7 +380,7 @@ export default function VideosPage() {
                     <div className="flex items-end justify-between mb-16 border-b border-white/10 pb-6">
                         <div>
                             <h2 className="text-5xl md:text-8xl font-bold tracking-tighter opacity-10 uppercase select-none">
-                                Catalog
+                                Tapes
                             </h2>
                             <h3 className="text-2xl font-bold text-accent-cyan -mt-8 uppercase tracking-widest pl-2">
                                 Official Music Videos
@@ -419,14 +401,23 @@ export default function VideosPage() {
                             <Loader2 className="w-10 h-10 text-accent-cyan animate-spin" />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {mainVideos.map((video) => (
-                                <VideoCard
-                                    key={video.id || video.youtube_id || video.youtubeId}
-                                    video={video}
-                                    onPlay={handlePlay}
-                                />
-                            ))}
+                        <div className="relative">
+                            <div className="grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                                {mainVideos.map((video, i) => (
+                                    <VhsTape
+                                        key={video.id || video.youtube_id || video.youtubeId}
+                                        video={video}
+                                        index={i}
+                                        onPlay={handlePlay}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* the shelf the tapes are standing on */}
+                            <div
+                                aria-hidden
+                                className="pointer-events-none absolute inset-x-0 -bottom-6 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent"
+                            />
                         </div>
                     )}
                 </div>

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Camera, Film, Play, Check, Send, Sparkles, Clock, Layers } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
-import { VideoFacade } from "@/components/ui/VideoFacade";
+import { FilmStrip } from "@/components/films/FilmStrip";
 
 const packages = [
     {
@@ -172,15 +172,46 @@ export default function LoafFilmsPage() {
 
             {/* Facade Portfolio Section */}
             <section className="relative py-16 px-6 z-10 bg-noir-charcoal/30 border-y border-white/5">
-                <div className="max-w-6xl mx-auto space-y-12">
-                    <div className="text-center">
-                        <h2 className="text-2xl sm:text-4xl font-bold uppercase tracking-tight">Our Portfolio</h2>
-                        <p className="text-noir-cloud text-sm">Visual highlights from recent Loaf Films productions.</p>
+                <div className="max-w-6xl mx-auto space-y-10">
+                    <div>
+                        <span
+                            aria-hidden
+                            className="pointer-events-none block select-none text-5xl sm:text-7xl font-black uppercase leading-none tracking-tighter text-white/[0.07]"
+                        >
+                            The Reel
+                        </span>
+                        <h2 className="-mt-5 sm:-mt-8 text-lg sm:text-xl font-black uppercase tracking-[0.2em] text-accent-cyan">
+                            Selected Work
+                        </h2>
+                        <p className="mt-2 text-sm text-noir-cloud">
+                            Recent Loaf Films productions. Pull a frame to watch it.
+                        </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <VideoFacade youtubeId="OOx9QAeRo8E" title="Shadow The Great - Lost City (Directed by Sage Wolf)" />
-                        <VideoFacade youtubeId="41Zx0etfnkM" title="Abel - Rah Tha Ruler & Shadow The Great (Directed by Loaf Films)" />
-                    </div>
+
+                    <FilmStrip
+                        entries={[
+                            {
+                                youtubeId: "OOx9QAeRo8E",
+                                title: "Shadow The Great — Lost City",
+                                credit: "Directed by Sage Wolf",
+                            },
+                            {
+                                youtubeId: "41Zx0etfnkM",
+                                title: "Abel — Rah Tha Ruler & Shadow The Great",
+                                credit: "Directed by Loaf Films",
+                            },
+                            {
+                                youtubeId: "jHGAyWqaZ88",
+                                title: "Shadow The Great — Soul",
+                                credit: "Prod. by Seyer",
+                            },
+                            {
+                                youtubeId: "ONVI4qys5A4",
+                                title: "Shadow The Great — Jeeps",
+                                credit: "Prod. by Ruggz",
+                            },
+                        ]}
+                    />
                 </div>
             </section>
 
@@ -307,14 +338,15 @@ export default function LoafFilmsPage() {
                                 Book Your Shoot
                             </h2>
                             <p className="text-noir-cloud text-sm">
-                                Let's build your vision. Fill in the inquiry form below and we'll reply within 24 hours.
+                                Let&apos;s build your vision. Fill in the inquiry form below and we&apos;ll reply within 24 hours.
                             </p>
                         </div>
 
                         <form onSubmit={handleBooking} className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Your Name</label>
+                                <label htmlFor="films-name" className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Your Name</label>
                                 <input
+                                    id="films-name"
                                     type="text"
                                     required
                                     value={name}
@@ -325,8 +357,9 @@ export default function LoafFilmsPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Email Address</label>
+                                <label htmlFor="films-email" className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Email Address</label>
                                 <input
+                                    id="films-email"
                                     type="email"
                                     required
                                     value={email}
@@ -337,8 +370,9 @@ export default function LoafFilmsPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Select Package</label>
+                                <label htmlFor="films-package" className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Select Package</label>
                                 <select
+                                    id="films-package"
                                     value={selectedPackage}
                                     onChange={(e) => setSelectedPackage(e.target.value)}
                                     className="w-full px-4 py-3 bg-noir-void rounded-xl text-white border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent-cyan"
@@ -351,8 +385,9 @@ export default function LoafFilmsPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Message & Vision</label>
+                                <label htmlFor="films-message" className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Message & Vision</label>
                                 <textarea
+                                    id="films-message"
                                     required
                                     rows={5}
                                     value={message}

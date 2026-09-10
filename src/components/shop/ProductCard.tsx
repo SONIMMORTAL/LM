@@ -10,7 +10,7 @@ import type { PrintfulProduct, PrintfulProductDetails } from "@/lib/printful";
 import useSWR from "swr";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 
 interface ProductCardProps {
     product: PrintfulProduct;
@@ -163,7 +163,17 @@ export function ProductCard({ product }: ProductCardProps) {
             transition={{ duration: 0.4 }}
             className="h-full"
         >
-            <Card className="group relative flex h-full flex-col overflow-hidden rounded-2xl border-noir-smoke bg-noir-void transition-all duration-300 hover:border-accent-cyan/30 hover:shadow-glow-sm">
+            <Card className="group relative flex h-full flex-col overflow-visible rounded-[3px] border-white/10 bg-noir-void transition-all duration-300 hover:border-white/25 hover:-translate-y-1">
+                {/* the punched hole and string a swing tag hangs from */}
+                <span
+                    aria-hidden
+                    className="pointer-events-none absolute -top-2 left-1/2 z-30 h-4 w-4 -translate-x-1/2 rounded-full border border-white/15 bg-noir-void shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]"
+                />
+                <span
+                    aria-hidden
+                    className="pointer-events-none absolute -top-6 left-1/2 z-20 h-6 w-px -translate-x-1/2 bg-gradient-to-b from-transparent to-white/20"
+                />
+
                 <Link href={`/shop/product/${product.id}`} className="block relative z-10 flex-grow">
                     <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-b from-noir-charcoal to-noir-slate">
                         <div className="absolute inset-0 bg-gradient-to-tr from-accent-cyan/0 via-white/0 to-purple-500/0 opacity-0 group-hover:opacity-100 group-hover:from-accent-cyan/5 group-hover:to-purple-500/5 transition-all duration-500 pointer-events-none z-20 mix-blend-overlay" />
@@ -183,15 +193,25 @@ export function ProductCard({ product }: ProductCardProps) {
                         )}
                     </div>
 
-                    <CardContent className="pt-5 pb-2 space-y-2">
-                        <h3 className="font-bold text-lg text-foreground line-clamp-1">{product.name}</h3>
-                        <Badge variant="outline" className="text-accent-cyan border-accent-cyan/30 font-mono">
-                            {activeVariant ? formatPrice(activeVariant.retail_price, activeVariant.currency) : "Loading..."}
-                        </Badge>
+                    <CardContent className="space-y-2 px-4 pb-2 pt-4">
+                        <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-noir-ash">
+                            <span className="h-px w-4 bg-white/20" />
+                            Loaf Records
+                        </div>
+                        <h3 className="line-clamp-2 text-base font-black uppercase leading-tight tracking-tight text-foreground">
+                            {product.name}
+                        </h3>
+                        <p className="font-mono text-lg font-bold tracking-tight text-white">
+                            {activeVariant ? (
+                                formatPrice(activeVariant.retail_price, activeVariant.currency)
+                            ) : (
+                                <span className="text-noir-ash">—</span>
+                            )}
+                        </p>
                     </CardContent>
                 </Link>
 
-                <CardFooter className="pt-2 pb-5 flex-col items-stretch space-y-4 relative z-20 border-t border-white/5 mt-auto">
+                <CardFooter className="relative z-20 mt-auto flex-col items-stretch space-y-4 border-t border-dashed border-white/10 px-4 pb-5 pt-3">
                     {details ? (
                         <>
                             <div className="flex flex-col gap-3">

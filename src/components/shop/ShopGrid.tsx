@@ -1,10 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ShoppingBag, ChevronRight } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import type { PrintfulProduct } from "@/lib/printful";
 import { ProductCard } from "./ProductCard";
-import { Badge } from "@/components/ui/badge";
 
 interface ShopGridProps {
     products: PrintfulProduct[];
@@ -46,16 +44,19 @@ export function ShopGrid({ products }: ShopGridProps) {
                 <section aria-labelledby="featured-drop-heading">
                     <div className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
-                            <Badge variant="outline" className="text-accent-cyan border-accent-cyan/20 tracking-[0.25em] uppercase mb-4 rounded-full px-4 py-1 bg-accent-cyan/5">
-                                New Arrival
-                            </Badge>
-                            <h2
-                                id="featured-drop-heading"
-                                className="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-white font-display"
+                            <span
+                                aria-hidden
+                                className="pointer-events-none block select-none text-5xl sm:text-7xl font-black uppercase leading-none tracking-tighter text-white/[0.07]"
                             >
                                 Featured Drop
+                            </span>
+                            <h2
+                                id="featured-drop-heading"
+                                className="-mt-5 sm:-mt-8 text-lg sm:text-xl font-black uppercase tracking-[0.2em] text-accent-cyan"
+                            >
+                                New Arrival
                             </h2>
-                            <p className="text-noir-cloud text-sm mt-1">
+                            <p className="mt-2 text-sm text-noir-cloud">
                                 Limited quantities. Lost City and Commission drop.
                             </p>
                         </div>
@@ -74,16 +75,19 @@ export function ShopGrid({ products }: ShopGridProps) {
                 <section aria-labelledby="best-sellers-heading">
                     <div className="max-w-7xl mx-auto mb-8">
                         <div>
-                            <Badge variant="outline" className="text-accent-cyan border-accent-cyan/20 tracking-[0.25em] uppercase mb-4 rounded-full px-4 py-1 bg-accent-cyan/5">
-                                Customer Favorites
-                            </Badge>
-                            <h2
-                                id="best-sellers-heading"
-                                className="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-white font-display"
+                            <span
+                                aria-hidden
+                                className="pointer-events-none block select-none text-5xl sm:text-7xl font-black uppercase leading-none tracking-tighter text-white/[0.07]"
                             >
                                 Best Sellers
+                            </span>
+                            <h2
+                                id="best-sellers-heading"
+                                className="-mt-5 sm:-mt-8 text-lg sm:text-xl font-black uppercase tracking-[0.2em] text-accent-cyan"
+                            >
+                                Customer Favorites
                             </h2>
-                            <p className="text-noir-cloud text-sm mt-1">
+                            <p className="mt-2 text-sm text-noir-cloud">
                                 Loaf Records essentials. Bear gear and heavyweight fleece.
                             </p>
                         </div>
@@ -102,16 +106,19 @@ export function ShopGrid({ products }: ShopGridProps) {
                 <section aria-labelledby="for-the-city-heading">
                     <div className="max-w-7xl mx-auto mb-8">
                         <div>
-                            <Badge variant="outline" className="text-accent-cyan border-accent-cyan/20 tracking-[0.25em] uppercase mb-4 rounded-full px-4 py-1 bg-accent-cyan/5">
-                                Brooklyn Originals
-                            </Badge>
-                            <h2
-                                id="for-the-city-heading"
-                                className="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-white font-display"
+                            <span
+                                aria-hidden
+                                className="pointer-events-none block select-none text-5xl sm:text-7xl font-black uppercase leading-none tracking-tighter text-white/[0.07]"
                             >
                                 For The City
+                            </span>
+                            <h2
+                                id="for-the-city-heading"
+                                className="-mt-5 sm:-mt-8 text-lg sm:text-xl font-black uppercase tracking-[0.2em] text-accent-cyan"
+                            >
+                                Brooklyn Originals
                             </h2>
-                            <p className="text-noir-cloud text-sm mt-1">
+                            <p className="mt-2 text-sm text-noir-cloud">
                                 Knowledge Born and More Life collectibles for the streets.
                             </p>
                         </div>
