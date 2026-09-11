@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
     title: "Gallery — Behind The Scenes",
     description:
-        "Photographs from the Loaf Records archive. Crew portraits, blackbook pieces, and the streets the label came out of.",
+        "Photographs from the Loaf Records archive. Trailer and box truck pieces, blackbook pages, and the crew behind them.",
     openGraph: {
         title: "Gallery — Behind The Scenes",
         description: "Photographs from the Loaf Records archive.",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
                 url: "/og/og-gallery.jpg",
                 width: 1200,
                 height: 630,
-                alt: "Two members of the Loaf Records crew",
+                alt: "A writer up a stepladder painting a blue and magenta piece along a trailer at dusk",
             },
         ],
     },
