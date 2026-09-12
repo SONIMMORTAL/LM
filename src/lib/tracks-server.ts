@@ -2,6 +2,7 @@ import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache';
 import { supabaseAdmin, isServiceRoleConfigured } from '@/lib/supabase/admin';
 import { ALBUMS, AlbumConfig } from '@/lib/albums';
 import { streamUrlFor } from '@/lib/stream-token';
+import { VIDEO_TAPES, isVideoTapeAlbum } from '@/lib/video-tapes';
 
 export interface Track {
     id: string;
@@ -209,8 +210,27 @@ const getCachedTracks = unstable_cache(loadTracks, ['tracks-catalogue'], {
     tags: [TRACKS_CACHE_TAG],
 });
 
+/**
+ * The playable catalogue: what the crate, the album pages and the page player
+ * share. Their track indexes must line up, so they all read from here.
+ *
+ * Video tapes are left out — none of their rows has audio, so in the player's
+ * list they were silent entries that next and shuffle could land on.
+ */
 export async function getTracks(): Promise<Track[]> {
-    return getCachedTracks();
+    const tracks = await getCachedTracks();
+    return tracks.filter((track) => !isVideoTapeAlbum(track.album));
+}
+
+/** Each video tape's track titles, in running order, keyed by album name. */
+export async function getVideoTapeTracklists(): Promise<Record<string, string[]>> {
+    const tracks = await getCachedTracks();
+    return Object.fromEntries(
+        VIDEO_TAPES.map((tape) => [
+            tape.name,
+            tracks.filter((track) => track.album === tape.name).map((track) => track.title),
+        ])
+    );
 }
 
 /** Publish admin catalogue edits without waiting for the cache window. */
@@ -219,4 +239,5 @@ export function revalidateTracks() {
     revalidateTag(TRACKS_CACHE_TAG, 'max');
     revalidatePath('/music');
     revalidatePath('/music/[slug]', 'page');
+    revalidatePath('/videos');
 }

@@ -121,9 +121,10 @@ export function RecordCrate({
     if (!album) return null;
 
     const isFree = !album.price;
-    // Darkside, Lord Knows and Munchies exist only as videos — every one of
-    // their rows has a null audio_url. Offering a play button for them was
-    // offering a button that does nothing.
+    // A release whose rows have no audio_url can't be played from here.
+    // Offering a play button for it would be offering a button that does
+    // nothing. (Video-only tapes are kept out of the crate altogether — see
+    // lib/video-tapes.ts.)
     const hasAudio = album.tracks.some((track) => !!track.audio_url);
 
     return (

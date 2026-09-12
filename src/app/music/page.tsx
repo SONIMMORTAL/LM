@@ -44,9 +44,6 @@ export default async function MusicPage() {
         album: [
             { "@type": "MusicAlbum", name: "Lost City", url: `${SITE_URL}/music/lost-city` },
             { "@type": "MusicAlbum", name: "The Commission", url: `${SITE_URL}/music/the-commission` },
-            { "@type": "MusicAlbum", name: "Darkside", url: `${SITE_URL}/music/darkside` },
-            { "@type": "MusicAlbum", name: "Munchies", url: `${SITE_URL}/music/munchies` },
-            { "@type": "MusicAlbum", name: "Lord Knows", url: `${SITE_URL}/music/lord-knows` },
             { "@type": "MusicAlbum", name: "More Life", url: `${SITE_URL}/music/more-life` },
             { "@type": "MusicAlbum", name: "Live From The Dungeon", url: `${SITE_URL}/music/live-from-the-dungeon` },
         ],

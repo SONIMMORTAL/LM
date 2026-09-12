@@ -20,33 +20,6 @@ const ALBUM_METADATA: Record<string, {
     youtubeId?: string;
     price: number;
 }> = {
-    "darkside": {
-        name: "Darkside",
-        artist: "Shadow The Great",
-        cover: "/darkside-cover.jpg",
-        gradient: "from-violet-500/20 via-indigo-600/10 to-slate-900/20",
-        accentColor: "violet",
-        youtubeId: "6-9cYB0_E14",
-        price: 0
-    },
-    "lord-knows": {
-        name: "Lord Knows",
-        artist: "Shadow The Great",
-        cover: "/lord-knows-cover.jpg",
-        gradient: "from-orange-500/20 via-amber-600/10 to-noir-void/20",
-        accentColor: "orange",
-        youtubeId: "QBaz7HbeJHk",
-        price: 0
-    },
-    "munchies": {
-        name: "Munchies",
-        artist: "Shadow The Great",
-        cover: "/MUNCHIES COVER.jpeg",
-        gradient: "from-yellow-500/20 via-orange-500/10 to-red-900/20",
-        accentColor: "yellow",
-        youtubeId: "rYld-JB5zLY",
-        price: 0
-    },
     "the-commission": {
         name: "The Commission",
         artist: "Shadow The Great",

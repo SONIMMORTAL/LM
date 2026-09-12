@@ -2,16 +2,13 @@ import { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/site';
 
 /**
- * Album detail routes under /music/[slug]. Kept here rather than derived from
- * lib/albums.ts because that map only covers the four albums sold as downloads,
- * while all seven of these have live pages.
+ * Album detail routes under /music/[slug]. The video-only tapes (darkside,
+ * lord-knows, munchies) are left off: their old album URLs now redirect to
+ * /videos, which is already listed below.
  */
 const ALBUM_SLUGS = [
     'lost-city',
     'the-commission',
-    'darkside',
-    'munchies',
-    'lord-knows',
     'more-life',
     'live-from-the-dungeon',
 ];

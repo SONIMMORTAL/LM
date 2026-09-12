@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { VIDEO_TAPES } from "./src/lib/video-tapes";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -38,6 +39,15 @@ const nextConfig: NextConfig = {
         destination: '/vip',
         permanent: true,
       },
+      // Video-only tapes used to have album pages; send old links and search
+      // results straight to the tape on the big screen. Done here rather than
+      // in the page so it's a real 308 — the root loading.tsx means a redirect
+      // thrown mid-render goes out as a 200 with a client-side hop.
+      ...VIDEO_TAPES.map((tape) => ({
+        source: `/music/${tape.slug}`,
+        destination: `/videos?v=${tape.youtubeId}`,
+        permanent: true,
+      })),
     ];
   },
   images: {

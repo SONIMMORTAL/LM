@@ -9,9 +9,6 @@ import type { Track } from "@/lib/tracks-server";
 
 // Album name → transparent deluxe-vinyl render (spins on the DJ decks)
 const ALBUM_VINYLS: Record<string, string> = {
-    "Darkside": "/darkside-cover-deluxe-vinyl.png",
-    "Lord Knows": "/lord-knows-cover-4-deluxe-vinyl.png",
-    "Munchies": "/MUNCHIES-COVER-6-deluxe-vinyl.png",
     "The Commission": "/THE-COMMISSION-7-deluxe-vinyl.png",
     "Lost City": "/LC1-2-deluxe-vinyl.png",
     "More Life": "/MORE-LIFE-VINYL-5-deluxe-vinyl.png",
@@ -26,7 +23,6 @@ interface Album {
     tracks: Track[];
     gradient: string;
     accentColor: string;
-    youtubeId?: string;
     price?: number;
 }
 
@@ -90,38 +86,10 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
         tracks.find((t) => t.album && t.album !== currentTrack?.album && t.audio_url) ??
         (tracks.length > 1 ? tracks[(currentTrackIndex + 1) % tracks.length] : undefined);
 
-    // Group tracks by album - filter out Gotham from The Commission
+    // Group tracks by album - filter out Gotham from The Commission.
+    // Darkside, Lord Knows and Munchies are video-only and live on the videos
+    // page (lib/video-tapes.ts) until their audio is uploaded.
     const albums: Album[] = [
-        {
-            name: "Darkside",
-            artist: "Shadow The Great",
-            cover: "/darkside-cover.jpg",
-            gradient: "from-violet-500/20 via-indigo-600/10 to-slate-900/20",
-            accentColor: "violet",
-            youtubeId: "6-9cYB0_E14",
-            tracks: tracks.filter(t => t.album === "Darkside"),
-            price: 0
-        },
-        {
-            name: "Lord Knows",
-            artist: "Shadow The Great",
-            cover: "/lord-knows-cover.jpg",
-            gradient: "from-orange-500/20 via-amber-600/10 to-noir-void/20",
-            accentColor: "orange",
-            youtubeId: "QBaz7HbeJHk",
-            tracks: tracks.filter(t => t.album === "Lord Knows"),
-            price: 0
-        },
-        {
-            name: "Munchies",
-            artist: "Shadow The Great",
-            cover: "/MUNCHIES COVER.jpeg",
-            gradient: "from-yellow-500/20 via-orange-500/10 to-red-900/20",
-            accentColor: "yellow",
-            youtubeId: "rYld-JB5zLY",
-            tracks: tracks.filter(t => t.album === "Munchies"),
-            price: 0
-        },
         {
             name: "The Commission",
             artist: "Shadow The Great",

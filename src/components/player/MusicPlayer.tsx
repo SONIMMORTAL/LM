@@ -33,9 +33,6 @@ const getAlbumCover = (albumName: string | null | undefined): string => {
         case "Lost City": return "/LC1.jpg";
         case "More Life": return "/MORE LIFE VINYL.jpg";
         case "Live From The Dungeon": return "/LFTD.jpg";
-        case "Darkside": return "/darkside-cover.jpg";
-        case "Lord Knows": return "/lord-knows-cover.jpg";
-        case "Munchies": return "/MUNCHIES COVER.jpeg";
         case "The Commission":
         default: return "/THE COMMISSION.png";
     }
