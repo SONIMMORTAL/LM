@@ -717,31 +717,21 @@ export function MobileStudioLanding({
                             <OnAirSign>Live From The Dungeon</OnAirSign>
                         </div>
 
-                        {/* Floating Loaf Man Mascot Stamp on Right */}
-                        <div className="absolute -bottom-2 right-2 w-28 h-28 sm:w-32 sm:h-32 pointer-events-none drop-shadow-[0_12px_24px_rgba(0,0,0,0.95)]">
-                            <Image
-                                src="/loafman.png"
-                                alt="Loaf Man Mascot"
-                                fill
-                                sizes="128px"
-                                className="object-contain"
-                                priority
-                            />
-                        </div>
-
-                        {/* Hero Typography Overlay */}
-                        <div className="absolute bottom-3 left-4 right-28">
-                            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-amber-400">
+                        {/* Loaf Man as a corner watermark with the label line beside him; the video carries the rest */}
+                        <div className="absolute bottom-3 left-2.5 flex items-center gap-1 pointer-events-none">
+                            <div className="relative w-10 h-12 shrink-0 opacity-90 drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]">
+                                <Image
+                                    src="/loafman.png"
+                                    alt=""
+                                    fill
+                                    sizes="48px"
+                                    className="object-contain"
+                                    priority
+                                />
+                            </div>
+                            <h1 className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
+                                <span className="sr-only">Shadow The Great — </span>
                                 LOAF RECORDS · BROOKLYN NY
-                            </p>
-                            <h1
-                                className="font-display uppercase leading-[0.86] tracking-[0.02em] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]"
-                                style={{ fontSize: "clamp(2.5rem, 11vw, 4rem)" }}
-                            >
-                                SHADOW{" "}
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-accent-cyan">
-                                    THE GREAT
-                                </span>
                             </h1>
                         </div>
                     </div>
