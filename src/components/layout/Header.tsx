@@ -1,15 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ShoppingCart, LogOut, ChevronDown } from "lucide-react";
+import { Menu, X, User, ShoppingCart, ShoppingBag, LogOut, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LoafDeck } from "@/components/brand/LoafDeck";
 import { useAuth, AuthModal } from "@/components/auth";
 import { useCart } from "@/context/CartContext";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { socialLinks } from "@/components/layout/socialLinks";
+import { playCrateFlipSfx } from "@/lib/ui-sfx";
 
 const navItems = [
     { href: "/", label: "Home" },
@@ -20,6 +23,21 @@ const navItems = [
     { href: "/bio", label: "Bio" },
 ];
 
+// Phones get every section, named the way the home page's tabs name them
+const mobileNavItems = [
+    { href: "/", label: "Home" },
+    { href: "/music", label: "Music" },
+    { href: "/videos", label: "Videos" },
+    { href: "/shop", label: "Store" },
+    { href: "/loaf-films", label: "Films" },
+    { href: "/gallery", label: "Blackbook" },
+    { href: "/bio", label: "Bio" },
+    { href: "/contact", label: "Contact" },
+];
+
+const isCurrent = (pathname: string, href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,6 +46,7 @@ export function Header() {
     const pathname = usePathname();
     const { user, profile, signOut, loading } = useAuth();
     const { cartCount, setIsCartOpen } = useCart();
+    const tabsRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         let ticking = false;
@@ -62,6 +81,15 @@ export function Header() {
         };
     }, [isMobileMenuOpen]);
 
+    // Bring the current page's tab into view in the scrolling strip
+    useEffect(() => {
+        const tabs = tabsRef.current;
+        const current = tabs?.querySelector<HTMLElement>('[aria-current="page"]');
+        if (tabs && current) {
+            tabs.scrollLeft = current.offsetLeft - (tabs.clientWidth - current.offsetWidth) / 2;
+        }
+    }, [pathname]);
+
     async function handleSignOut() {
         await signOut();
         setIsUserMenuOpen(false);
@@ -78,12 +106,86 @@ export function Header() {
             <header
                 className={cn(
                     "fixed top-0 left-0 right-0 z-40 transition-all duration-200",
+                    // Phones: the same stamped bar as the home page
+                    "max-md:bg-[#07070A]/90 max-md:backdrop-blur-xl max-md:border-b-2 max-md:border-amber-400/25 max-md:safe-top",
                     isScrolled
-                        ? "bg-noir-void/95 backdrop-blur-md border-b border-noir-smoke/50"
-                        : "bg-noir-void/90"
+                        ? "md:bg-noir-void/95 md:backdrop-blur-md md:border-b md:border-noir-smoke/50"
+                        : "md:bg-noir-void/90"
                 )}
             >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                {/* Phones: deck, every section as a stamped tab, bag and the fold-out menu */}
+                <div className="md:hidden flex items-center gap-2 px-3 py-2">
+                    <Link href="/" aria-label="Loaf Records — home" className="relative z-50 shrink-0">
+                        <LoafDeck size={40} priority />
+                    </Link>
+
+                    <nav
+                        ref={tabsRef}
+                        aria-label="Site sections"
+                        className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-1 [mask-image:linear-gradient(to_right,transparent,black_6px,black_calc(100%-20px),transparent)]"
+                    >
+                        {mobileNavItems.map((item) => {
+                            const current = isCurrent(pathname, item.href);
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => playCrateFlipSfx()}
+                                    aria-current={current ? "page" : undefined}
+                                    className={cn(
+                                        "shrink-0 inline-flex items-center rounded-lg border px-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] transition-colors",
+                                        current
+                                            ? "border-amber-400 bg-amber-400 text-black"
+                                            : "border-white/15 bg-black/70 text-noir-cloud hover:text-amber-400 hover:border-amber-400/50"
+                                    )}
+                                >
+                                    {item.label}
+                                </Link>
+                            );
+                        })}
+                    </nav>
+
+                    <button
+                        type="button"
+                        onClick={() => setIsCartOpen(true)}
+                        aria-label={
+                            cartCount > 0
+                                ? `Open bag, ${cartCount} item${cartCount === 1 ? "" : "s"}`
+                                : "Open bag, empty"
+                        }
+                        className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-amber-400/35 bg-amber-400/10 text-amber-300 hover:bg-amber-400 hover:text-black transition-colors"
+                    >
+                        <ShoppingBag className="w-4 h-4" aria-hidden="true" />
+                        {cartCount > 0 && (
+                            <span
+                                aria-hidden="true"
+                                className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-accent-cyan text-black font-mono text-[9px] font-black flex items-center justify-center"
+                            >
+                                {cartCount}
+                            </span>
+                        )}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            playCrateFlipSfx();
+                            setIsMobileMenuOpen(!isMobileMenuOpen);
+                        }}
+                        aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                        aria-expanded={isMobileMenuOpen}
+                        className={cn(
+                            "relative z-50 shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border transition-colors",
+                            isMobileMenuOpen
+                                ? "border-amber-400 bg-amber-400 text-black"
+                                : "border-white/20 bg-white/[0.05] text-white hover:border-amber-400"
+                        )}
+                    >
+                        {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                    </button>
+                </div>
+
+                <div className="hidden md:block max-w-7xl mx-auto px-4 sm:px-6">
                     <div className="flex items-center justify-between h-20 md:h-24">
                         {/* Logo — the Loaf Records deck, same mark as the mobile landing */}
                         <Link
@@ -202,151 +304,170 @@ export function Header() {
                             <ThemeToggle />
                         </div>
 
-                        {/* Mobile Menu Button */}
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="relative z-50 md:hidden p-2.5 text-foreground"
-                            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-                        >
-                            <AnimatePresence mode="wait">
-                                {isMobileMenuOpen ? (
-                                    <motion.div
-                                        key="close"
-                                        initial={{ rotate: -90, opacity: 0 }}
-                                        animate={{ rotate: 0, opacity: 1 }}
-                                        exit={{ rotate: 90, opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <X className="w-6 h-6" />
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        key="menu"
-                                        initial={{ rotate: 90, opacity: 0 }}
-                                        animate={{ rotate: 0, opacity: 1 }}
-                                        exit={{ rotate: -90, opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <Menu className="w-6 h-6" />
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </button>
                     </div>
                 </div>
             </header>
 
-            {/* Mobile Menu Overlay */}
+            {/* Mobile menu: the whole screen, lit like the dungeon — big stamped section names */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="fixed inset-0 z-30 md:hidden"
+                        transition={{ duration: 0.25 }}
+                        className="fixed inset-0 z-30 md:hidden bg-[#060608] text-[#F5F5F7]"
                     >
-                        {/* Backdrop */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-noir-void/98"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        />
+                        {/* Brick dungeon mural, halftone and vignette — the home page's atmosphere */}
+                        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+                            <Image
+                                src="/brand/dungeon-crew.png"
+                                alt=""
+                                fill
+                                sizes="100vw"
+                                className="object-cover object-top opacity-[0.14] scale-105"
+                            />
+                            <div
+                                className="absolute inset-0 opacity-25"
+                                style={{
+                                    backgroundImage: "radial-gradient(rgba(245, 158, 11, 0.22) 1px, transparent 1px)",
+                                    backgroundSize: "16px 16px",
+                                }}
+                            />
+                            <div
+                                className="absolute inset-0"
+                                style={{
+                                    background:
+                                        "radial-gradient(ellipse 95% 70% at 50% 15%, rgba(245,158,11,0.12) 0%, rgba(6,6,8,0.9) 55%, #050507 100%)",
+                                }}
+                            />
+                        </div>
 
-                        {/* Menu Content */}
-                        <motion.nav
-                            initial={{ x: "100%" }}
-                            animate={{ x: 0 }}
-                            exit={{ x: "100%" }}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            className="absolute right-0 top-0 bottom-0 w-80 max-w-full bg-noir-charcoal border-l border-noir-smoke flex flex-col pt-24 pb-8 px-6"
+                        <nav
+                            aria-label="Menu"
+                            className="relative h-full overflow-y-auto overscroll-contain px-5 pt-24 pb-32 flex flex-col"
                         >
-                            <div className="flex flex-col gap-2">
-                                {navItems.map((item, index) => {
-                                    const isActive = pathname === item.href;
+                            <p className="font-mono text-[9px] font-bold uppercase tracking-[0.3em] text-amber-400">
+                                Loaf Records · Brooklyn NY
+                            </p>
+
+                            <ul className="mt-3 border-t border-white/10">
+                                {mobileNavItems.map((item, index) => {
+                                    const current = isCurrent(pathname, item.href);
                                     return (
-                                        <motion.div
+                                        <motion.li
                                             key={item.href}
-                                            initial={{ opacity: 0, x: 20 }}
+                                            initial={{ opacity: 0, x: 18 }}
                                             animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: index * 0.05 }}
+                                            transition={{ delay: 0.04 + index * 0.04, type: "spring", stiffness: 320, damping: 28 }}
+                                            className="border-b border-white/10"
                                         >
                                             <Link
                                                 href={item.href}
-                                                className={cn(
-                                                    "flex items-center gap-4 px-4 py-4 rounded-xl transition-colors uppercase tracking-wider",
-                                                    isActive
-                                                        ? "bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20"
-                                                        : "text-foreground hover:bg-noir-slate"
-                                                )}
+                                                onClick={() => playCrateFlipSfx()}
+                                                aria-current={current ? "page" : undefined}
+                                                className="group flex items-center gap-3 py-2.5"
                                             >
-                                                <span className="text-lg font-medium">{item.label}</span>
+                                                <span className="w-6 font-mono text-[10px] font-bold tracking-widest text-amber-400/60">
+                                                    {String(index + 1).padStart(2, "0")}
+                                                </span>
+                                                <span
+                                                    className={cn(
+                                                        "font-display text-[2.5rem] uppercase leading-none tracking-[0.04em] transition-colors",
+                                                        current ? "text-amber-400" : "text-white group-hover:text-amber-300"
+                                                    )}
+                                                >
+                                                    {item.label}
+                                                </span>
+                                                {current && (
+                                                    <span className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-red-500/70 bg-[#1a0606]/85 px-2 py-1 font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#FFE1E1]">
+                                                        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-red-500 motion-safe:animate-pulse" />
+                                                        On air
+                                                    </span>
+                                                )}
                                             </Link>
-                                        </motion.div>
+                                        </motion.li>
                                     );
                                 })}
-                            </div>
+                            </ul>
 
-                            {/* Login & Cart for mobile */}
-                            <div className="mt-8 pt-8 border-t border-noir-smoke flex flex-col gap-4">
+                            {/* Account & bag, styled like the home page's Spin / Shop buttons */}
+                            <div className="mt-6 grid grid-cols-2 gap-2.5">
                                 {user ? (
-                                    <>
-                                        <div className="flex items-center gap-3 px-4 py-3 bg-noir-slate/50 rounded-xl">
-                                            <div className="w-10 h-10 rounded-full bg-accent-cyan text-noir-void flex items-center justify-center font-bold uppercase text-lg">
-                                                {profile?.username?.charAt(0) || user.email?.charAt(0) || "U"}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="font-medium text-foreground truncate">
-                                                    {profile?.display_name || profile?.username}
-                                                </p>
-                                                <p className="text-xs text-noir-ash truncate">{user.email}</p>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={handleSignOut}
-                                            className="flex items-center gap-3 px-4 py-3 bg-noir-slate rounded-xl text-red-400"
-                                        >
-                                            <LogOut className="w-5 h-5" />
-                                            <span className="font-medium">Sign out</span>
-                                        </button>
-                                    </>
+                                    <button
+                                        type="button"
+                                        onClick={handleSignOut}
+                                        className="flex items-center gap-2 rounded-xl border-2 border-white/15 bg-black/60 py-3 px-3 text-left text-white active:scale-[0.98] transition-transform"
+                                    >
+                                        <LogOut className="w-4 h-4 shrink-0 text-red-400" />
+                                        <span className="min-w-0">
+                                            <span className="block font-mono text-[9px] font-bold uppercase tracking-[0.24em] text-noir-cloud truncate">
+                                                {profile?.display_name || profile?.username || user.email?.split("@")[0]}
+                                            </span>
+                                            <span className="block font-display text-[17px] uppercase leading-[1.05] tracking-[0.03em]">
+                                                Sign out
+                                            </span>
+                                        </span>
+                                    </button>
                                 ) : (
                                     <button
+                                        type="button"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setIsAuthModalOpen(true);
                                         }}
-                                        className="flex items-center gap-3 px-4 py-3 bg-noir-slate rounded-xl text-foreground"
+                                        className="flex items-center gap-2 rounded-xl border-2 border-accent-cyan/50 bg-accent-cyan/10 py-3 px-3 text-left text-accent-cyan active:scale-[0.98] transition-transform"
                                     >
-                                        <User className="w-5 h-5" />
-                                        <span className="font-medium">Log in</span>
+                                        <User className="w-4 h-4 shrink-0" />
+                                        <span className="min-w-0">
+                                            <span className="block font-mono text-[9px] font-bold uppercase tracking-[0.24em] opacity-80">
+                                                Account
+                                            </span>
+                                            <span className="block font-display text-[17px] uppercase leading-[1.05] tracking-[0.03em]">
+                                                Log in
+                                            </span>
+                                        </span>
                                     </button>
                                 )}
                                 <button
+                                    type="button"
                                     onClick={() => {
                                         setIsMobileMenuOpen(false);
                                         setIsCartOpen(true);
                                     }}
-                                    className="flex items-center gap-3 px-4 py-3 bg-accent-cyan text-noir-void rounded-xl"
+                                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 py-3 px-3 text-left text-black shadow-[0_0_25px_rgba(245,158,11,0.35)] active:scale-[0.98] transition-transform"
                                 >
-                                    <ShoppingCart className="w-5 h-5" />
-                                    <span className="font-medium">Cart ({cartCount})</span>
+                                    <ShoppingBag className="w-4 h-4 shrink-0" />
+                                    <span className="min-w-0">
+                                        <span className="block font-mono text-[9px] font-black uppercase tracking-[0.24em] text-black/70">
+                                            {cartCount} {cartCount === 1 ? "item" : "items"}
+                                        </span>
+                                        <span className="block font-display text-[17px] uppercase leading-[1.05] tracking-[0.03em]">
+                                            Your bag
+                                        </span>
+                                    </span>
                                 </button>
                             </div>
 
-                            {/* Bottom branding */}
-                            <div className="mt-auto pt-8 border-t border-noir-smoke">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div>
-                                        <p className="text-noir-ash text-sm">Loaf Records</p>
-                                        <p className="text-accent-cyan text-xs mt-1">Brooklyn, NY</p>
-                                    </div>
-                                    <ThemeToggle />
+                            {/* Socials, and the light/dark switch that used to live here */}
+                            <div className="mt-auto pt-8 flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    {socialLinks.map((link) => (
+                                        <a
+                                            key={link.label}
+                                            href={link.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label={link.label}
+                                            className="-m-2 inline-flex h-11 w-11 items-center justify-center text-white/60 transition-colors hover:text-amber-300"
+                                        >
+                                            <link.icon className="h-5 w-5" />
+                                        </a>
+                                    ))}
                                 </div>
+                                <ThemeToggle />
                             </div>
-                        </motion.nav>
+                        </nav>
                     </motion.div>
                 )}
             </AnimatePresence>
