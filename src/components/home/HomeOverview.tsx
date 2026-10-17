@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ALBUMS } from "@/lib/albums";
+import { socialLinks } from "@/components/layout/socialLinks";
 
 /** Visible, server-rendered context and navigation for both home experiences. */
 export function HomeOverview() {
@@ -49,6 +50,27 @@ export function HomeOverview() {
                             ))}
                         </ul>
                     </nav>
+                </div>
+
+                {/* Phones end here, so the socials the desktop footer carries live on this line */}
+                <div className="mt-10 flex items-center justify-between gap-4 border-t border-white/10 pt-6 lg:hidden">
+                    <div className="flex items-center gap-4">
+                        {socialLinks.map((link) => (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={link.label}
+                                className="-m-2 inline-flex h-11 w-11 items-center justify-center text-white/60 transition-colors hover:text-amber-300"
+                            >
+                                <link.icon className="h-5 w-5" />
+                            </a>
+                        ))}
+                    </div>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
+                        © {new Date().getFullYear()} Loaf Records
+                    </p>
                 </div>
             </div>
         </section>

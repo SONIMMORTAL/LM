@@ -32,6 +32,7 @@ import type { PrintfulProduct } from "@/lib/printful";
 import { AlbumPurchaseModal } from "@/components/music/AlbumPurchaseModal";
 import { LoafDeck } from "@/components/brand/LoafDeck";
 import { OnAirSign } from "@/components/brand/OnAirSign";
+import { LostCityHeroTape } from "@/components/home/LostCityHeroTape";
 
 interface ShowcaseAlbum {
     id: string;
@@ -626,83 +627,67 @@ export function MobileStudioLanding({
             {/* ═══════════════════════════════════════════════════════════
                 STICKY HEADER
                ═══════════════════════════════════════════════════════════ */}
+            {/* The nav banner stands on its own: deck, tabs, bag. The hero below carries the name */}
             <header className="sticky top-0 z-40 bg-[#07070A]/90 backdrop-blur-xl border-b-2 border-amber-400/25 safe-top">
-                <div className="max-w-2xl mx-auto px-4 py-2.5 flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2.5">
-                        {/* The Loaf Records deck — same mark as the desktop */}
-                        <LoafDeck size={44} label="Loaf Records" priority />
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <span className="font-display text-xl tracking-[0.06em] leading-none text-white">
-                                    SHADOW THE GREAT
-                                </span>
-                                <span className="rounded bg-amber-400 px-1.5 py-0.5 font-mono text-[8px] font-black uppercase tracking-widest text-black">
-                                    OFFICIAL
-                                </span>
-                            </div>
-                            <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-amber-400/90 mt-0.5">
-                                Loaf Records · Brooklyn NY
-                            </p>
-                        </div>
-                    </div>
+                <div className="max-w-2xl mx-auto px-3 sm:px-4 py-2 flex items-center gap-2">
+                    {/* The Loaf Records deck — same mark as the desktop */}
+                    <LoafDeck size={40} label="Loaf Records" priority />
 
-                    <div className="flex items-center gap-2">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                playCrateFlipSfx();
-                                onSwitchToRoom();
-                            }}
-                            className="hidden sm:flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/[0.05] px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-white hover:border-amber-400 transition-colors"
-                        >
-                            <Monitor className="w-3.5 h-3.5 text-amber-400" />
-                            <span>Room View</span>
-                        </button>
+                    {/* Stamped Navigation Tabs — faded at the edges so it reads as a scroller */}
+                    <nav
+                        aria-label="Loaf Records mobile sections"
+                        className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-1 [mask-image:linear-gradient(to_right,transparent,black_6px,black_calc(100%-20px),transparent)]"
+                    >
+                        {[
+                            { href: "#master-anatomy", label: "Music" },
+                            { href: "#merch-anatomy", label: "Merch" },
+                            { href: "#cinema-stage", label: "Lost City" },
+                            { href: "/bio", label: "Bio ↗" },
+                            { href: "/shop", label: "Store ↗" },
+                            { href: "/gallery", label: "Blackbook ↗" },
+                        ].map((pill) => {
+                            const pillClass =
+                                "shrink-0 inline-flex items-center rounded-lg border border-white/15 bg-black/70 px-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-noir-cloud hover:text-amber-400 hover:border-amber-400/50 transition-colors";
+                            // Other pages go through the router so the mini player keeps playing;
+                            // a plain link would reload the site and cut the music off
+                            return pill.href.startsWith("/") ? (
+                                <Link key={pill.label} href={pill.href} onClick={() => playCrateFlipSfx()} className={pillClass}>
+                                    {pill.label}
+                                </Link>
+                            ) : (
+                                <a key={pill.label} href={pill.href} onClick={() => playCrateFlipSfx()} className={pillClass}>
+                                    {pill.label}
+                                </a>
+                            );
+                        })}
+                    </nav>
 
-                        <button
-                            type="button"
-                            onClick={() => setIsCartOpen(true)}
-                            aria-label="Open shopping bag"
-                            className="relative flex items-center justify-center w-10 h-10 rounded-xl border border-amber-400/35 bg-amber-400/10 text-amber-300 hover:bg-amber-400 hover:text-black transition-colors"
-                        >
-                            <ShoppingBag className="w-4 h-4" />
-                            {cartCount > 0 && (
-                                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-accent-cyan text-black font-mono text-[9px] font-black flex items-center justify-center">
-                                    {cartCount}
-                                </span>
-                            )}
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            playCrateFlipSfx();
+                            onSwitchToRoom();
+                        }}
+                        className="hidden sm:flex shrink-0 items-center gap-1.5 rounded-xl border border-white/20 bg-white/[0.05] px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-white hover:border-amber-400 transition-colors"
+                    >
+                        <Monitor className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Room View</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => setIsCartOpen(true)}
+                        aria-label="Open shopping bag"
+                        className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-amber-400/35 bg-amber-400/10 text-amber-300 hover:bg-amber-400 hover:text-black transition-colors"
+                    >
+                        <ShoppingBag className="w-4 h-4" />
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-accent-cyan text-black font-mono text-[9px] font-black flex items-center justify-center">
+                                {cartCount}
+                            </span>
+                        )}
+                    </button>
                 </div>
-
-                {/* Stamped Navigation Tabs */}
-                <nav
-                    aria-label="Loaf Records mobile sections"
-                    className="max-w-2xl mx-auto px-4 pb-2 flex items-center gap-1.5 overflow-x-auto hide-scrollbar"
-                >
-                    {[
-                        { href: "#master-anatomy", label: "Music" },
-                        { href: "#merch-anatomy", label: "Merch" },
-                        { href: "#cinema-stage", label: "Lost City" },
-                        { href: "/bio", label: "Bio ↗" },
-                        { href: "/shop", label: "Store ↗" },
-                        { href: "/gallery", label: "Blackbook ↗" },
-                    ].map((pill) => {
-                        const pillClass =
-                            "shrink-0 rounded-lg border border-white/15 bg-black/70 px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-noir-cloud hover:text-amber-400 hover:border-amber-400/50 transition-colors";
-                        // Other pages go through the router so the mini player keeps playing;
-                        // a plain link would reload the site and cut the music off
-                        return pill.href.startsWith("/") ? (
-                            <Link key={pill.label} href={pill.href} onClick={() => playCrateFlipSfx()} className={pillClass}>
-                                {pill.label}
-                            </Link>
-                        ) : (
-                            <a key={pill.label} href={pill.href} onClick={() => playCrateFlipSfx()} className={pillClass}>
-                                {pill.label}
-                            </a>
-                        );
-                    })}
-                </nav>
             </header>
 
             {/* ═══════════════════════════════════════════════════════════
@@ -720,6 +705,8 @@ export function MobileStudioLanding({
                             sizes="(max-width: 768px) 96vw, 680px"
                             className="object-cover object-center scale-[1.02]"
                         />
+                        {/* Lost City on tape over the mural; the mural stays if it can't play */}
+                        <LostCityHeroTape />
                         <div
                             aria-hidden
                             className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-[#0B0B0F]/45 to-black/30"
