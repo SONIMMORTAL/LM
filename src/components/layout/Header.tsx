@@ -345,13 +345,31 @@ export function Header() {
 
                         <nav
                             aria-label="Menu"
-                            className="relative h-full overflow-y-auto overscroll-contain px-5 pt-24 pb-32 flex flex-col"
+                            className="relative h-full overflow-y-auto overscroll-contain px-5 pt-24 pb-32"
                         >
-                            <p className="font-mono text-[9px] font-bold uppercase tracking-[0.3em] text-amber-400">
-                                Loaf Records · Brooklyn NY
-                            </p>
+                            {/* Socials sit up top, where the floating mini player can't cover them */}
+                            <div className="flex items-center justify-between gap-2">
+                                <p className="min-w-0 truncate font-mono text-[8px] font-bold uppercase tracking-[0.24em] text-amber-400">
+                                    Loaf Records · Brooklyn NY
+                                </p>
+                                <div className="flex shrink-0 items-center">
+                                    {socialLinks.map((link) => (
+                                        <a
+                                            key={link.label}
+                                            href={link.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label={link.label}
+                                            className="inline-flex h-10 w-8 items-center justify-center text-white/60 transition-colors hover:text-amber-300"
+                                        >
+                                            <link.icon className="h-[18px] w-[18px]" />
+                                        </a>
+                                    ))}
+                                    <ThemeToggle />
+                                </div>
+                            </div>
 
-                            <ul className="mt-3 border-t border-white/10">
+                            <ul className="mt-2 border-t border-white/10">
                                 {mobileNavItems.map((item, index) => {
                                     const current = isCurrent(pathname, item.href);
                                     return (
@@ -366,14 +384,14 @@ export function Header() {
                                                 href={item.href}
                                                 onClick={() => playCrateFlipSfx()}
                                                 aria-current={current ? "page" : undefined}
-                                                className="group flex items-center gap-3 py-2.5"
+                                                className="group flex items-center gap-3 py-2"
                                             >
                                                 <span className="w-6 font-mono text-[10px] font-bold tracking-widest text-amber-400/60">
                                                     {String(index + 1).padStart(2, "0")}
                                                 </span>
                                                 <span
                                                     className={cn(
-                                                        "font-display text-[2.5rem] uppercase leading-none tracking-[0.04em] transition-colors",
+                                                        "font-display text-[2.25rem] uppercase leading-none tracking-[0.04em] transition-colors",
                                                         current ? "text-amber-400" : "text-white group-hover:text-amber-300"
                                                     )}
                                                 >
@@ -449,24 +467,6 @@ export function Header() {
                                 </button>
                             </div>
 
-                            {/* Socials, and the light/dark switch that used to live here */}
-                            <div className="mt-auto pt-8 flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    {socialLinks.map((link) => (
-                                        <a
-                                            key={link.label}
-                                            href={link.href}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            aria-label={link.label}
-                                            className="-m-2 inline-flex h-11 w-11 items-center justify-center text-white/60 transition-colors hover:text-amber-300"
-                                        >
-                                            <link.icon className="h-5 w-5" />
-                                        </a>
-                                    ))}
-                                </div>
-                                <ThemeToggle />
-                            </div>
                         </nav>
                     </motion.div>
                 )}
