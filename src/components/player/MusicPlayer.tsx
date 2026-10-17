@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { claimAudio, onAudioClaim, setMasterVolume } from "@/lib/audio-bus";
+import { onWelcomeRequest, takeWelcomeRequest } from "@/lib/welcome-track";
 
 interface Track {
     id: string;
@@ -314,6 +315,112 @@ export function MusicPlayer() {
         }
     }, [currentTrackIndex, tracks, isPlaying, currentTrack]);
 
+    // ── Welcome track — the song that greets a first boot ───────────
+    // Mobile browsers refuse unmuted autoplay until the visitor has touched the
+    // page, so we try straight away and, if refused, start on their first tap
+    // or key press. Unlike the old "unlock on first interaction" hack, this is
+    // a one-shot armed only by an explicit request, and it stands down the
+    // moment the visitor picks any other track, video or deck.
+    const volumeRef = useRef(volume);
+    const isMutedRef = useRef(isMuted);
+    useEffect(() => {
+        volumeRef.current = volume;
+        isMutedRef.current = isMuted;
+    }, [volume, isMuted]);
+
+    useEffect(() => {
+        if (tracks.length === 0) return;
+        let disarm: (() => void) | null = null;
+
+        const startWelcome = (title: string): (() => void) => {
+            const audio = audioRef.current;
+            const idx = (() => {
+                const exact = tracks.findIndex((t) => t.title === title && t.audio_url);
+                return exact >= 0 ? exact : tracks.findIndex((t) => t.album === title && t.audio_url);
+            })();
+            // Never talk over something the visitor already has playing.
+            if (!audio || idx < 0 || !audio.paused) return () => {};
+
+            const src = tracks[idx].audio_url as string;
+            const expectedHref = new URL(src, window.location.origin).href;
+            setCurrentTrackIndex(idx);
+            audio.src = src;
+
+            let done = false;
+            let fadeFrame = 0;
+            const gestureEvents = ["click", "touchend", "keydown"] as const;
+
+            const fadeIn = () => {
+                const startedAt = performance.now();
+                const step = (now: number) => {
+                    const t = Math.min(1, Math.max(0, (now - startedAt) / 2500));
+                    const target = isMutedRef.current ? 0 : volumeRef.current;
+                    audio.volume = target * t;
+                    if (t < 1) fadeFrame = requestAnimationFrame(step);
+                };
+                audio.volume = 0;
+                fadeFrame = requestAnimationFrame(step);
+            };
+
+            const attempt = () => {
+                if (done) return;
+                if (audio.src !== expectedHref) return stop(); // visitor moved on
+                if (!audio.paused) return stop();
+                fadeIn();
+                audio.play().then(stop).catch(() => {
+                    // Still blocked (e.g. the touch was a scroll, not a tap) — keep waiting.
+                    cancelAnimationFrame(fadeFrame);
+                    audio.volume = isMutedRef.current ? 0 : volumeRef.current;
+                });
+            };
+
+            const onGesture = () => attempt();
+
+            const stopListening = () => {
+                gestureEvents.forEach((type) =>
+                    window.removeEventListener(type, onGesture, true)
+                );
+                window.removeEventListener("playMusic", cancel);
+                stopClaimWatch();
+            };
+
+            function stop() {
+                if (done) return;
+                done = true;
+                stopListening();
+            }
+
+            // Another source taking over — or a different track picked — stands it down.
+            function cancel() {
+                cancelAnimationFrame(fadeFrame);
+                stop();
+            }
+
+            const stopClaimWatch = onAudioClaim("player", cancel);
+            window.addEventListener("playMusic", cancel);
+            gestureEvents.forEach((type) =>
+                window.addEventListener(type, onGesture, { capture: true, passive: true })
+            );
+
+            attempt();
+            return cancel;
+        };
+
+        const tryWelcome = () => {
+            const title = takeWelcomeRequest();
+            if (!title) return;
+            disarm?.();
+            disarm = startWelcome(title);
+        };
+
+        tryWelcome();
+        const unsubscribe = onWelcomeRequest(tryWelcome);
+        return () => {
+            unsubscribe();
+            disarm?.();
+        };
+    }, [tracks]);
+
     // ── MediaSession API — lock screen / tab controls ───────────────
     useEffect(() => {
         if (!("mediaSession" in navigator) || !currentTrack) return;
@@ -482,13 +589,13 @@ export function MusicPlayer() {
 function CollapsedPlayer({ track, isPlaying }: { track: Track; isPlaying: boolean }) {
     return (
         <motion.div
-            initial={{ opacity: 0, filter: "blur(4px)" }}
-            animate={{ opacity: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, filter: "blur(4px)" }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.18 }}
             className="flex items-center gap-3 whitespace-nowrap"
         >
-            <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0">
+            <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 ring-1 ring-white/10">
                 <Image src={getAlbumCover(track?.album)} alt={track?.album || "Album"} fill sizes="32px" className="object-cover" />
             </div>
             <div className="flex items-center gap-2">
@@ -501,10 +608,11 @@ function CollapsedPlayer({ track, isPlaying }: { track: Track; isPlaying: boolea
                 </span>
             </div>
             {isPlaying && (
-                <div className="flex items-end gap-0.5 h-3">
-                    {[1, 2, 3].map((bar) => (
-                        <div key={bar} className="w-0.5 bg-accent-cyan rounded-full animate-pulse" style={{ height: `${4 + bar * 3}px` }} />
-                    ))}
+                <div className="flex items-end gap-[2px] h-3.5 pl-0.5" aria-hidden>
+                    <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-1" />
+                    <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-2" />
+                    <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-3" />
+                    <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-4" />
                 </div>
             )}
         </motion.div>
@@ -540,10 +648,10 @@ function ExpandedPlayer({
 
     return (
         <motion.div
-            initial={{ opacity: 0, filter: "blur(4px)" }}
-            animate={{ opacity: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, filter: "blur(4px)" }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.18 }}
             className="p-4 w-full sm:w-[384px]"
         >
             {/* Close button */}
@@ -561,18 +669,32 @@ function ExpandedPlayer({
 
             {/* Album art + info */}
             <div className="flex gap-4 mb-4">
-                <motion.div className={cn("relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-glow-sm")}>
-                    <Image src={getAlbumCover(track?.album)} alt={track?.album || "Album"} fill sizes="64px" className="object-cover" />
-                    {isPlaying && (
-                        <motion.div
-                            className="absolute inset-0 rounded-lg border-2 border-accent-cyan/50"
-                            animate={{ opacity: [0.5, 1, 0.5] }}
-                            transition={{ repeat: Infinity, duration: 2 }}
-                        />
-                    )}
-                </motion.div>
-                <div className="flex flex-col justify-center min-w-0 pr-8">
-                    <h3 className="font-bold text-lg text-foreground truncate tracking-wide uppercase">{track?.title || "No Title"}</h3>
+                <div className="relative w-16 h-16 flex-shrink-0">
+                    {/* Subtle vinyl disc peeking out when spinning */}
+                    <div
+                        aria-hidden
+                        className={cn(
+                            "absolute top-1 bottom-1 -right-2.5 w-14 rounded-full bg-gradient-to-tr from-black via-zinc-900 to-zinc-800 border border-white/15 shadow-md transition-transform duration-500",
+                            isPlaying ? "translate-x-1 vinyl-rotor vinyl-rotor-on" : "translate-x-0 opacity-60"
+                        )}
+                    >
+                        <span className="absolute inset-[38%] rounded-full bg-accent-cyan/40 border border-black/60" />
+                    </div>
+                    <motion.div className="relative w-16 h-16 rounded-lg overflow-hidden shadow-glow-sm ring-1 ring-white/15">
+                        <Image src={getAlbumCover(track?.album)} alt={track?.album || "Album"} fill sizes="64px" className="object-cover" />
+                    </motion.div>
+                </div>
+                <div className="flex flex-col justify-center min-w-0 pr-8 pl-1">
+                    <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-lg text-foreground truncate tracking-wide uppercase">{track?.title || "No Title"}</h3>
+                        {isPlaying && (
+                            <div className="flex items-end gap-[2px] h-3 shrink-0" aria-hidden>
+                                <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-1" />
+                                <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-2" />
+                                <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-3" />
+                            </div>
+                        )}
+                    </div>
                     <p className="text-sm text-noir-cloud truncate">{track?.artist || "Unknown Artist"}</p>
                     <p className="text-xs text-accent-cyan truncate">{track?.album || ""}</p>
                 </div>
@@ -587,7 +709,7 @@ function ExpandedPlayer({
                         style={{ left: `${progress}%`, x: "-50%" }}
                     />
                 </div>
-                <div className="flex justify-between mt-2 text-xs text-noir-ash font-medium">
+                <div className="flex justify-between mt-2 text-xs text-noir-ash font-medium tabular-nums">
                     <span>{currentTime}</span>
                     <span>{totalTime}</span>
                 </div>
@@ -659,10 +781,10 @@ function ExpandedPlayer({
                                         <p className="text-xs text-noir-ash truncate">{t.artist}</p>
                                     </div>
                                     {idx === currentTrackIndex && isPlaying && (
-                                        <div className="flex items-end gap-0.5 h-3">
-                                            {[1, 2, 3].map((bar) => (
-                                                <div key={bar} className="w-0.5 bg-accent-cyan rounded-full animate-pulse" style={{ height: `${4 + bar * 3}px` }} />
-                                            ))}
+                                        <div className="flex items-end gap-[2px] h-3" aria-hidden>
+                                            <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-1" />
+                                            <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-2" />
+                                            <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-3" />
                                         </div>
                                     )}
                                 </button>

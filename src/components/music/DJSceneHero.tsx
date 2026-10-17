@@ -1,12 +1,18 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { Disc, Scissors, Sparkles, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { VinylCanvas3D } from "@/components/three/VinylCanvas3D";
 import { useScratchDecks } from "@/hooks/use-scratch-decks";
+import { playNeedleDropSfx } from "@/lib/ui-sfx";
 import { useCallback, useState } from "react";
+
+const VinylCanvas3D = dynamic(
+    () => import("@/components/three/VinylCanvas3D").then((m) => m.VinylCanvas3D),
+    { ssr: false }
+);
 
 /*
  * The DJ-booth scene. The artwork has two blank turntable platters;
@@ -76,8 +82,14 @@ export function DJSceneHero({
         stopDecks,
     } = useScratchDecks({ sources: [leftSource, rightSource] });
 
-    const armLeft = useCallback(() => { void armDeck(0); }, [armDeck]);
-    const armRight = useCallback(() => { void armDeck(1); }, [armDeck]);
+    const armLeft = useCallback(() => {
+        playNeedleDropSfx();
+        void armDeck(0);
+    }, [armDeck]);
+    const armRight = useCallback(() => {
+        playNeedleDropSfx();
+        void armDeck(1);
+    }, [armDeck]);
 
     // Once the decks are live they own the platters: they keep turning at 33 1/3
     // under the listener's hand rather than following the page player.

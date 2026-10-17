@@ -1,6 +1,7 @@
 
 import { verifyDownloadToken } from "@/lib/token";
 import { getAlbumBySlug } from "@/lib/albums";
+import { findCommissionTrackSpec, isCommissionAlbumName } from "@/lib/commission-tracklist";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import DownloadPageClient from "./DownloadPageClient";
 
@@ -46,8 +47,19 @@ export default async function DownloadPage({
         return <DownloadPageClient error="system" />;
     }
 
+    const isCommission = isCommissionAlbumName(album.name);
+
     // Filter for audio/media files (ignore empty folders or system files)
-    const mediaFiles = files.filter(f => f.name && !f.name.startsWith('.') && f.id);
+    const mediaFiles = files
+        .filter(f => f.name && !f.name.startsWith('.') && f.id)
+        .sort((a, b) => {
+            if (isCommission) {
+                const posA = findCommissionTrackSpec({ filename: a.name })?.position ?? 999;
+                const posB = findCommissionTrackSpec({ filename: b.name })?.position ?? 999;
+                if (posA !== posB) return posA - posB;
+            }
+            return a.name.localeCompare(b.name, undefined, { numeric: true });
+        });
 
     // Generate signed URLs for each file
     const tracksWithUrls = await Promise.all(mediaFiles.map(async (file) => {
@@ -57,8 +69,12 @@ export default async function DownloadPage({
             .from(album.bucket)
             .createSignedUrl(filePath, 60 * 60 * 24); // 24 hour link validity
 
+        const spec = isCommission ? findCommissionTrackSpec({ filename: file.name }) : undefined;
+        const ext = file.name.split('.').pop() || 'mp3';
+        const displayName = spec ? `${spec.title}.${ext}` : file.name;
+
         return {
-            name: file.name,
+            name: displayName,
             url: data?.signedUrl || null,
             size: (file.metadata?.size || 0) as number,
         };

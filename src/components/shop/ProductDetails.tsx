@@ -239,13 +239,6 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         : "default";
     const activeChart = sizeCharts[chartType];
 
-    const isLightProduct = (name: string) => {
-        const t = name.toLowerCase();
-        return ["white", "snow", "ash", "heather grey", "silver", "canvas", "mug", "sticker", "poster", "cream", "beige"].some(
-            (k) => t.includes(k)
-        );
-    };
-
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative">
             {/* Back Button */}
@@ -260,16 +253,14 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
                 {/* Images Column (Left) */}
                 <div className="lg:col-span-7 space-y-4">
-                    {/* Main Showcase */}
-                    <div className="relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br from-noir-charcoal to-noir-slate border border-noir-smoke flex items-center justify-center">
+                    {/* Main Showcase — a light well, like the store tiles, so dark garments stay visible */}
+                    <div className="relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-white border-2 border-white/15 shadow-[0_26px_55px_rgba(0,0,0,0.95)] flex items-center justify-center">
                         {activeImage ? (
                             <Image
                                 src={activeImage}
                                 alt={sync_product.name}
                                 fill
-                                className={`object-cover object-center ${
-                                    isLightProduct(sync_product.name) ? "mix-blend-normal" : "mix-blend-multiply contrast-110"
-                                }`}
+                                className="object-cover object-center"
                                 priority
                                 sizes="(max-width: 768px) 100vw, 50vw"
                             />
@@ -285,7 +276,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                                 <button
                                     key={img}
                                     onClick={() => setActiveImage(img)}
-                                    className={`relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-noir-charcoal border transition-all duration-200 ${
+                                    className={`relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-white border transition-all duration-200 ${
                                         activeImage === img
                                             ? "border-accent-cyan ring-1 ring-accent-cyan/30"
                                             : "border-noir-smoke opacity-70 hover:opacity-100"

@@ -42,11 +42,16 @@ export interface PlatterTelemetry {
   isDragging: boolean;
 }
 
+let sharedGrooveTexture: THREE.CanvasTexture | null = null;
+let sharedDeckSheenTexture: THREE.CanvasTexture | null = null;
+
 /**
  * Procedurally generates an ultra-fine radial micro-groove bump texture for authentic vinyl sheen.
- * Used in showcase mode only — deckMode uses the vinyl PNG directly.
+ * Cached at module scope so 300+ canvas arc draws only run once per session.
  */
-function createVinylGrooveTexture(): THREE.CanvasTexture {
+function getVinylGrooveTexture(): THREE.CanvasTexture {
+  if (sharedGrooveTexture) return sharedGrooveTexture;
+
   const canvas = document.createElement("canvas");
   canvas.width = 1024;
   canvas.height = 1024;
@@ -81,6 +86,51 @@ function createVinylGrooveTexture(): THREE.CanvasTexture {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.generateMipmaps = true;
+  sharedGrooveTexture = texture;
+  return texture;
+}
+
+/**
+ * Stationary anisotropic studio light reflection for top-down deck platters.
+ * Gives spinning 2D deck platters a physical overhead booth reflection.
+ */
+function getDeckSheenTexture(): THREE.CanvasTexture {
+  if (sharedDeckSheenTexture) return sharedDeckSheenTexture;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 512;
+  const ctx = canvas.getContext("2d");
+
+  if (ctx) {
+    ctx.clearRect(0, 0, 512, 512);
+    ctx.save();
+    ctx.translate(256, 256);
+    ctx.rotate(-Math.PI / 5);
+
+    const grad = ctx.createLinearGradient(0, -256, 0, 256);
+    grad.addColorStop(0, "rgba(255, 255, 255, 0)");
+    grad.addColorStop(0.42, "rgba(0, 217, 255, 0.04)");
+    grad.addColorStop(0.5, "rgba(255, 255, 255, 0.22)");
+    grad.addColorStop(0.58, "rgba(255, 220, 180, 0.05)");
+    grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(0, 0, 248, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cut out center label area so only the vinyl grooves catch the harsh specular sweep
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.beginPath();
+    ctx.arc(0, 0, 84, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  sharedDeckSheenTexture = texture;
   return texture;
 }
 
@@ -102,6 +152,10 @@ export function VinylCanvas3D({
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [hasWebGL, setHasWebGL] = useState(true);
+
+  const targetMaterialRef = useRef<THREE.MeshBasicMaterial | THREE.MeshStandardMaterial | null>(null);
+  const activeTextureRef = useRef<THREE.Texture | null>(null);
+  const initialCoverUrlRef = useRef(coverUrl);
 
   const stateRef = useRef({
     isPlaying,
@@ -147,6 +201,49 @@ export function VinylCanvas3D({
     return () => mediaQuery.removeEventListener("change", handleMotionChange);
   }, []);
 
+  // Hot-swap the vinyl/label texture when coverUrl changes WITHOUT rebuilding the WebGL context
+  useEffect(() => {
+    const mat = targetMaterialRef.current;
+    if (!mat) return;
+
+    let cancelled = false;
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      coverUrl,
+      (tex) => {
+        if (cancelled) {
+          tex.dispose();
+          return;
+        }
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.generateMipmaps = true;
+        if (deckMode) {
+          tex.minFilter = THREE.LinearMipmapLinearFilter;
+          tex.magFilter = THREE.LinearFilter;
+        }
+        const prevTex = activeTextureRef.current;
+        activeTextureRef.current = tex;
+        mat.map = tex;
+        mat.color.setHex(0xffffff);
+        mat.needsUpdate = true;
+        if (prevTex && prevTex !== tex) {
+          prevTex.dispose();
+        }
+      },
+      undefined,
+      () => {
+        if (!cancelled) {
+          mat.color.setHex(deckMode ? 0x111111 : 0x1a1a1a);
+          mat.needsUpdate = true;
+        }
+      }
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [coverUrl, deckMode]);
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -155,8 +252,14 @@ export function VinylCanvas3D({
     try {
       const testCanvas = document.createElement("canvas");
       const gl = testCanvas.getContext("webgl2") || testCanvas.getContext("webgl");
-      if (!gl) { setHasWebGL(false); return; }
-    } catch { setHasWebGL(false); return; }
+      if (!gl) {
+        queueMicrotask(() => setHasWebGL(false));
+        return;
+      }
+    } catch {
+      queueMicrotask(() => setHasWebGL(false));
+      return;
+    }
 
     const width = container.clientWidth || 300;
     const height = container.clientHeight || 300;
@@ -222,18 +325,21 @@ export function VinylCanvas3D({
         transparent: true,
         side: THREE.FrontSide,
       });
+      targetMaterialRef.current = discMat;
 
-      // Load the vinyl PNG as the disc texture
+      // Load initial vinyl PNG as the disc texture
       textureLoader.load(
-        coverUrl,
+        initialCoverUrlRef.current,
         (tex) => {
           tex.colorSpace = THREE.SRGBColorSpace;
           tex.generateMipmaps = true;
           tex.minFilter = THREE.LinearMipmapLinearFilter;
           tex.magFilter = THREE.LinearFilter;
+          const prev = activeTextureRef.current;
+          activeTextureRef.current = tex;
           discMat.map = tex;
           discMat.needsUpdate = true;
-          disposables.push(tex);
+          if (prev && prev !== tex) prev.dispose();
         },
         undefined,
         () => {
@@ -246,6 +352,20 @@ export function VinylCanvas3D({
       const disc = new THREE.Mesh(discGeo, discMat);
       scene.add(disc);
       disposables.push(discGeo, discMat);
+
+      // Stationary studio overhead light sheen across the spinning grooves
+      const sheenGeo = new THREE.CircleGeometry(VINYL_RADIUS * 0.98, 48);
+      const sheenMat = new THREE.MeshBasicMaterial({
+        map: getDeckSheenTexture(),
+        transparent: true,
+        opacity: 0.65,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const sheenMesh = new THREE.Mesh(sheenGeo, sheenMat);
+      sheenMesh.position.z = 0.02;
+      scene.add(sheenMesh);
+      disposables.push(sheenGeo, sheenMat);
 
       spinTarget = disc;
       spinAxis = "z"; // CircleGeometry is in XY plane, spin around Z
@@ -281,8 +401,7 @@ export function VinylCanvas3D({
       vinylGroup.rotation.x = THREE.MathUtils.degToRad(18);
       vinylGroup.rotation.y = THREE.MathUtils.degToRad(-10);
 
-      const grooveTexture = createVinylGrooveTexture();
-      disposables.push(grooveTexture);
+      const grooveTexture = getVinylGrooveTexture();
 
       const vinylMaterial = new THREE.MeshPhysicalMaterial({
         color: 0x0a0a0c,
@@ -316,15 +435,18 @@ export function VinylCanvas3D({
         polygonOffsetFactor: -1,
         polygonOffsetUnits: -1,
       });
+      targetMaterialRef.current = labelMat;
 
       textureLoader.load(
-        coverUrl,
+        initialCoverUrlRef.current,
         (tex) => {
           tex.colorSpace = THREE.SRGBColorSpace;
           tex.generateMipmaps = true;
+          const prev = activeTextureRef.current;
+          activeTextureRef.current = tex;
           labelMat.map = tex;
           labelMat.needsUpdate = true;
-          disposables.push(tex);
+          if (prev && prev !== tex) prev.dispose();
         },
         undefined,
         () => {
@@ -567,6 +689,11 @@ export function VinylCanvas3D({
       window.removeEventListener("touchmove", handlePointerMove);
       window.removeEventListener("touchend", handlePointerUp);
 
+      targetMaterialRef.current = null;
+      if (activeTextureRef.current) {
+        activeTextureRef.current.dispose();
+        activeTextureRef.current = null;
+      }
       disposables.forEach((d) => d.dispose());
       renderer.dispose();
       renderer.forceContextLoss();
@@ -575,7 +702,7 @@ export function VinylCanvas3D({
         container.removeChild(domElement);
       }
     };
-  }, [coverUrl, interactive, enableParallax, deckMode, platterRef]);
+  }, [interactive, enableParallax, deckMode, platterRef]);
 
   // Fallback for non-WebGL devices
   if (!hasWebGL) {

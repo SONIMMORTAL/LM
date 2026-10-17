@@ -111,11 +111,12 @@ html[data-theme="light"] .film-grain {
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  background-repeat: repeat;
   opacity: 0.03;
   pointer-events: none;
   z-index: 9999;
-  will-change: opacity;
   transform: translate3d(0, 0, 0);
 }
 
@@ -368,6 +369,97 @@ body {
   font-size: 9px;
   line-height: 1;
   color: var(--color-noir-cloud);
+}
+
+/* ========================
+   CRT Screening Room & Equalizer Polish
+   ======================== */
+.crt-scanlines {
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.28) 50%
+    ),
+    radial-gradient(
+      ellipse at center,
+      transparent 62%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+  background-size: 100% 3px, 100% 100%;
+}
+
+@keyframes crtStaticFlash {
+  0% {
+    opacity: 0.95;
+    transform: scaleY(0.04) scaleX(1.06);
+  }
+  25% {
+    opacity: 0.85;
+    transform: scaleY(1) scaleX(1);
+  }
+  65% {
+    opacity: 0.45;
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+.crt-static-burst {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.18) 0px,
+      rgba(0, 217, 255, 0.14) 1px,
+      rgba(0, 0, 0, 0.85) 2px,
+      rgba(255, 255, 255, 0.1) 3px
+    );
+  animation: crtStaticFlash 380ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes eqBounce1 {
+  0%, 100% { transform: scaleY(0.28); }
+  50% { transform: scaleY(0.95); }
+}
+@keyframes eqBounce2 {
+  0%, 100% { transform: scaleY(0.85); }
+  35% { transform: scaleY(0.3); }
+  70% { transform: scaleY(1); }
+}
+@keyframes eqBounce3 {
+  0%, 100% { transform: scaleY(0.42); }
+  45% { transform: scaleY(0.92); }
+  80% { transform: scaleY(0.25); }
+}
+@keyframes eqBounce4 {
+  0%, 100% { transform: scaleY(0.75); }
+  25% { transform: scaleY(0.98); }
+  65% { transform: scaleY(0.32); }
+}
+
+.eq-bar-1 {
+  transform-origin: bottom;
+  animation: eqBounce1 0.72s ease-in-out infinite;
+  will-change: transform;
+}
+.eq-bar-2 {
+  transform-origin: bottom;
+  animation: eqBounce2 0.58s ease-in-out infinite;
+  will-change: transform;
+}
+.eq-bar-3 {
+  transform-origin: bottom;
+  animation: eqBounce3 0.84s ease-in-out infinite;
+  will-change: transform;
+}
+.eq-bar-4 {
+  transform-origin: bottom;
+  animation: eqBounce4 0.64s ease-in-out infinite;
+  will-change: transform;
 }
 
 :root {

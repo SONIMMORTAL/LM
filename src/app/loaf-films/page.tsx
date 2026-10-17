@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Camera, Film, Play, Check, Send, Sparkles, Clock, Layers } from "lucide-react";
+import { Camera, Film, Play, Check, Send, Sparkles, Clock, Layers, Clapperboard } from "lucide-react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { FilmStrip } from "@/components/films/FilmStrip";
@@ -21,7 +20,8 @@ const packages = [
             "5-7 Days delivery turnaround"
         ],
         icon: Camera,
-        color: "from-amber-700/20 to-amber-900/10 border-amber-700/30 text-amber-500"
+        frame: "border-amber-700/50",
+        accent: "text-amber-600"
     },
     {
         name: "Silver",
@@ -37,7 +37,8 @@ const packages = [
             "10-14 Days delivery turnaround"
         ],
         icon: Film,
-        color: "from-slate-400/20 to-slate-600/10 border-slate-400/30 text-accent-cyan",
+        frame: "border-accent-cyan/50",
+        accent: "text-accent-cyan",
         popular: true
     },
     {
@@ -55,7 +56,8 @@ const packages = [
             "BTS (Behind-The-Scenes) video + 2 socials cuts"
         ],
         icon: Sparkles,
-        color: "from-amber-400/20 to-amber-600/10 border-amber-500/30 text-amber-400"
+        frame: "border-amber-400/50",
+        accent: "text-amber-400"
     }
 ];
 
@@ -86,6 +88,35 @@ const timelineSteps = [
         icon: Play
     }
 ];
+
+// The frames on the reel, in order
+const REEL = [
+    {
+        youtubeId: "OOx9QAeRo8E",
+        title: "Shadow The Great — Lost City",
+        credit: "Directed by Sage Wolf",
+    },
+    {
+        youtubeId: "41Zx0etfnkM",
+        title: "Abel — Rah Tha Ruler & Shadow The Great",
+        credit: "Directed by Loaf Films",
+    },
+    {
+        youtubeId: "jHGAyWqaZ88",
+        title: "Shadow The Great — Soul",
+        credit: "Prod. by Seyer",
+    },
+    {
+        youtubeId: "ONVI4qys5A4",
+        title: "Shadow The Great — Jeeps",
+        credit: "Prod. by Ruggz",
+    },
+];
+
+// Booking form fields in the landing's stamped style. 16px text, so iPhones don't zoom on focus.
+const FIELD_LABEL = "font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-noir-cloud";
+const FIELD =
+    "w-full rounded-xl border border-white/15 bg-black/60 px-4 py-3 text-base text-white placeholder:text-noir-ash focus:border-amber-400/60 focus:outline-none focus:ring-1 focus:ring-amber-400/40";
 
 export default function LoafFilmsPage() {
     const [name, setName] = useState("");
@@ -131,290 +162,367 @@ export default function LoafFilmsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-noir-void text-foreground selection:bg-accent-cyan/30 relative overflow-hidden">
-            
-            {/* Visual background details */}
-            <div className="absolute inset-0 pointer-events-none z-0">
-                <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-accent-cyan/5 rounded-full blur-[140px] opacity-40" />
-                <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[140px] opacity-30" />
-            </div>
-
-            {/* Hero Section */}
-            <section className="relative pt-32 pb-16 px-6 z-10">
-                <div className="max-w-5xl mx-auto text-center space-y-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="space-y-4"
-                    >
-                        <span className="inline-block px-3 py-1 rounded-full border border-accent-cyan/50 text-accent-cyan text-xs font-bold tracking-widest uppercase bg-accent-cyan/5">
-                            Cinematic Services
-                        </span>
-                        <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase leading-none">
-                            LOAF <span className="text-accent-cyan">FILMS</span>
-                        </h1>
-                        <p className="text-noir-cloud text-base sm:text-lg md:text-xl max-w-2xl mx-auto tracking-wide font-light">
-                            Brooklyn-born cinematic execution. We shoot raw, concept-driven music videos and commercial films that reflect visual soul.
-                        </p>
-                        <div className="pt-4">
-                            <a
-                                href="#booking"
-                                className="inline-flex items-center gap-2 px-8 py-4 bg-accent-cyan text-noir-void font-bold rounded-xl shadow-lg shadow-accent-cyan/25 hover:shadow-accent-cyan/40 hover:scale-105 transition-all text-sm uppercase tracking-wider"
-                            >
-                                <Camera className="w-5 h-5" />
-                                Book a Production
-                            </a>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Facade Portfolio Section */}
-            <section className="relative py-16 px-6 z-10 bg-noir-charcoal/30 border-y border-white/5">
-                <div className="max-w-6xl mx-auto space-y-10">
-                    <div>
-                        <span
+        <div className="min-h-screen pt-24 pb-16">
+            {/* ═══════════════════════════════════════════════════════════
+                HERO — the same stamped monument as the mobile landing
+               ═══════════════════════════════════════════════════════════ */}
+            <section className="px-3 sm:px-4 max-w-5xl mx-auto">
+                <div className="relative overflow-hidden rounded-[26px] border-2 border-amber-400/35 bg-[#0B0B0F] shadow-[0_28px_80px_rgba(0,0,0,0.95)]">
+                    <div className="relative h-52 sm:h-72 w-full overflow-hidden">
+                        <Image
+                            src="/LC1.jpg"
+                            alt="Still from Shadow The Great — Lost City, a Loaf Films production"
+                            fill
+                            priority
+                            sizes="(max-width: 1024px) 96vw, 1000px"
+                            className="object-cover object-center"
+                        />
+                        <div
                             aria-hidden
-                            className="pointer-events-none block select-none text-5xl sm:text-7xl font-black uppercase leading-none tracking-tighter text-white/[0.07]"
-                        >
-                            The Reel
-                        </span>
-                        <h2 className="-mt-5 sm:-mt-8 text-lg sm:text-xl font-black uppercase tracking-[0.2em] text-accent-cyan">
-                            Selected Work
-                        </h2>
-                        <p className="mt-2 text-sm text-noir-cloud">
-                            Recent Loaf Films productions. Pull a frame to watch it.
-                        </p>
+                            className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-[#0B0B0F]/45 to-black/30"
+                        />
+
+                        {/* Stamped badge */}
+                        <div className="absolute top-3 left-3">
+                            <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-amber-400">
+                                <Clapperboard className="h-3 w-3" />
+                                Cinematic Services
+                            </span>
+                        </div>
+
+                        {/* Loaf Films seal */}
+                        <div className="absolute bottom-3 right-3 h-14 w-14 sm:h-16 sm:w-16 overflow-hidden rounded-xl border border-amber-400/40 bg-black shadow-[0_0_20px_rgba(245,158,11,0.25)]">
+                            <Image src="/LOAFFILMS.png" alt="Loaf Films" fill sizes="64px" className="object-cover" />
+                        </div>
+
+                        <div className="absolute bottom-3 left-4 right-24">
+                            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-amber-400">
+                                Loaf Records · Production House
+                            </p>
+                            <h1
+                                className="font-display uppercase leading-[0.86] tracking-[0.02em] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]"
+                                style={{ fontSize: "clamp(2.75rem, 13vw, 4.5rem)" }}
+                            >
+                                Loaf{" "}
+                                <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-accent-cyan bg-clip-text text-transparent">
+                                    Films
+                                </span>
+                            </h1>
+                        </div>
                     </div>
 
-                    <FilmStrip
-                        entries={[
-                            {
-                                youtubeId: "OOx9QAeRo8E",
-                                title: "Shadow The Great — Lost City",
-                                credit: "Directed by Sage Wolf",
-                            },
-                            {
-                                youtubeId: "41Zx0etfnkM",
-                                title: "Abel — Rah Tha Ruler & Shadow The Great",
-                                credit: "Directed by Loaf Films",
-                            },
-                            {
-                                youtubeId: "jHGAyWqaZ88",
-                                title: "Shadow The Great — Soul",
-                                credit: "Prod. by Seyer",
-                            },
-                            {
-                                youtubeId: "ONVI4qys5A4",
-                                title: "Shadow The Great — Jeeps",
-                                credit: "Prod. by Ruggz",
-                            },
-                        ]}
-                    />
+                    {/* Stamped ticker */}
+                    <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar border-y border-amber-400/20 bg-black/90 px-4 py-2 font-mono text-[9px] uppercase tracking-[0.22em]">
+                        <span className="shrink-0 font-bold text-amber-400">We Shoot:</span>
+                        <span className="shrink-0 text-white/85">Music Videos</span>
+                        <span className="text-amber-400/50">•</span>
+                        <span className="shrink-0 text-white/85">Commercials</span>
+                        <span className="text-amber-400/50">•</span>
+                        <span className="shrink-0 text-white/85">Direction</span>
+                    </div>
+
+                    {/* Action console */}
+                    <div className="bg-gradient-to-b from-[#111218] to-[#090A0E] p-4">
+                        <p className="text-xs leading-relaxed text-noir-cloud">
+                            Brooklyn-born cinematic execution. We shoot raw, concept-driven music videos and
+                            commercial films that reflect visual soul.
+                        </p>
+                        <div className="mt-3 grid grid-cols-2 gap-2.5">
+                            <a
+                                href="#booking"
+                                className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-3 py-3.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-black shadow-[0_0_25px_rgba(245,158,11,0.35)] transition-transform active:scale-[0.98]"
+                            >
+                                <Camera className="h-4 w-4" />
+                                <span>Book A Shoot</span>
+                            </a>
+                            <a
+                                href="#reel"
+                                className="flex items-center justify-center gap-2 rounded-xl border-2 border-accent-cyan/50 bg-accent-cyan/10 px-3 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan hover:text-black active:scale-[0.98]"
+                            >
+                                <Play className="h-4 w-4 fill-current" />
+                                <span>Watch The Reel</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            {/* Packages Section */}
-            <section className="relative py-24 px-6 z-10">
-                <div className="max-w-6xl mx-auto space-y-16">
-                    <div className="text-center space-y-4">
-                        <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight">
+            <div className="px-3 sm:px-4 max-w-5xl mx-auto mt-4 space-y-5">
+                {/* Stamped jump tabs, like the landing's section pills */}
+                <nav aria-label="Loaf Films sections" className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar">
+                    {[
+                        { href: "#reel", label: "The Reel" },
+                        { href: "#packages", label: "Packages" },
+                        { href: "#process", label: "Process" },
+                        { href: "#booking", label: "Book" },
+                    ].map((tab) => (
+                        <a
+                            key={tab.href}
+                            href={tab.href}
+                            className="inline-flex shrink-0 items-center rounded-lg border border-white/15 bg-black/70 px-2.5 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-noir-cloud transition-colors hover:border-amber-400/50 hover:text-amber-400"
+                        >
+                            {tab.label}
+                        </a>
+                    ))}
+                </nav>
+
+                {/* ═══ THE REEL ═══ */}
+                <section
+                    id="reel"
+                    aria-labelledby="reel-heading"
+                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-white/15 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                >
+                    <div className="flex items-end justify-between gap-3 border-b border-white/10 bg-black/60 p-4 sm:p-5">
+                        <div className="min-w-0">
+                            <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-amber-400">
+                                Selected Work
+                            </p>
+                            <h2
+                                id="reel-heading"
+                                className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-white"
+                            >
+                                The Reel
+                            </h2>
+                            <p className="mt-1.5 text-xs text-noir-cloud">
+                                Recent Loaf Films productions. Pull a frame to watch it.
+                            </p>
+                        </div>
+                        <span className="shrink-0 rounded border border-white/15 bg-black/70 px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-white/70">
+                            {REEL.length} Films
+                        </span>
+                    </div>
+                    {/* The strip bleeds to the card's edges */}
+                    <div className="px-6 pt-5 pb-3">
+                        <FilmStrip entries={REEL} />
+                    </div>
+                </section>
+
+                {/* ═══ PACKAGES ═══ */}
+                <section
+                    id="packages"
+                    aria-labelledby="packages-heading"
+                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-amber-400/40 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                >
+                    <div
+                        aria-hidden
+                        className="pointer-events-none absolute -top-24 left-1/2 h-[360px] w-full -translate-x-1/2"
+                        style={{ background: "radial-gradient(circle at 50% 30%, rgba(245, 158, 11, 0.18) 0%, transparent 70%)" }}
+                    />
+                    <div className="relative border-b border-white/10 bg-black/60 p-4 sm:p-5">
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-amber-400">
+                            Flat Rates · No Surprises
+                        </p>
+                        <h2
+                            id="packages-heading"
+                            className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-white"
+                        >
                             Production Packages
                         </h2>
-                        <p className="text-noir-cloud max-w-md mx-auto text-sm">
+                        <p className="mt-1.5 text-xs text-noir-cloud">
                             Transparent pricing tailored to independent and label-signed artists.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="relative grid grid-cols-1 gap-3 p-3 sm:p-5 md:grid-cols-3 md:gap-4">
                         {packages.map((pkg) => {
                             const PkgIcon = pkg.icon;
                             return (
-                                <motion.div
+                                <div
                                     key={pkg.name}
-                                    initial={{ opacity: 0, y: 40 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.6 }}
-                                    className={`relative flex flex-col justify-between p-8 rounded-3xl bg-gradient-to-b ${pkg.color} border backdrop-blur-md transition-all duration-300 hover:scale-[1.02]`}
+                                    className={`relative flex flex-col rounded-2xl border-2 bg-[#101219] p-4 ${pkg.frame}`}
                                 >
-                                    {pkg.popular && (
-                                        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-accent-cyan text-noir-void px-3 py-1 text-xs font-extrabold uppercase rounded-full tracking-widest shadow-glow-sm">
-                                            RECOMMENDED
-                                        </span>
-                                    )}
-
-                                    <div className="space-y-6">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-2xl font-bold uppercase tracking-tight text-white">{pkg.name}</h3>
-                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center">
-                                                <PkgIcon className="w-6 h-6 text-white" />
-                                            </div>
-                                        </div>
-
+                                    <div className="flex items-start justify-between gap-3">
                                         <div>
-                                            <span className="text-4xl sm:text-5xl font-black text-white">{pkg.price}</span>
-                                            <span className="text-noir-ash text-xs uppercase tracking-widest ml-2">Flat Rate</span>
+                                            {pkg.popular && (
+                                                <span className="mb-1.5 inline-block rounded bg-accent-cyan px-2 py-0.5 font-mono text-[8px] font-black uppercase tracking-widest text-black">
+                                                    Recommended
+                                                </span>
+                                            )}
+                                            <h3 className="font-display text-2xl uppercase leading-none tracking-wider text-white">
+                                                {pkg.name}
+                                            </h3>
                                         </div>
-
-                                        <p className="text-sm text-noir-cloud leading-relaxed">{pkg.tagline}</p>
-                                        <div className="h-px bg-white/10" />
-
-                                        <ul className="space-y-3">
-                                            {pkg.deliverables.map((item, i) => (
-                                                <li key={i} className="flex items-start gap-3 text-sm text-white/90">
-                                                    <Check className="w-4 h-4 text-accent-cyan flex-shrink-0 mt-0.5" />
-                                                    <span>{item}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-black/70">
+                                            <PkgIcon className={`h-5 w-5 ${pkg.accent}`} />
+                                        </div>
                                     </div>
 
-                                    <div className="pt-8">
-                                        <a
-                                            href="#booking"
-                                            onClick={() => setSelectedPackage(pkg.name)}
-                                            className={`block w-full py-3.5 rounded-xl font-bold uppercase text-xs tracking-wider text-center transition-all ${
-                                                pkg.popular
-                                                    ? "bg-accent-cyan text-noir-void hover:bg-cyan-400"
-                                                    : "bg-white/10 text-white hover:bg-white/15"
-                                            }`}
-                                        >
-                                            Select {pkg.name} Package
-                                        </a>
-                                    </div>
-                                </motion.div>
+                                    <p className="mt-3 font-mono">
+                                        <span className="text-3xl font-bold text-amber-400">{pkg.price}</span>
+                                        <span className="ml-2 text-[9px] uppercase tracking-[0.2em] text-noir-cloud">Flat Rate</span>
+                                    </p>
+                                    <p className="mt-1.5 text-xs leading-relaxed text-noir-cloud">{pkg.tagline}</p>
+
+                                    <ul className="mt-3 space-y-1.5 border-t border-dashed border-white/10 pt-3">
+                                        {pkg.deliverables.map((item) => (
+                                            <li key={item} className="flex items-start gap-2 text-xs text-white/90">
+                                                <Check className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${pkg.accent}`} />
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    <a
+                                        href="#booking"
+                                        onClick={() => setSelectedPackage(pkg.name)}
+                                        className={`mt-4 block rounded-xl py-3 text-center font-mono text-[10px] font-black uppercase tracking-[0.16em] transition-colors ${
+                                            pkg.popular
+                                                ? "bg-accent-cyan text-black shadow-glow-sm"
+                                                : "border border-white/20 bg-black/60 text-white hover:border-amber-400"
+                                        }`}
+                                    >
+                                        Select {pkg.name}
+                                    </a>
+                                </div>
                             );
                         })}
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {/* Process Timeline */}
-            <section className="relative py-24 px-6 z-10 bg-noir-charcoal/20 border-y border-white/5">
-                <div className="max-w-5xl mx-auto space-y-16">
-                    <div className="text-center space-y-4">
-                        <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight">
-                            The Production Process
+                {/* ═══ PROCESS ═══ */}
+                <section
+                    id="process"
+                    aria-labelledby="process-heading"
+                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-white/15 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                >
+                    <div className="border-b border-white/10 bg-black/60 p-4 sm:p-5">
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-accent-cyan">
+                            Inception To Upload
+                        </p>
+                        <h2
+                            id="process-heading"
+                            className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-white"
+                        >
+                            The Process
                         </h2>
-                        <p className="text-noir-cloud max-w-md mx-auto text-sm">
-                            From inception to upload, here is how we bring your tracks to life.
+                        <p className="mt-1.5 text-xs text-noir-cloud">
+                            Here is how we bring your tracks to life.
                         </p>
                     </div>
 
-                    <div className="relative border-l border-white/10 pl-6 sm:pl-12 ml-4 sm:ml-8 space-y-12">
-                        {timelineSteps.map((step, idx) => {
+                    <ol className="space-y-2.5 p-3 sm:p-5">
+                        {timelineSteps.map((step) => {
                             const StepIcon = step.icon;
+                            const [number, title] = step.title.split(". ");
                             return (
-                                <motion.div
-                                    key={idx}
-                                    initial={{ opacity: 0, x: -30 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.5, delay: idx * 0.1 }}
-                                    className="relative space-y-2"
+                                <li
+                                    key={step.title}
+                                    className="flex gap-3 rounded-2xl border border-white/10 bg-[#101219] p-3.5"
                                 >
-                                    {/* Timeline bullet icon */}
-                                    <div className="absolute -left-[45px] sm:-left-[69px] top-0 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-noir-charcoal border border-white/10 flex items-center justify-center">
-                                        <StepIcon className="w-4 h-4 sm:w-5 sm:h-5 text-accent-cyan" />
+                                    <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl border border-amber-400/40 bg-black/85">
+                                        <span className="font-mono text-[10px] font-black leading-none text-amber-400">{number}</span>
+                                        <StepIcon className="mt-0.5 h-3 w-3 text-white/60" />
                                     </div>
-                                    <h3 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-white">{step.title}</h3>
-                                    <p className="text-sm sm:text-base text-noir-cloud max-w-2xl leading-relaxed">{step.desc}</p>
-                                </motion.div>
+                                    <div className="min-w-0">
+                                        <h3 className="font-display text-xl uppercase leading-none tracking-wider text-white">
+                                            {title}
+                                        </h3>
+                                        <p className="mt-1 text-xs leading-relaxed text-noir-cloud">{step.desc}</p>
+                                    </div>
+                                </li>
                             );
                         })}
-                    </div>
-                </div>
-            </section>
+                    </ol>
+                </section>
 
-            {/* Booking Form Section */}
-            <section id="booking" className="relative py-24 px-6 z-10 scroll-mt-24">
-                <div className="max-w-xl mx-auto">
-                    <div className="glass-card p-8 rounded-3xl space-y-8 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-accent-cyan/5 to-transparent pointer-events-none" />
-                        <div className="text-center space-y-2">
-                            <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight">
-                                Book Your Shoot
-                            </h2>
-                            <p className="text-noir-cloud text-sm">
-                                Let&apos;s build your vision. Fill in the inquiry form below and we&apos;ll reply within 24 hours.
-                            </p>
+                {/* ═══ BOOKING ═══ */}
+                <section
+                    id="booking"
+                    aria-labelledby="booking-heading"
+                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-accent-cyan/30 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                >
+                    <div
+                        aria-hidden
+                        className="pointer-events-none absolute -top-24 left-1/2 h-[360px] w-full -translate-x-1/2"
+                        style={{ background: "radial-gradient(circle at 50% 30%, rgba(0, 217, 255, 0.14) 0%, transparent 70%)" }}
+                    />
+                    <div className="relative border-b border-white/10 bg-black/60 p-4 sm:p-5">
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-accent-cyan">
+                            Reply Within 24 Hours
+                        </p>
+                        <h2
+                            id="booking-heading"
+                            className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-white"
+                        >
+                            Book Your Shoot
+                        </h2>
+                        <p className="mt-1.5 text-xs text-noir-cloud">
+                            Let&apos;s build your vision. Tell us about the track and we&apos;ll get back to you.
+                        </p>
+                    </div>
+
+                    <form onSubmit={handleBooking} className="relative mx-auto max-w-xl space-y-4 p-4 sm:p-5">
+                        <div className="space-y-1.5">
+                            <label htmlFor="films-name" className={FIELD_LABEL}>Your Name</label>
+                            <input
+                                id="films-name"
+                                type="text"
+                                required
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Enter your name"
+                                className={FIELD}
+                            />
                         </div>
 
-                        <form onSubmit={handleBooking} className="space-y-6">
-                            <div className="space-y-2">
-                                <label htmlFor="films-name" className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Your Name</label>
-                                <input
-                                    id="films-name"
-                                    type="text"
-                                    required
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    placeholder="Enter your name"
-                                    className="w-full px-4 py-3 bg-noir-void rounded-xl text-white border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent-cyan"
-                                />
-                            </div>
+                        <div className="space-y-1.5">
+                            <label htmlFor="films-email" className={FIELD_LABEL}>Email Address</label>
+                            <input
+                                id="films-email"
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="yourname@gmail.com"
+                                className={FIELD}
+                            />
+                        </div>
 
-                            <div className="space-y-2">
-                                <label htmlFor="films-email" className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Email Address</label>
-                                <input
-                                    id="films-email"
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="yourname@gmail.com"
-                                    className="w-full px-4 py-3 bg-noir-void rounded-xl text-white border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent-cyan"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label htmlFor="films-package" className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Select Package</label>
-                                <select
-                                    id="films-package"
-                                    value={selectedPackage}
-                                    onChange={(e) => setSelectedPackage(e.target.value)}
-                                    className="w-full px-4 py-3 bg-noir-void rounded-xl text-white border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent-cyan"
-                                >
-                                    <option value="Bronze">Bronze Package ($1,500)</option>
-                                    <option value="Silver">Silver Package ($3,000)</option>
-                                    <option value="Gold">Gold Package ($6,000)</option>
-                                    <option value="Custom">Custom / Commercial Project</option>
-                                </select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label htmlFor="films-message" className="text-xs uppercase tracking-wider text-noir-cloud font-medium">Message & Vision</label>
-                                <textarea
-                                    id="films-message"
-                                    required
-                                    rows={5}
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    placeholder="Tell us about your track, visual references, shoot ideas, or locations..."
-                                    className="w-full px-4 py-3 bg-noir-void rounded-xl text-white border border-white/10 focus:outline-none focus:ring-1 focus:ring-accent-cyan resize-none"
-                                />
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full py-4 bg-accent-cyan text-noir-void font-bold uppercase rounded-xl hover:bg-cyan-400 disabled:opacity-50 transition-all flex items-center justify-center gap-2 text-sm tracking-wider shadow-glow-md"
+                        <div className="space-y-1.5">
+                            <label htmlFor="films-package" className={FIELD_LABEL}>Select Package</label>
+                            <select
+                                id="films-package"
+                                value={selectedPackage}
+                                onChange={(e) => setSelectedPackage(e.target.value)}
+                                className={FIELD}
                             >
-                                {isSubmitting ? (
-                                    <span className="w-5 h-5 border-2 border-noir-void/30 border-t-noir-void rounded-full animate-spin" />
-                                ) : (
-                                    <>
-                                        Submit Booking Inquiry
-                                        <Send className="w-4 h-4" />
-                                    </>
-                                )}
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </section>
+                                <option value="Bronze">Bronze Package ($1,500)</option>
+                                <option value="Silver">Silver Package ($3,000)</option>
+                                <option value="Gold">Gold Package ($6,000)</option>
+                                <option value="Custom">Custom / Commercial Project</option>
+                            </select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label htmlFor="films-message" className={FIELD_LABEL}>Message & Vision</label>
+                            <textarea
+                                id="films-message"
+                                required
+                                rows={5}
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                placeholder="Tell us about your track, visual references, shoot ideas, or locations..."
+                                className={`${FIELD} resize-none`}
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 py-3.5 font-mono text-xs font-black uppercase tracking-[0.18em] text-black shadow-[0_0_25px_rgba(245,158,11,0.3)] transition-transform active:scale-[0.98] disabled:opacity-50"
+                        >
+                            {isSubmitting ? (
+                                <span className="h-5 w-5 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                            ) : (
+                                <>
+                                    Send Booking Inquiry
+                                    <Send className="h-4 w-4" />
+                                </>
+                            )}
+                        </button>
+                    </form>
+                </section>
+            </div>
         </div>
     );
 }

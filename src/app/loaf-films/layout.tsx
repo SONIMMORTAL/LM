@@ -1,4 +1,5 @@
 import { SITE_URL } from "@/lib/site";
+import { StreetBackdrop } from "@/components/layout/StreetBackdrop";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -120,7 +121,7 @@ export default function LoafFilmsLayout({
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(loafFilmsJsonLd) }}
             />
-            {children}
+            <StreetBackdrop>{children}</StreetBackdrop>
         </>
     );
 }

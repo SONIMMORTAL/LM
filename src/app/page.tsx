@@ -1,5 +1,9 @@
 import HomeClient from "@/components/home/HomeClient";
+import { getTracks } from "@/lib/tracks-server";
+import { getPrintfulProducts } from "@/lib/printful";
 import type { Metadata } from "next";
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
     title: "Loaf Records",
@@ -24,6 +28,11 @@ export const metadata: Metadata = {
     },
 };
 
-export default function Home() {
-    return <HomeClient />;
+export default async function Home() {
+    const [tracks, products] = await Promise.all([
+        getTracks().catch(() => []),
+        getPrintfulProducts().catch(() => []),
+    ]);
+
+    return <HomeClient initialTracks={tracks} initialProducts={products} />;
 }

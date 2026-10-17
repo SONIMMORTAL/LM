@@ -1,29 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Check, Loader2 } from "lucide-react";
-import { useCart } from "@/context/CartContext";
-import type { PrintfulProduct, PrintfulProductDetails } from "@/lib/printful";
+import { useInView } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import useSWR from "swr";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-
+import type { PrintfulProduct, PrintfulProductDetails } from "@/lib/printful";
 
 interface ProductCardProps {
     product: PrintfulProduct;
+    /** Position in its collection, stamped on the tile like the landing's lookbook. */
+    index: number;
 }
 
 const colorMap: Record<string, string> = {
-    black: "bg-black border-white/20",
+    black: "bg-black border-white/30",
     white: "bg-white border-black/20",
     red: "bg-red-600 border-transparent",
     blue: "bg-blue-600 border-transparent",
     grey: "bg-zinc-500 border-transparent",
     gray: "bg-zinc-500 border-transparent",
-    charcoal: "bg-zinc-800 border-transparent",
+    charcoal: "bg-zinc-800 border-white/20",
     navy: "bg-blue-900 border-transparent",
     green: "bg-emerald-700 border-transparent",
     yellow: "bg-yellow-500 border-transparent",
@@ -38,254 +36,97 @@ const colorMap: Record<string, string> = {
     khaki: "bg-[#c3b091] border-transparent",
 };
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export function ProductCard({ product }: ProductCardProps) {
-    const { addToCart } = useCart();
-    
-    // Lazy load detailed product data for Quick Add
-    const { data: details, error } = useSWR<PrintfulProductDetails>(
-        `/api/products/${product.id}`, 
+const formatPrice = (amount: number, currency: string) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: currency || "USD" }).format(amount);
+
+/**
+ * A merch tile in the landing's lookbook style: the garment big on a light well so
+ * dark pieces still read, a stamped drop number, the price, and the colours it comes in.
+ * Size and colour are picked on the product page.
+ */
+export function ProductCard({ product, index }: ProductCardProps) {
+    // Prices and colours load once the tile is close to the screen, so a long store
+    // doesn't fire every product request at once on a slow phone
+    const tileRef = useRef<HTMLAnchorElement>(null);
+    const nearScreen = useInView(tileRef, { once: true, margin: "300px 0px" });
+    const { data: details } = useSWR<PrintfulProductDetails>(
+        nearScreen ? `/api/products/${product.id}` : null,
         fetcher,
         { revalidateOnFocus: false }
     );
 
-    const sync_variants = details?.sync_variants || [];
-
-    // Get unique colors and sizes
-    const colors = Array.from(
-        new Set(sync_variants.map((v) => v.color).filter(Boolean))
-    ) as string[];
-
-    const sizes = Array.from(
-        new Set(sync_variants.map((v) => v.size).filter(Boolean))
-    ) as string[];
-
-    // Selected state
-    const [selectedColor, setSelectedColor] = useState<string | null>(null);
-    const [selectedSize, setSelectedSize] = useState<string | null>(null);
-
-    // Track button states for Quick Add
-    const [isAdding, setIsAdding] = useState(false);
-    const [isAdded, setIsAdded] = useState(false);
-
-    // Initialize selections once details load
-    useEffect(() => {
-        if (colors.length > 0 && !selectedColor) setSelectedColor(colors[0]);
-        if (sizes.length > 0 && !selectedSize) setSelectedSize(sizes[0]);
-    }, [colors, sizes, selectedColor, selectedSize]);
-
-    // Sync selected size if color changes
-    const handleColorChange = (color: string) => {
-        setSelectedColor(color);
-        const availableSizes = sync_variants
-            .filter((v) => v.color === color)
-            .map((v) => v.size)
-            .filter(Boolean) as string[];
-
-        if (availableSizes.length > 0 && (!selectedSize || !availableSizes.includes(selectedSize))) {
-            setSelectedSize(availableSizes[0]);
-        }
-    };
-
-    // Find active variant
-    const activeVariant =
-        sync_variants.find((v) => {
-            const colorMatch = !selectedColor || v.color === selectedColor;
-            const sizeMatch = !selectedSize || v.size === selectedSize;
-            return colorMatch && sizeMatch;
-        }) || sync_variants[0];
-
-    // Reset success checkmark after 2 seconds
-    useEffect(() => {
-        if (isAdded) {
-            const timer = setTimeout(() => setIsAdded(false), 2000);
-            return () => clearTimeout(timer);
-        }
-    }, [isAdded]);
-
-    const handleQuickAdd = (e: React.MouseEvent) => {
-        e.preventDefault(); 
-        e.stopPropagation();
-
-        if (!activeVariant || !details) return;
-
-        setIsAdding(true);
-
-        setTimeout(() => {
-            addToCart({
-                productId: details.sync_product.id,
-                variantId: activeVariant.id,
-                name: details.sync_product.name,
-                variantName: activeVariant.name,
-                price: parseFloat(activeVariant.retail_price),
-                currency: activeVariant.currency,
-                quantity: 1,
-                thumbnail:
-                    activeVariant.files?.find((f) => f.type === "mockup")?.preview_url ||
-                    details.sync_product.thumbnail_url ||
-                    activeVariant.product?.image ||
-                    activeVariant.files?.find((f) => f.type === "preview")?.preview_url || "/placeholder.svg",
-            });
-            setIsAdding(false);
-            setIsAdded(true);
-        }, 600);
-    };
-
-    // Format currency
-    const formatPrice = (price: string, currency: string) => {
-        return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: currency || "USD",
-        }).format(parseFloat(price));
-    };
-
-    // Get active image
-    const activeImage =
-        activeVariant?.files?.find((f) => f.type === "mockup")?.preview_url ||
-        product.thumbnail_url ||
-        activeVariant?.product?.image ||
-        activeVariant?.files?.find((f) => f.type === "preview")?.preview_url;
-
-    // Check if name is white/light
-    const isLightProduct = (name: string) => {
-        const t = name.toLowerCase();
-        return ["white", "snow", "ash", "heather grey", "silver", "canvas", "mug", "sticker", "poster", "cream", "beige"].some(
-            (k) => t.includes(k)
-        );
-    };
+    const variants = details?.sync_variants ?? [];
+    const colors = Array.from(new Set(variants.map((v) => v.color).filter(Boolean))) as string[];
+    const prices = variants.map((v) => parseFloat(v.retail_price)).filter((p) => !Number.isNaN(p));
+    const lowest = prices.length > 0 ? Math.min(...prices) : null;
+    const priceVaries = prices.some((p) => p !== lowest);
+    const currency = variants[0]?.currency || "USD";
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.4 }}
-            className="h-full"
+        <Link
+            ref={tileRef}
+            href={`/shop/product/${product.id}`}
+            className="group flex h-full flex-col rounded-2xl border border-white/15 bg-[#101219] p-2 sm:p-2.5 transition-colors hover:border-amber-400/60"
         >
-            <Card className="group relative flex h-full flex-col overflow-visible rounded-[3px] border-white/10 bg-noir-void transition-all duration-300 hover:border-white/25 hover:-translate-y-1">
-                {/* the punched hole and string a swing tag hangs from */}
-                <span
-                    aria-hidden
-                    className="pointer-events-none absolute -top-2 left-1/2 z-30 h-4 w-4 -translate-x-1/2 rounded-full border border-white/15 bg-noir-void shadow-[inset_0_1px_2px_rgba(0,0,0,0.9)]"
+            <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-white/10 bg-white">
+                <Image
+                    src={product.thumbnail_url || "/placeholder.svg"}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 640px) 46vw, (max-width: 1024px) 31vw, 270px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <span
                     aria-hidden
-                    className="pointer-events-none absolute -top-6 left-1/2 z-20 h-6 w-px -translate-x-1/2 bg-gradient-to-b from-transparent to-white/20"
-                />
+                    className="absolute top-2 left-2 rounded border border-amber-400/40 bg-black/85 px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-widest text-amber-400"
+                >
+                    DROP // {String(index + 1).padStart(2, "0")}
+                </span>
+            </div>
 
-                <Link href={`/shop/product/${product.id}`} className="block relative z-10 flex-grow">
-                    <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-b from-noir-charcoal to-noir-slate">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-accent-cyan/0 via-white/0 to-purple-500/0 opacity-0 group-hover:opacity-100 group-hover:from-accent-cyan/5 group-hover:to-purple-500/5 transition-all duration-500 pointer-events-none z-20 mix-blend-overlay" />
-                        
-                        <Image
-                            src={activeImage || "/placeholder.svg"}
-                            alt={product.name}
-                            fill
-                            className={`object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${isLightProduct(product.name) ? 'mix-blend-multiply opacity-90' : ''}`}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
+            <h3 className="mt-2.5 line-clamp-2 text-xs sm:text-sm font-bold leading-tight text-white">
+                {product.name}
+            </h3>
 
-                        {!details && !error && (
-                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center backdrop-blur-sm z-30 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Loader2 className="w-8 h-8 text-white animate-spin" />
-                            </div>
+            <div className="mt-auto pt-2">
+                {colors.length > 1 && (
+                    <div role="img" aria-label={`${colors.length} colours`} className="mb-1.5 flex items-center gap-1">
+                        {colors.slice(0, 5).map((color) => (
+                            <span
+                                key={color}
+                                title={color}
+                                className={`h-2.5 w-2.5 rounded-full border ${colorMap[color.toLowerCase()] || "bg-zinc-700 border-white/20"}`}
+                            />
+                        ))}
+                        {colors.length > 5 && (
+                            <span className="font-mono text-[8px] text-noir-cloud">+{colors.length - 5}</span>
                         )}
                     </div>
+                )}
 
-                    <CardContent className="space-y-2 px-4 pb-2 pt-4">
-                        <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-noir-ash">
-                            <span className="h-px w-4 bg-white/20" />
-                            Loaf Records
-                        </div>
-                        <h3 className="line-clamp-2 text-base font-black uppercase leading-tight tracking-tight text-foreground">
-                            {product.name}
-                        </h3>
-                        <p className="font-mono text-lg font-bold tracking-tight text-white">
-                            {activeVariant ? (
-                                formatPrice(activeVariant.retail_price, activeVariant.currency)
-                            ) : (
-                                <span className="text-noir-ash">—</span>
+                <div className="flex items-center justify-between gap-2">
+                    {lowest !== null ? (
+                        <span className="font-mono text-sm font-bold text-amber-400">
+                            {priceVaries && (
+                                <>
+                                    <span className="text-[8px] uppercase tracking-wider text-noir-cloud">From</span>{" "}
+                                </>
                             )}
-                        </p>
-                    </CardContent>
-                </Link>
-
-                <CardFooter className="relative z-20 mt-auto flex-col items-stretch space-y-4 border-t border-dashed border-white/10 px-4 pb-5 pt-3">
-                    {details ? (
-                        <>
-                            <div className="flex flex-col gap-3">
-                                {colors.length > 0 && (
-                                    <div className="flex flex-wrap gap-2">
-                                        {colors.map((color) => {
-                                            const twColor = colorMap[color.toLowerCase()] || "bg-zinc-700 border-transparent";
-                                            return (
-                                                <button
-                                                    key={color}
-                                                    onClick={() => handleColorChange(color)}
-                                                    className={`w-6 h-6 rounded-full border-2 transition-all ${
-                                                        selectedColor === color
-                                                            ? "border-accent-cyan scale-110 shadow-[0_0_10px_rgba(0,255,204,0.3)]"
-                                                            : "border-transparent hover:scale-110 opacity-70 hover:opacity-100"
-                                                    } ${twColor}`}
-                                                    title={color}
-                                                    aria-label={`Select ${color}`}
-                                                />
-                                            );
-                                        })}
-                                    </div>
-                                )}
-
-                                {sizes.length > 0 && (
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {sizes.map((size) => (
-                                            <button
-                                                key={size}
-                                                onClick={() => setSelectedSize(size)}
-                                                className={`px-2.5 py-1 text-xs font-mono rounded-md border transition-all ${
-                                                    selectedSize === size
-                                                        ? "bg-accent-cyan text-noir-void border-accent-cyan font-bold shadow-glow-sm"
-                                                        : "bg-transparent text-noir-cloud border-noir-smoke hover:border-accent-cyan/50 hover:text-white"
-                                                }`}
-                                            >
-                                                {size}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            <Button
-                                onClick={handleQuickAdd}
-                                disabled={isAdding || isAdded || !activeVariant}
-                                variant={isAdded ? "default" : "secondary"}
-                                className={`w-full py-6 font-bold transition-all ${isAdded ? "bg-green-500 hover:bg-green-600 text-white" : "hover:bg-accent-cyan hover:text-black"}`}
-                            >
-                                <AnimatePresence mode="wait">
-                                    {isAdding ? (
-                                        <motion.div key="adding" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                            <Loader2 className="w-5 h-5 animate-spin" />
-                                        </motion.div>
-                                    ) : isAdded ? (
-                                        <motion.div key="added" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                                            <Check className="w-5 h-5" />
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div key="default" className="flex items-center gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                            <ShoppingBag className="w-4 h-4" />
-                                            <span>QUICK ADD</span>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </Button>
-                        </>
+                            {formatPrice(lowest, currency)}
+                        </span>
                     ) : (
-                        <div className="h-[120px] w-full flex items-center justify-center border border-dashed border-noir-smoke rounded-lg text-noir-ash text-sm">
-                            Loading options...
-                        </div>
+                        <span aria-hidden className="h-3.5 w-14 animate-pulse rounded bg-white/10" />
                     )}
-                </CardFooter>
-            </Card>
-        </motion.div>
+                    <span
+                        aria-hidden
+                        className="flex items-center gap-0.5 font-mono text-[9px] font-bold uppercase tracking-widest text-accent-cyan"
+                    >
+                        Cop <ArrowUpRight className="h-3 w-3" />
+                    </span>
+                </div>
+            </div>
+        </Link>
     );
 }

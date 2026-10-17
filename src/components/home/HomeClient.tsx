@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { DungeonMenu } from "@/components/home/DungeonMenu";
+import { MobileStudioLanding } from "@/components/home/MobileStudioLanding";
+import type { Track } from "@/lib/tracks-server";
+import type { PrintfulProduct } from "@/lib/printful";
 
 /**
  * Whether the intro should be suppressed for this visitor: either they've
@@ -31,15 +34,53 @@ function readIntroSuppressed() {
 // The server can't know either fact, so it assumes a first-time visitor.
 const introSuppressedOnServer = () => false;
 
-export default function HomeClient() {
+function subscribeToMobileViewport(onChange: () => void) {
+    const mqWidth = window.matchMedia("(max-width: 1023px)");
+    const mqTouch = window.matchMedia("(pointer: coarse)");
+    mqWidth.addEventListener("change", onChange);
+    mqTouch.addEventListener("change", onChange);
+    return () => {
+        mqWidth.removeEventListener("change", onChange);
+        mqTouch.removeEventListener("change", onChange);
+    };
+}
+
+function readIsMobileViewport() {
+    return (
+        window.matchMedia("(max-width: 1023px)").matches ||
+        window.matchMedia("(pointer: coarse)").matches
+    );
+}
+
+const isMobileOnServer = () => true;
+
+interface HomeClientProps {
+    initialTracks?: Track[];
+    initialProducts?: PrintfulProduct[];
+}
+
+export default function HomeClient({
+    initialTracks = [],
+    initialProducts = [],
+}: HomeClientProps) {
     const introSuppressed = useSyncExternalStore(
         subscribeToMotionPreference,
         readIntroSuppressed,
         introSuppressedOnServer
     );
 
+    const isMobileViewport = useSyncExternalStore(
+        subscribeToMobileViewport,
+        readIsMobileViewport,
+        isMobileOnServer
+    );
+
     const [dismissed, setDismissed] = useState(false);
+    const [viewOverride, setViewOverride] = useState<"studio" | "room" | null>(null);
+
     const showIntro = !introSuppressed && !dismissed;
+    const activeExperience =
+        viewOverride !== null ? viewOverride : isMobileViewport ? "studio" : "room";
 
     const handleIntroEnd = useCallback(() => {
         setDismissed(true);
@@ -106,8 +147,16 @@ export default function HomeClient() {
                 )}
             </AnimatePresence>
 
-            {/* THE MENU */}
-            <DungeonMenu />
+            {/* BESPOKE MOBILE 3D STUDIO LANDING vs DESKTOP 3D CRATE ROOM */}
+            {activeExperience === "studio" ? (
+                <MobileStudioLanding
+                    tracks={initialTracks}
+                    products={initialProducts}
+                    onSwitchToRoom={() => setViewOverride("room")}
+                />
+            ) : (
+                <DungeonMenu onSwitchToStudio={() => setViewOverride("studio")} />
+            )}
         </div>
     );
 }

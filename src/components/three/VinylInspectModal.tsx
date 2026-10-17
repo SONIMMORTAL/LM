@@ -1,11 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Play, Pause, Volume2, Sparkles, Disc } from "lucide-react";
-import { VinylCanvas3D } from "./VinylCanvas3D";
+import { X, Play, Volume2, Sparkles, Disc } from "lucide-react";
 import type { Track } from "@/lib/tracks-server";
 import { cn } from "@/lib/utils";
+
+const VinylCanvas3D = dynamic(
+  () => import("./VinylCanvas3D").then((m) => m.VinylCanvas3D),
+  { ssr: false }
+);
 
 export interface InspectableAlbum {
   name: string;

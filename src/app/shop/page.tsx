@@ -1,9 +1,7 @@
-import { ShoppingBag, Star, Check, ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { getPrintfulProducts, getPrintfulProduct, type PrintfulProductDetails } from "@/lib/printful";
+import { Flame, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import Image from "next/image";
+import { getPrintfulProducts } from "@/lib/printful";
 import { ShopGrid } from "@/components/shop/ShopGrid";
-import { AuroraBackground } from "@/components/ui/AuroraBackground";
-import { TextReveal } from "@/components/ui/TextReveal";
 import type { Metadata } from "next";
 
 // Force dynamic rendering since we are fetching data
@@ -34,86 +32,91 @@ export default async function ShopPage() {
     const products = await getPrintfulProducts();
 
     return (
-
         <div className="min-h-screen pt-24 pb-16">
-            {/* Hero Section */}
-            <AuroraBackground className="mb-8 py-20">
-                <section className="px-6 relative z-10">
-                    <div className="max-w-6xl mx-auto">
-                        <div className="text-center mb-0">
-                            <span className="inline-block mb-4 text-accent-cyan text-sm tracking-[0.3em] uppercase">
+            {/* ═══════════════════════════════════════════════════════════
+                HERO — the same stamped monument as the mobile landing, kept
+                short so the merch starts on the first screen
+               ═══════════════════════════════════════════════════════════ */}
+            <section className="px-3 sm:px-4 max-w-6xl mx-auto">
+                <div className="relative overflow-hidden rounded-[26px] border-2 border-amber-400/35 bg-[#0B0B0F] shadow-[0_28px_80px_rgba(0,0,0,0.95)]">
+                    <div className="relative h-44 sm:h-60 w-full overflow-hidden">
+                        <Image
+                            src="/gallery/rooftop-throwies.jpg"
+                            alt=""
+                            fill
+                            priority
+                            sizes="(max-width: 1152px) 96vw, 1100px"
+                            className="object-cover object-center opacity-80"
+                        />
+                        <div
+                            aria-hidden
+                            className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-[#0B0B0F]/50 to-black/30"
+                        />
+
+                        {/* Stamped badge */}
+                        <div className="absolute top-3 left-3">
+                            <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-amber-400">
+                                <Flame className="h-3 w-3 fill-amber-400" />
                                 Official Merch
                             </span>
-                            <div className="flex justify-center mb-4">
-                                <TextReveal
-                                    text="The Drop"
-                                    className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter uppercase justify-center"
-                                />
-                            </div>
-                            <p className="text-noir-cloud max-w-lg mx-auto">
-                                Limited edition gear. Raw aesthetics. Wear the movement.
+                        </div>
+
+                        {/* Loaf Man stamp */}
+                        <div className="pointer-events-none absolute -bottom-2 right-2 h-24 w-24 sm:h-32 sm:w-32 drop-shadow-[0_12px_24px_rgba(0,0,0,0.95)]">
+                            <Image src="/loafman.png" alt="" fill sizes="128px" className="object-contain" priority />
+                        </div>
+
+                        <div className="absolute bottom-3 left-4 right-28">
+                            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-amber-400">
+                                Loaf Records · Brooklyn NY
                             </p>
+                            <h1
+                                className="font-display uppercase leading-[0.86] tracking-[0.02em] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]"
+                                style={{ fontSize: "clamp(2.75rem, 13vw, 4.5rem)" }}
+                            >
+                                The{" "}
+                                <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-accent-cyan bg-clip-text text-transparent">
+                                    Drop
+                                </span>
+                            </h1>
                         </div>
                     </div>
-                </section>
-            </AuroraBackground>
 
-            {/* Products Grid */}
-            <ShopGrid products={products} />
-
-            {/* Official Store Banner */}
-            <section className="px-6 mt-16">
-                <div className="max-w-4xl mx-auto">
-                    <div className="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
-                        {/* Background gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-transparent to-accent-cyan/20 group-hover:opacity-100 transition-opacity duration-700" />
-                        <div className="absolute inset-0 bg-noir-void/40 backdrop-blur-[2px]" />
-
-                        <div className="relative z-10">
-                            <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight mb-4 text-white">
-                                Join The Inner Circle
-                            </h2>
-                            <p className="text-noir-cloud mb-6 max-w-md mx-auto">
-                                Get early access to limited drops, exclusive variants, and behind-the-scenes content.
-                            </p>
-                            <Link
-                                href="/vip"
-                                className="inline-flex items-center gap-2 px-8 py-4 bg-accent-cyan text-noir-void font-bold rounded-full hover:bg-white hover:scale-105 transition-all shadow-glow-sm"
-                            >
-                                <Star className="w-5 h-5 fill-current" />
-                                UNLOCK VIP ACCESS
-                            </Link>
-                        </div>
+                    {/* Stamped ticker */}
+                    <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar border-t border-amber-400/20 bg-black/90 px-4 py-2 font-mono text-[9px] uppercase tracking-[0.22em]">
+                        <span className="shrink-0 font-bold text-amber-400">Limited Edition:</span>
+                        <span className="shrink-0 text-white/85">Raw Aesthetics</span>
+                        <span className="text-amber-400/50">•</span>
+                        <span className="shrink-0 text-white/85">Wear The Movement</span>
                     </div>
                 </div>
             </section>
 
-            {/* Trust Badges */}
-            <section className="px-6 mt-12">
-                <div className="max-w-4xl mx-auto">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                        {[
-                            { icon: Check, title: "Authentic Merch", desc: "100% official gear" },
-                            { icon: Star, title: "Premium Quality", desc: "Made to last" },
-                            { icon: ShoppingBag, title: "Worldwide Shipping", desc: "We ship everywhere" },
-                        ].map((badge, i) => (
-                            <div
-                                key={badge.title}
-                                className="flex items-center gap-4 p-4 glass-card rounded-xl"
-                            >
-                                <div className="w-10 h-10 rounded-full bg-accent-cyan/10 flex items-center justify-center">
-                                    <badge.icon className="w-5 h-5 text-accent-cyan" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-foreground">{badge.title}</h4>
-                                    <p className="text-sm text-noir-cloud">{badge.desc}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+            {/* Products */}
+            <div className="mt-4">
+                <ShopGrid products={products} />
+            </div>
+
+            {/* Trust strip */}
+            <section className="px-3 sm:px-4 max-w-6xl mx-auto mt-5">
+                <ul className="grid grid-cols-3 gap-2">
+                    {[
+                        { icon: ShieldCheck, label: "100% Official" },
+                        { icon: Sparkles, label: "Premium Quality" },
+                        { icon: Truck, label: "Ships Worldwide" },
+                    ].map((badge) => (
+                        <li
+                            key={badge.label}
+                            className="flex flex-col items-center gap-1.5 rounded-2xl border border-white/15 bg-black/70 px-2 py-3 text-center sm:flex-row sm:justify-center sm:gap-2"
+                        >
+                            <badge.icon className="h-4 w-4 shrink-0 text-amber-400" />
+                            <span className="font-mono text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.16em] text-white/85">
+                                {badge.label}
+                            </span>
+                        </li>
+                    ))}
+                </ul>
             </section>
         </div>
     );
 }
-

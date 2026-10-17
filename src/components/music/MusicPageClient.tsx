@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { AlbumPurchaseModal } from "@/components/music/AlbumPurchaseModal";
 import { DJSceneHero } from "@/components/music/DJSceneHero";
 import { VinylInspectModal } from "@/components/three/VinylInspectModal";
@@ -33,7 +34,15 @@ interface MusicPageClientProps {
 
 export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
     const [tracks] = useState<Track[]>(initialTracks);
-    const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+    const [currentTrackIndex, setCurrentTrackIndex] = useState(() => {
+        if (initialTracks.length > 0) {
+            const lostCityIndex = initialTracks.findIndex((t: Track) => t.title === "Lost City");
+            if (lostCityIndex >= 0) return lostCityIndex;
+            const lostCityAlbumIndex = initialTracks.findIndex((t: Track) => t.album === "Lost City");
+            if (lostCityAlbumIndex >= 0) return lostCityAlbumIndex;
+        }
+        return 0;
+    });
     const [isPlaying, setIsPlaying] = useState(false);
     const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
     const [selectedPurchaseAlbum, setSelectedPurchaseAlbum] = useState<{ name: string; price: number; cover: string; artist: string } | null>(null);
@@ -49,19 +58,6 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
     const [deckCues, setDeckCues] = useState<
         [{ url: string; label: string } | null, { url: string; label: string } | null]
     >([null, null]);
-
-    useEffect(() => {
-        if (tracks.length > 0) {
-            // Set initial track to specific "Lost City" song
-            const lostCityIndex = tracks.findIndex((t: Track) => t.title === "Lost City");
-            if (lostCityIndex >= 0) {
-                setCurrentTrackIndex(lostCityIndex);
-            } else {
-                const lostCityAlbumIndex = tracks.findIndex((t: Track) => t.album === "Lost City");
-                if (lostCityAlbumIndex >= 0) setCurrentTrackIndex(lostCityAlbumIndex);
-            }
-        }
-    }, [tracks]);
 
     useEffect(() => {
         const handleGlobalState = (e: Event) => {
@@ -86,7 +82,7 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
         tracks.find((t) => t.album && t.album !== currentTrack?.album && t.audio_url) ??
         (tracks.length > 1 ? tracks[(currentTrackIndex + 1) % tracks.length] : undefined);
 
-    // Group tracks by album - filter out Gotham from The Commission.
+    // Group tracks by album.
     // Darkside, Lord Knows and Munchies are video-only and live on the videos
     // page (lib/video-tapes.ts) until their audio is uploaded.
     const albums: Album[] = [
@@ -96,7 +92,7 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
             cover: "/THE COMMISSION.png",
             gradient: "from-amber-500/20 via-orange-600/10 to-red-900/20",
             accentColor: "amber",
-            tracks: tracks.filter(t => (t.album === "The Commission" || (!t.album && t.title !== "Lost City")) && t.title.toUpperCase() !== "GOTHAM"),
+            tracks: tracks.filter(t => t.album === "The Commission" || (!t.album && t.title !== "Lost City")),
             price: 9.99
         },
         {
@@ -152,7 +148,8 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
                 <div className="md:hidden absolute top-0 left-0 w-full h-full bg-gradient-to-b from-accent-cyan/5 to-transparent opacity-50" />
             </div>
 
-            <section className="relative pt-16 md:pt-20 pb-12">
+            {/* DESKTOP DJ BOOTH SCENE (Hidden on mobile so mobile has zero vinyl turntable clutter) */}
+            <section className="hidden md:block relative pt-20 pb-12">
                 <DJSceneHero
                     leftVinyl={
                         (currentTrack?.album && ALBUM_VINYLS[currentTrack.album]) ||
@@ -177,9 +174,62 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
                 />
             </section>
 
-            <section className="relative px-6 pb-40 pt-8">
+            {/* MOBILE FIGMA STUDIO MASTER HEADER (Zero Vinyl Display) */}
+            <section className="md:hidden relative pt-20 pb-4 px-4">
+                <div className="rounded-3xl border border-white/12 bg-gradient-to-b from-[#14161F] via-[#0B0C10] to-[#07070A] p-4 shadow-2xl">
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="font-mono text-[9px] uppercase tracking-[0.26em] text-accent-cyan">
+                            24-Bit Studio Master Catalog
+                        </span>
+                        <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-noir-cloud">
+                            {albums.length} Releases
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-3.5">
+                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/15 shrink-0">
+                            <Image
+                                src={albums[crateIndex]?.cover || "/THE COMMISSION.png"}
+                                alt={albums[crateIndex]?.name || "The Commission"}
+                                fill
+                                sizes="80px"
+                                className="object-cover"
+                            />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber-400">
+                                {albums[crateIndex]?.artist || "Shadow The Great"}
+                            </p>
+                            <h2 className="font-display text-2xl uppercase tracking-wider text-white truncate">
+                                {albums[crateIndex]?.name || "The Commission"}
+                            </h2>
+                            <p className="font-mono text-[10px] text-noir-cloud mt-0.5">
+                                {albums[crateIndex]?.tracks.length || 0} Tracks · Lossless Master
+                            </p>
+                        </div>
+                    </div>
+                    {/* Mobile Album Switcher Pills */}
+                    <div className="mt-3.5 flex items-center gap-1.5 overflow-x-auto hide-scrollbar pb-1">
+                        {albums.map((alb, idx) => (
+                            <button
+                                key={alb.name}
+                                type="button"
+                                onClick={() => setCrateIndex(idx)}
+                                className={`shrink-0 rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-wider border transition-colors ${
+                                    idx === crateIndex
+                                        ? "bg-accent-cyan text-black border-accent-cyan font-bold"
+                                        : "bg-white/[0.04] text-noir-cloud border-white/10"
+                                }`}
+                            >
+                                {alb.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="relative px-4 sm:px-6 pb-40 pt-4 md:pt-8">
                 <div className="max-w-7xl mx-auto">
-                    <div className="mb-8 flex items-baseline justify-between border-b border-white/10 pb-4">
+                    <div className="hidden md:flex mb-8 items-baseline justify-between border-b border-white/10 pb-4">
                         <h2 className="text-2xl font-black uppercase tracking-tighter text-white">
                             The Crate
                         </h2>

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, ShoppingCart, LogOut, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import { LoafDeck } from "@/components/brand/LoafDeck";
 import { useAuth, AuthModal } from "@/components/auth";
 import { useCart } from "@/context/CartContext";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -17,6 +17,7 @@ const navItems = [
     { href: "/videos", label: "Videos" },
     { href: "/shop", label: "Shop" },
     { href: "/loaf-films", label: "Films" },
+    { href: "/bio", label: "Bio" },
 ];
 
 export function Header() {
@@ -84,21 +85,13 @@ export function Header() {
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6">
                     <div className="flex items-center justify-between h-20 md:h-24">
-                        {/* Logo - Turntable with Spinning Vinyl */}
+                        {/* Logo — the Loaf Records deck, same mark as the mobile landing */}
                         <Link
                             href="/"
-                            className="relative z-50 flex items-center group"
+                            aria-label="Loaf Records — home"
+                            className="relative z-50 flex items-center"
                         >
-                            <div className="relative w-[52px] h-[52px] md:w-[60px] md:h-[60px] rounded-xl overflow-hidden ring-1 ring-white/10 group-hover:ring-accent-cyan/30 transition-all">
-                                <Image
-                                    src="/static-logo.jpg"
-                                    alt="Loaf Records"
-                                    fill
-                                    className="object-cover"
-                                    sizes="60px"
-                                    priority
-                                />
-                            </div>
+                            <LoafDeck size={56} priority />
                         </Link>
 
                         {/* Desktop Navigation */}

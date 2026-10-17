@@ -18,8 +18,10 @@ import {
     useSpring,
     useTransform,
 } from "framer-motion";
-import { ChevronLeft, ChevronRight, CornerDownLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight, CornerDownLeft, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { playCrateFlipSfx, playNeedleDropSfx } from "@/lib/ui-sfx";
+import { LoafDeck } from "@/components/brand/LoafDeck";
 
 /* ─────────────────────────────────────────────
    Menu data — each destination is a record
@@ -79,7 +81,11 @@ function circularOffset(index: number, selected: number): number {
     return ((index - selected + COUNT + half) % COUNT) - half;
 }
 
-export function DungeonMenu() {
+interface DungeonMenuProps {
+    onSwitchToStudio?: () => void;
+}
+
+export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
     const router = useRouter();
     const reducedMotion = useReducedMotion();
     const sectionRef = useRef<HTMLElement>(null);
@@ -106,11 +112,13 @@ export function DungeonMenu() {
 
     /* ── Selection helpers ── */
     const select = useCallback((dir: 1 | -1) => {
+        playCrateFlipSfx();
         setSelected((s) => (s + dir + COUNT) % COUNT);
     }, []);
 
     const activate = useCallback(
         (index: number) => {
+            playNeedleDropSfx();
             router.push(MENU_ITEMS[index].href);
         },
         [router]
@@ -253,20 +261,45 @@ export function DungeonMenu() {
 
             {/* ═══ TOP CHROME ═══ */}
             <header className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-5 pt-5 sm:px-8 sm:pt-6 safe-top">
-                <div className="flex items-baseline gap-3">
-                    <span className="font-display text-2xl sm:text-3xl tracking-[0.08em] text-foreground leading-none">
-                        LOAF RECORDS
-                    </span>
-                    <span className="hidden sm:block text-[10px] tracking-[0.35em] uppercase text-noir-cloud/80">
-                        Brooklyn, NY
-                    </span>
+                <div className="flex items-center gap-3">
+                    {/* The Loaf Records deck — same mark as the header and the mobile landing */}
+                    <LoafDeck size={48} />
+                    <div className="flex items-baseline gap-3">
+                        <span className="font-display text-2xl sm:text-3xl tracking-[0.08em] text-foreground leading-none">
+                            LOAF RECORDS
+                        </span>
+                        <span className="hidden sm:block text-[10px] tracking-[0.35em] uppercase text-noir-cloud/80">
+                            Brooklyn, NY
+                        </span>
+                    </div>
                 </div>
-                <Link
-                    href="/vip"
-                    className="text-[11px] tracking-[0.3em] uppercase text-noir-cloud hover:text-accent-cyan transition-colors border border-white/15 hover:border-accent-cyan/50 px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/20"
-                >
-                    VIP
-                </Link>
+                <div className="flex items-center gap-2">
+                    {onSwitchToStudio && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                playCrateFlipSfx();
+                                onSwitchToStudio();
+                            }}
+                            className="flex items-center gap-1.5 text-[10px] sm:text-[11px] tracking-[0.22em] uppercase text-accent-cyan hover:text-white transition-colors border border-accent-cyan/40 hover:border-accent-cyan px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/35"
+                        >
+                            <Layers className="w-3.5 h-3.5" />
+                            <span>3D Studio</span>
+                        </button>
+                    )}
+                    <Link
+                        href="/bio"
+                        className="text-[11px] tracking-[0.3em] uppercase text-noir-cloud hover:text-accent-cyan transition-colors border border-white/15 hover:border-accent-cyan/50 px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/20"
+                    >
+                        Bio
+                    </Link>
+                    <Link
+                        href="/vip"
+                        className="text-[11px] tracking-[0.3em] uppercase text-noir-cloud hover:text-accent-cyan transition-colors border border-white/15 hover:border-accent-cyan/50 px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/20"
+                    >
+                        VIP
+                    </Link>
+                </div>
             </header>
 
             {/* ═══ TITLE ═══ */}
@@ -274,10 +307,10 @@ export function DungeonMenu() {
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={current.label}
-                        initial={{ opacity: 0, y: 26, filter: "blur(6px)" }}
-                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, y: -18, filter: "blur(6px)" }}
-                        transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1] }}
+                        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -14, scale: 0.98 }}
+                        transition={{ duration: 0.26, ease: [0.32, 0.72, 0, 1] }}
                         className="flex flex-col items-center"
                     >
                         <h1
@@ -295,7 +328,7 @@ export function DungeonMenu() {
                         </p>
                         <button
                             onClick={() => activate(selected)}
-                            className="pointer-events-auto mt-5 flex items-center gap-2 rounded-full border border-accent-cyan/40 bg-black/30 px-6 py-2.5 text-[11px] tracking-[0.35em] uppercase text-accent-cyan backdrop-blur-sm transition-colors hover:bg-accent-cyan hover:text-noir-void"
+                            className="pointer-events-auto mt-5 flex items-center gap-2 rounded-full border border-accent-cyan/40 bg-black/30 px-6 py-2.5 text-[11px] tracking-[0.35em] uppercase text-accent-cyan backdrop-blur-sm transition-all hover:bg-accent-cyan hover:text-noir-void hover:shadow-glow-md"
                         >
                             Enter
                             <CornerDownLeft className="h-3.5 w-3.5" />
@@ -324,11 +357,16 @@ export function DungeonMenu() {
                             aria-label={`${item.label} — ${item.sub}`}
                             aria-current={isCenter ? "true" : undefined}
                             tabIndex={isCenter ? 0 : -1}
-                            onClick={() =>
-                                isCenter ? activate(i) : setSelected(i)
-                            }
+                            onClick={() => {
+                                if (isCenter) {
+                                    activate(i);
+                                } else {
+                                    playCrateFlipSfx();
+                                    setSelected(i);
+                                }
+                            }}
                             className={cn(
-                                "absolute bottom-0 left-1/2 outline-none",
+                                "absolute bottom-0 left-1/2 outline-none will-change-transform",
                                 isCenter ? "cursor-pointer" : "cursor-e-resize"
                             )}
                             initial={false}
@@ -340,11 +378,8 @@ export function DungeonMenu() {
                                 opacity: visible
                                     ? isCenter
                                         ? 1
-                                        : 0.75 - (abs - 1) * 0.18
+                                        : 0.55 - (abs - 1) * 0.22
                                     : 0,
-                                filter: isCenter
-                                    ? "blur(0px) brightness(1)"
-                                    : `blur(${Math.min(abs, 2)}px) brightness(0.72)`,
                             }}
                             transition={{
                                 type: "spring",
@@ -362,18 +397,24 @@ export function DungeonMenu() {
                             whileHover={isCenter ? { scale: 1.04 } : undefined}
                             whileTap={{ scale: isCenter ? 0.97 : 0.6 }}
                         >
-                            {/* Floor shadow */}
+                            {/* Floor shadow + subtle cyan rim reflection when centered */}
                             <span
                                 aria-hidden
-                                className="absolute left-1/2 -bottom-5 h-8 w-[78%] -translate-x-1/2 rounded-[50%] bg-black/70 blur-md"
-                                style={{ opacity: isCenter ? 0.8 : 0.35 }}
+                                className="absolute left-1/2 -bottom-5 h-8 w-[78%] -translate-x-1/2 rounded-[50%] bg-black/75 blur-md"
+                                style={{ opacity: isCenter ? 0.85 : 0.35 }}
                             />
-                            {/* Spinning record */}
+                            {isCenter && (
+                                <span
+                                    aria-hidden
+                                    className="pointer-events-none absolute left-1/2 -bottom-3 h-4 w-[55%] -translate-x-1/2 rounded-[50%] bg-accent-cyan/20 blur-xl"
+                                />
+                            )}
+                            {/* Spinning record — only attach infinite keyframe layer to center record */}
                             <span
                                 className={cn(
-                                    "block h-full w-full vinyl-rotor",
+                                    "block h-full w-full",
                                     isCenter && !reducedMotion
-                                        ? "vinyl-rotor-on"
+                                        ? "vinyl-rotor vinyl-rotor-on"
                                         : ""
                                 )}
                             >
@@ -389,6 +430,21 @@ export function DungeonMenu() {
                                     draggable={false}
                                 />
                             </span>
+                            {/* Stationary overhead studio light reflection across the center spinning vinyl */}
+                            {isCenter && (
+                                <span
+                                    aria-hidden
+                                    className="pointer-events-none absolute inset-[8%] rounded-full opacity-40"
+                                    style={{
+                                        background:
+                                            "linear-gradient(125deg, transparent 36%, rgba(255,255,255,0.22) 48%, rgba(0,217,255,0.12) 52%, transparent 64%)",
+                                        maskImage:
+                                            "radial-gradient(circle, transparent 28%, black 32%, black 98%, transparent 100%)",
+                                        WebkitMaskImage:
+                                            "radial-gradient(circle, transparent 28%, black 32%, black 98%, transparent 100%)",
+                                    }}
+                                />
+                            )}
                         </motion.button>
                     );
                 })}

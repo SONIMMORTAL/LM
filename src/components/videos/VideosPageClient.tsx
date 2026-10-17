@@ -6,6 +6,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { VhsTape } from "@/components/videos/VhsTape";
 import { FullTapeShelf, TapeTracklist, fullTapeTitle, type FullTape } from "@/components/videos/FullTapeShelf";
 import { claimAudio, onAudioClaim } from "@/lib/audio-bus";
+import { playVhsClunkSfx } from "@/lib/ui-sfx";
 
 /*
  * Theater screen — the blank TV in the artwork. The rect is measured
@@ -115,7 +116,11 @@ export function VideosPageClient({ tapes }: VideosPageClientProps) {
 
     // What's on the theater screen, and whether the user hit play yet
     const [screenVideo, setScreenVideo] = useState<{ id: string; title?: string } | null>(null);
+    // Starts on the poster: walking into the room shouldn't cut off music that's already playing
     const [isWatching, setIsWatching] = useState(false);
+    const [channelSwitchKey, setChannelSwitchKey] = useState(0);
+    const [showOsd, setShowOsd] = useState(true);
+    const osdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const theaterRef = useRef<HTMLElement>(null);
 
     // Track video play
@@ -128,14 +133,28 @@ export function VideosPageClient({ tapes }: VideosPageClientProps) {
     }, []);
 
     // Any play anywhere on the page loads the video onto the theater screen
-    // The theater is a sound source like any other: take the room when a tape
-    // goes in, and stop if the mini player or the decks take it back.
-    useEffect(() => onAudioClaim("video", () => setIsWatching(false)), []);
+    // The theater is a sound source like any other: it takes the room only when a
+    // tape actually goes in (handlePlay), and stops if the mini player or the decks
+    // take it back.
+    useEffect(() => {
+        const initialTimer = setTimeout(() => setShowOsd(false), 2600);
+        const unclaim = onAudioClaim("video", () => setIsWatching(false));
+        return () => {
+            clearTimeout(initialTimer);
+            if (osdTimerRef.current) clearTimeout(osdTimerRef.current);
+            unclaim();
+        };
+    }, []);
 
     const handlePlay = useCallback((youtubeId: string, title?: string) => {
+        playVhsClunkSfx();
         claimAudio("video");
         setScreenVideo({ id: youtubeId, title });
         setIsWatching(true);
+        setChannelSwitchKey((k) => k + 1);
+        setShowOsd(true);
+        if (osdTimerRef.current) clearTimeout(osdTimerRef.current);
+        osdTimerRef.current = setTimeout(() => setShowOsd(false), 2400);
         trackVideoPlay(youtubeId, title);
     }, [trackVideoPlay]);
 
@@ -146,7 +165,9 @@ export function VideosPageClient({ tapes }: VideosPageClientProps) {
         const requested = new URLSearchParams(window.location.search).get("v");
         if (!requested || !/^[\w-]{6,20}$/.test(requested)) return;
         const tape = tapes.find((t) => t.youtubeId === requested);
-        handlePlay(requested, tape ? fullTapeTitle(tape) : undefined);
+        queueMicrotask(() => {
+            handlePlay(requested, tape ? fullTapeTitle(tape) : undefined);
+        });
     }, [handlePlay, tapes]);
 
     // After the screen swaps, glide the viewer back up to the theater.
@@ -186,9 +207,8 @@ export function VideosPageClient({ tapes }: VideosPageClientProps) {
         i === self.findIndex((t) => (t.youtube_id || t.youtubeId) === (v.youtube_id || v.youtubeId))
     );
 
-    // Featured Video (Newest "Classic" - Shogun Army)
-    // We assume the last added static video is the featured one for now
-    const featuredVideo = staticVideos[staticVideos.length - 1];
+    // Featured Video — Lost City plays first on the theater screen when the page loads
+    const featuredVideo = staticVideos[0];
     // The full tapes have their own shelf, so keep them off this one even if
     // someone also adds them through the admin.
     const tapeIds = new Set(tapes.map((t) => t.youtubeId));
@@ -291,7 +311,7 @@ export function VideosPageClient({ tapes }: VideosPageClientProps) {
 
                         {/* The screen inlay */}
                         <div
-                            className="absolute bg-black overflow-hidden"
+                            className="absolute bg-black overflow-hidden shadow-[inset_0_0_24px_rgba(0,0,0,0.85)]"
                             style={{
                                 left: `${SCREEN_RECT.left}%`,
                                 top: `${SCREEN_RECT.top}%`,
@@ -338,6 +358,32 @@ export function VideosPageClient({ tapes }: VideosPageClientProps) {
                                     </span>
                                 </button>
                             )}
+
+                            {/* CRT Scanline & Tube Curvature Glare Overlay */}
+                            <div
+                                aria-hidden
+                                className="pointer-events-none absolute inset-0 z-10 crt-scanlines opacity-40"
+                            />
+
+                            {/* CRT Channel-Switch Static Burst on Tape Load */}
+                            {channelSwitchKey > 0 && (
+                                <div
+                                    key={channelSwitchKey}
+                                    aria-hidden
+                                    className="pointer-events-none absolute inset-0 z-20 crt-static-burst"
+                                />
+                            )}
+
+                            {/* Retro VCR On-Screen Display (OSD) */}
+                            <div
+                                aria-hidden
+                                className={`pointer-events-none absolute inset-x-3 top-2.5 z-20 flex items-start justify-between font-mono text-[9px] sm:text-xs uppercase tracking-[0.2em] text-[#4eff91] drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)] transition-opacity duration-500 ${
+                                    showOsd ? "opacity-90" : "opacity-0"
+                                }`}
+                            >
+                                <span>PLAY ► SP</span>
+                                <span>CH-01 · LOAF TV</span>
+                            </div>
                         </div>
 
                         {/* Fade into the page */}

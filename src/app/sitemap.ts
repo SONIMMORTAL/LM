@@ -29,6 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { path: '/vip', changeFrequency: 'daily', priority: 0.8 },
         { path: '/videos', changeFrequency: 'weekly', priority: 0.7 },
         { path: '/loaf-films', changeFrequency: 'monthly', priority: 0.7 },
+        { path: '/bio', changeFrequency: 'monthly', priority: 0.7 },
         { path: '/gallery', changeFrequency: 'monthly', priority: 0.6 },
         { path: '/contact', changeFrequency: 'yearly', priority: 0.5 },
         ...ALBUM_SLUGS.map((slug) => ({

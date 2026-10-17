@@ -3,6 +3,11 @@ import { supabaseAdmin, isServiceRoleConfigured } from '@/lib/supabase/admin';
 import { ALBUMS, AlbumConfig } from '@/lib/albums';
 import { streamUrlFor } from '@/lib/stream-token';
 import { VIDEO_TAPES, isVideoTapeAlbum } from '@/lib/video-tapes';
+import {
+    findCommissionTrackSpec,
+    isCommissionAlbumName,
+    normalizeCommissionTracks,
+} from '@/lib/commission-tracklist';
 
 export interface Track {
     id: string;
@@ -82,15 +87,27 @@ async function fetchTracksFromStorageForAlbums(albumsToFetch: AlbumConfig[]): Pr
             return [];
         }
 
+        const isCommission = isCommissionAlbumName(album.name);
+
         const sortedFiles = files
             .filter(file => {
                 const ext = file.name.split('.').pop()?.toLowerCase();
                 return ext && audioExtensions.includes(ext);
             })
-            .sort((a, b) => getTrackNumber(a.name) - getTrackNumber(b.name));
+            .sort((a, b) => {
+                if (isCommission) {
+                    const posA = findCommissionTrackSpec({ filename: a.name })?.position ?? 999;
+                    const posB = findCommissionTrackSpec({ filename: b.name })?.position ?? 999;
+                    if (posA !== posB) return posA - posB;
+                }
+                return getTrackNumber(a.name) - getTrackNumber(b.name);
+            });
 
         return sortedFiles.map((file, index) => {
-            const { title, artist } = parseTrackName(file.name);
+            const spec = isCommission ? findCommissionTrackSpec({ filename: file.name }) : undefined;
+            const parsed = parseTrackName(file.name);
+            const title = spec ? spec.title : parsed.title;
+            const artist = spec ? spec.artist : parsed.artist;
             const filePath = album.path ? `${album.path}/${file.name}` : file.name;
 
             return {
@@ -166,20 +183,26 @@ async function loadTracks(): Promise<Track[]> {
         }
 
         const allTracks: Track[] = [];
+        const rawAudioUrlById = new Map<string, string | null>(
+            (dbTracks || []).map(track => [track.id, track.audio_url])
+        );
 
-        const formattedDbTracks = (dbTracks || [])
-            .filter(track => track.album !== 'Lost City')
-            .map(track => ({
-                id: track.id,
-                title: track.title,
-                artist: track.artist,
-                duration: track.duration,
-                audio_url: toStreamUrl(track.audio_url, track.album),
-                soundcloud_url: track.soundcloud_url,
-                album: track.album,
-                price: track.price ? parseFloat(track.price) : null,
-                plays: track.plays || 0
-            }));
+        const formattedDbTracks = normalizeCommissionTracks(
+            (dbTracks || [])
+                .filter(track => track.album !== 'Lost City')
+                .map(track => ({
+                    id: track.id,
+                    title: track.title,
+                    artist: track.artist,
+                    duration: track.duration,
+                    audio_url: toStreamUrl(track.audio_url, track.album),
+                    soundcloud_url: track.soundcloud_url,
+                    album: track.album,
+                    price: track.price ? parseFloat(track.price) : null,
+                    plays: track.plays || 0
+                })),
+            rawAudioUrlById
+        );
 
         allTracks.push(...formattedDbTracks);
 
@@ -205,7 +228,7 @@ async function loadTracks(): Promise<Track[]> {
  * data cache rather than re-listing every storage bucket on each request.
  * Admin writes call revalidateTracks() to publish immediately.
  */
-const getCachedTracks = unstable_cache(loadTracks, ['tracks-catalogue'], {
+const getCachedTracks = unstable_cache(loadTracks, ['tracks-catalogue-v2'], {
     revalidate: TRACKS_CACHE_SECONDS,
     tags: [TRACKS_CACHE_TAG],
 });

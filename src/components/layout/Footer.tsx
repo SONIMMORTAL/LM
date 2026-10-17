@@ -32,6 +32,7 @@ const navLinks = [
     { href: "/videos", label: "Videos" },
     { href: "/shop", label: "Shop" },
     { href: "/loaf-films", label: "Films" },
+    { href: "/bio", label: "Bio" },
 ];
 
 export function Footer() {
@@ -134,9 +135,9 @@ export function Footer() {
                         © {new Date().getFullYear()} Loaf Records. All rights reserved.
                     </p>
                     <div className="flex items-center gap-4 text-sm">
-                        <a href="/contact" className="text-noir-cloud hover:text-accent-cyan transition-colors">
+                        <Link href="/contact" className="text-noir-cloud hover:text-accent-cyan transition-colors">
                             Contact
-                        </a>
+                        </Link>
                         <span className="text-noir-smoke">•</span>
                         <span className="text-noir-cloud">
                             Brooklyn, NY

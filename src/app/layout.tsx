@@ -86,6 +86,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("dark", "font-sans", geist.variable, bebasNeue.variable)} suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://www.youtube.com" />
+        <link rel="preconnect" href="https://img.youtube.com" />
         <link rel="preconnect" href="https://www.youtube-nocookie.com" />
         <link rel="preconnect" href="https://bnjoouzcnxwdxcgcknoe.supabase.co" />
       </head>

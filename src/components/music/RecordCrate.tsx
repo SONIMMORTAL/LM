@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Disc3, Pause, Play, Search, ShoppingBag, Youtube } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { playCrateFlipSfx, playNeedleDropSfx } from "@/lib/ui-sfx";
 import type { Track } from "@/lib/tracks-server";
 
 export interface CrateAlbum {
@@ -56,16 +57,27 @@ export function RecordCrate({
     const listId = useId();
     const crateRef = useRef<HTMLDivElement>(null);
     const dragRef = useRef<{ startX: number; startIndex: number } | null>(null);
+    const touchRef = useRef<{ startX: number; startIndex: number } | null>(null);
     const [isDragging, setIsDragging] = useState(false);
 
     const album = albums[selectedIndex];
 
+    const selectWithSfx = useCallback(
+        (next: number) => {
+            if (next !== selectedIndex) {
+                playCrateFlipSfx();
+                onSelect(next);
+            }
+        },
+        [selectedIndex, onSelect]
+    );
+
     const move = useCallback(
         (delta: number) => {
             const next = Math.min(albums.length - 1, Math.max(0, selectedIndex + delta));
-            if (next !== selectedIndex) onSelect(next);
+            selectWithSfx(next);
         },
-        [albums.length, selectedIndex, onSelect]
+        [albums.length, selectedIndex, selectWithSfx]
     );
 
     // ── Keyboard: dig with the arrows, Enter drops it on deck A ──────
@@ -81,14 +93,15 @@ export function RecordCrate({
                 break;
             case "Home":
                 e.preventDefault();
-                onSelect(0);
+                selectWithSfx(0);
                 break;
             case "End":
                 e.preventDefault();
-                onSelect(albums.length - 1);
+                selectWithSfx(albums.length - 1);
                 break;
             case "Enter":
                 e.preventDefault();
+                playNeedleDropSfx();
                 onLoadToDeck(selectedIndex, 0);
                 break;
         }
@@ -103,7 +116,7 @@ export function RecordCrate({
             if (!drag) return;
             const steps = Math.round((drag.startX - e.clientX) / 90);
             const target = Math.min(albums.length - 1, Math.max(0, drag.startIndex + steps));
-            if (target !== selectedIndex) onSelect(target);
+            selectWithSfx(target);
         };
         const onUp = () => {
             dragRef.current = null;
@@ -116,7 +129,7 @@ export function RecordCrate({
             window.removeEventListener("mousemove", onMove);
             window.removeEventListener("mouseup", onUp);
         };
-    }, [isDragging, albums.length, selectedIndex, onSelect]);
+    }, [isDragging, albums.length, selectWithSfx]);
 
     if (!album) return null;
 
@@ -129,7 +142,7 @@ export function RecordCrate({
 
     return (
         <div className="w-full">
-            {/* ── THE CRATE ─────────────────────────────────────────── */}
+            {/* ── THE CRATE (Desktop only — mobile uses the Figma Studio Master Header) ── */}
             <div
                 ref={crateRef}
                 role="listbox"
@@ -141,8 +154,27 @@ export function RecordCrate({
                     dragRef.current = { startX: e.clientX, startIndex: selectedIndex };
                     setIsDragging(true);
                 }}
+                onTouchStart={(e) => {
+                    touchRef.current = {
+                        startX: e.touches[0].clientX,
+                        startIndex: selectedIndex,
+                    };
+                }}
+                onTouchMove={(e) => {
+                    const touch = touchRef.current;
+                    if (!touch) return;
+                    const steps = Math.round((touch.startX - e.touches[0].clientX) / 70);
+                    const target = Math.min(
+                        albums.length - 1,
+                        Math.max(0, touch.startIndex + steps)
+                    );
+                    selectWithSfx(target);
+                }}
+                onTouchEnd={() => {
+                    touchRef.current = null;
+                }}
                 className={cn(
-                    "relative h-[340px] sm:h-[400px] w-full select-none overflow-hidden",
+                    "hidden md:block relative h-[340px] sm:h-[400px] w-full select-none overflow-hidden",
                     "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent-cyan rounded-2xl",
                     isDragging ? "cursor-grabbing" : "cursor-grab"
                 )}
@@ -191,19 +223,16 @@ export function RecordCrate({
                                 role="option"
                                 aria-selected={isCurrent}
                                 tabIndex={-1}
-                                onClick={() => (isCurrent ? onInspect(entry) : onSelect(i))}
+                                onClick={() => (isCurrent ? onInspect(entry) : selectWithSfx(i))}
                                 style={{
                                     transform: `translateX(${x}px) translateZ(${isCurrent ? 90 : -distance * 60}px) rotateY(${Math.sign(-offset) * Math.min(distance, 3) * (MAX_TILT / 3)}deg) scale(${isCurrent ? 1 : 0.82})`,
                                     zIndex: albums.length - distance,
-                                    filter: isCurrent
-                                        ? "none"
-                                        : `brightness(${Math.max(0.28, 0.62 - distance * 0.12)})`,
-                                    transitionProperty: "transform, filter",
+                                    transitionProperty: "transform",
                                     transitionDuration: "480ms",
                                     transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
                                 }}
                                 className={cn(
-                                    "absolute h-[210px] w-[210px] sm:h-[260px] sm:w-[260px] overflow-hidden rounded-sm",
+                                    "absolute h-[210px] w-[210px] sm:h-[260px] sm:w-[260px] overflow-hidden rounded-sm will-change-transform",
                                     "shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] ring-1",
                                     isCurrent ? "ring-white/25" : "ring-black/60",
                                     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-cyan"
@@ -217,6 +246,16 @@ export function RecordCrate({
                                     quality={80}
                                     className="object-cover"
                                     draggable={false}
+                                />
+                                {/* GPU-composited depth darkening scrim (avoids per-frame CSS filter: brightness repaints) */}
+                                <span
+                                    aria-hidden
+                                    className="pointer-events-none absolute inset-0 bg-black transition-opacity duration-500"
+                                    style={{
+                                        opacity: isCurrent
+                                            ? 0
+                                            : Math.min(0.72, 0.38 + distance * 0.12),
+                                    }}
                                 />
                                 {/* the sheen a sleeve catches under a light */}
                                 <span
@@ -253,10 +292,8 @@ export function RecordCrate({
                 </div>
             </div>
 
-            <p className="mt-3 text-center text-[10px] font-mono uppercase tracking-[0.3em] text-noir-ash">
-                {/* Don't tell a phone to press the arrow keys. */}
-                <span className="hidden sm:inline">Drag or press ← → to dig · ↵ loads deck A</span>
-                <span className="sm:hidden">Swipe to dig through the crate</span>
+            <p className="hidden md:block mt-3 text-center text-[10px] font-mono uppercase tracking-[0.3em] text-noir-ash">
+                <span>Drag or press ← → to dig · ↵ loads deck A</span>
             </p>
 
             {/* ── THE RECORD YOU'RE HOLDING ─────────────────────────── */}
@@ -267,7 +304,7 @@ export function RecordCrate({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.28 }}
-                    className="mx-auto mt-10 grid max-w-5xl gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
+                    className="mx-auto mt-2 md:mt-10 grid max-w-5xl gap-8 md:gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
                 >
                     {/* left: identity + actions */}
                     <div>
@@ -296,12 +333,13 @@ export function RecordCrate({
                         <div className="mt-6 flex flex-wrap gap-2">
                             {hasAudio ? (
                                 <button
-                                    onClick={() =>
+                                    onClick={() => {
+                                        playNeedleDropSfx();
                                         onPlayTrack(
                                             album.tracks.find((t) => t.audio_url) ?? album.tracks[0]
-                                        )
-                                    }
-                                    className="flex items-center gap-2 rounded-full bg-accent-cyan px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-noir-void transition-colors hover:bg-white"
+                                        );
+                                    }}
+                                    className="flex items-center gap-2 rounded-full bg-accent-cyan px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-noir-void transition-all hover:bg-white hover:shadow-glow-md"
                                 >
                                     <Play className="h-4 w-4" />
                                     Play album
@@ -332,7 +370,7 @@ export function RecordCrate({
                         </div>
 
                         {hasAudio && (
-                            <div className="mt-6">
+                            <div className="hidden md:block mt-6">
                                 <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-noir-ash">
                                     Drop it on a deck
                                 </p>
@@ -340,7 +378,10 @@ export function RecordCrate({
                                     {([0, 1] as const).map((deck) => (
                                         <button
                                             key={deck}
-                                            onClick={() => onLoadToDeck(selectedIndex, deck)}
+                                            onClick={() => {
+                                                playNeedleDropSfx();
+                                                onLoadToDeck(selectedIndex, deck);
+                                            }}
                                             className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 font-mono text-xs uppercase tracking-widest text-noir-cloud transition-colors hover:border-accent-cyan/40 hover:text-white"
                                         >
                                             <Disc3 className="h-3.5 w-3.5" />
@@ -387,7 +428,10 @@ export function RecordCrate({
                                     return (
                                         <li key={track.id}>
                                             <button
-                                                onClick={() => onPlayTrack(track)}
+                                                onClick={() => {
+                                                    playNeedleDropSfx();
+                                                    onPlayTrack(track);
+                                                }}
                                                 className={cn(
                                                     "group flex w-full items-center gap-3 px-2 py-2.5 text-left transition-colors",
                                                     isCurrent
