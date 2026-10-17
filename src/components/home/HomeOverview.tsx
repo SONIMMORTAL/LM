@@ -14,8 +14,10 @@ export function HomeOverview() {
                 <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75">
                     Loaf Records is an independent hip-hop label from Brooklyn, founded by{" "}
                     <Link href="/bio" className="text-amber-300 underline underline-offset-4">Shadow The Great</Link>{" "}
-                    — an artist, producer and director from Bushwick — and Oso Dope. Explore the music, official merchandise,
-                    and films from the crew behind Loaf Muzik.
+                    and Oso Dope. Shadow is an artist, producer and director from Bushwick; Oso is a hip-hop artist
+                    and musician seen on Raising Kanan, The Equalizer and Wu-Tang: An American Saga. Together they&apos;ve
+                    performed at AfroPunk, the Apollo Theater, Hot 97&apos;s Hot Box and Higher Ground in Burlington, VT.
+                    Explore the music, official merchandise, and films from the crew behind Loaf Muzik.
                 </p>
                 <div className="mt-8 grid gap-8 sm:grid-cols-2">
                     <div>

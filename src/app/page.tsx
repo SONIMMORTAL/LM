@@ -48,7 +48,12 @@ const homeJsonLd = {
             description: DESCRIPTION,
             founder: [
                 { "@id": absoluteUrl("/bio#artist") },
-                { "@type": "Person", name: "Oso Dope", worksFor: { "@id": absoluteUrl("/#organization") } },
+                {
+                    "@type": "Person",
+                    name: "Oso Dope",
+                    jobTitle: ["Hip-hop artist", "Musician"],
+                    worksFor: { "@id": absoluteUrl("/#organization") },
+                },
             ],
             foundingLocation: { "@type": "Place", name: "Brooklyn, New York" },
             sameAs: [
