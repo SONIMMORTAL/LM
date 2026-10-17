@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 import {
     Instagram,
     Youtube,
     ArrowUpRight,
-    Disc3,
     Music2
 } from "lucide-react";
 
@@ -28,21 +25,19 @@ const socialLinks = [
 ];
 
 const navLinks = [
+    { href: "/", label: "Home" },
     { href: "/music", label: "Music" },
     { href: "/videos", label: "Videos" },
     { href: "/shop", label: "Shop" },
     { href: "/loaf-films", label: "Films" },
+    { href: "/gallery", label: "Gallery" },
     { href: "/bio", label: "Bio" },
+    { href: "/contact", label: "Contact" },
 ];
 
 export function Footer() {
-    const pathname = usePathname();
-
-    // Home is the full-screen menu — no footer
-    if (pathname === "/") return null;
-
     return (
-        <footer className="relative border-t border-noir-smoke bg-noir-void">
+        <footer aria-label="Loaf Records footer" className="relative z-10 border-t border-noir-smoke bg-noir-void">
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-noir-charcoal/50 to-transparent pointer-events-none" />
 
@@ -83,8 +78,8 @@ export function Footer() {
                         </div>
                     </div>
 
-                    {/* Navigation Column */}
-                    <div>
+                    {/* Shared navigation on every page, including the mobile home. */}
+                    <nav aria-label="Footer navigation">
                         <h4 className="text-foreground font-semibold mb-4 uppercase tracking-wider text-sm">
                             Navigate
                         </h4>
@@ -100,7 +95,7 @@ export function Footer() {
                                 </li>
                             ))}
                         </ul>
-                    </div>
+                    </nav>
 
                     {/* Music & Shop Column */}
                     <div>
@@ -110,7 +105,7 @@ export function Footer() {
                         </h4>
                         <Link
                             href="/music"
-                            className="inline-flex items-center gap-2 text-noir-cloud hover:text-accent-cyan transition-colors font-medium group"
+                            className="inline-flex min-h-11 items-center gap-2 text-noir-cloud hover:text-accent-cyan transition-colors font-medium group"
                         >
                             Stream the catalog
                             <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -120,7 +115,7 @@ export function Footer() {
                         <div className="mt-6 pt-4 border-t border-noir-smoke">
                             <Link
                                 href="/shop"
-                                className="inline-flex items-center gap-2 text-accent-cyan hover:text-accent-cyanMuted transition-colors font-medium"
+                                className="inline-flex min-h-11 items-center gap-2 text-accent-cyan hover:text-accent-cyanMuted transition-colors font-medium"
                             >
                                 VISIT SHOP
                                 <ArrowUpRight className="w-4 h-4" />
@@ -135,7 +130,7 @@ export function Footer() {
                         © {new Date().getFullYear()} Loaf Records. All rights reserved.
                     </p>
                     <div className="flex items-center gap-4 text-sm">
-                        <Link href="/contact" className="text-noir-cloud hover:text-accent-cyan transition-colors">
+                        <Link href="/contact" className="inline-flex min-h-11 items-center text-noir-cloud hover:text-accent-cyan transition-colors">
                             Contact
                         </Link>
                         <span className="text-noir-smoke">•</span>
@@ -146,7 +141,7 @@ export function Footer() {
                 </div>
 
                 {/* Clearance so the floating player never parks on the last row */}
-                <div aria-hidden className="h-24 sm:h-0" />
+                <div aria-hidden className="h-28" />
             </div>
         </footer>
     );
