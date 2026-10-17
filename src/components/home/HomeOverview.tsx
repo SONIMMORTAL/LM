@@ -2,6 +2,9 @@ import Link from "next/link";
 import { ALBUMS } from "@/lib/albums";
 import { socialLinks } from "@/components/layout/socialLinks";
 
+// The label, its founders and the crew stand out in gold, the way Shadow's bio link always has
+const KEYWORD = "whitespace-nowrap text-amber-300 underline underline-offset-4";
+
 /** Visible, server-rendered context and navigation for both home experiences. */
 export function HomeOverview() {
     return (
@@ -12,12 +15,13 @@ export function HomeOverview() {
                     Loaf Records — Music from The Dungeon
                 </h2>
                 <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75">
-                    Loaf Records is an independent hip-hop label from Brooklyn, founded by{" "}
-                    <Link href="/bio" className="text-amber-300 underline underline-offset-4">Shadow The Great</Link>{" "}
-                    and Oso Dope. Shadow is an artist, producer and director from Bushwick; Oso is a hip-hop artist
-                    and musician seen on Raising Kanan, The Equalizer and Wu-Tang: An American Saga. Together they&apos;ve
-                    performed at AfroPunk, the Apollo Theater, Hot 97&apos;s Hot Box and Higher Ground in Burlington, VT.
-                    Explore the music, official merchandise, and films from the crew behind Loaf Muzik.
+                    <span className={KEYWORD}>Loaf Records</span> is an independent hip-hop label from Brooklyn, founded by{" "}
+                    <Link href="/bio" className={KEYWORD}>Shadow The Great</Link> and{" "}
+                    <span className={KEYWORD}>Oso Dope</span>. Shadow is an artist, producer and director from Bushwick;
+                    Oso is a hip-hop artist and musician seen on Raising Kanan, The Equalizer and Wu-Tang: An American
+                    Saga. Together they&apos;ve performed at AfroPunk, the Apollo Theater, Hot 97&apos;s Hot Box and Higher
+                    Ground in Burlington, VT. Explore the music, official merchandise, and films from the crew behind{" "}
+                    <span className={KEYWORD}>Loaf Muzik</span>.
                 </p>
                 <div className="mt-8 grid gap-8 sm:grid-cols-2">
                     <div>
