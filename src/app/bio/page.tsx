@@ -9,9 +9,11 @@ const DESCRIPTION =
     "Shadow The Great is an independent underground hip-hop artist, producer and director from Bushwick, Brooklyn — a psalm writer and the founder of Loaf Records. Live from The Dungeon to the world.";
 
 export const metadata: Metadata = {
+    alternates: { canonical: "/bio" },
     title: "Bio | Shadow The Great",
     description: DESCRIPTION,
     openGraph: {
+        url: "/bio",
         images: [{ url: "/og/og-default.jpg", width: 1200, height: 630, alt: "Shadow The Great — Loaf Records" }],
         title: "Shadow The Great — Bio",
         description: DESCRIPTION,
@@ -30,12 +32,13 @@ export const metadata: Metadata = {
 const artistJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": `${SITE_URL}/bio#artist`,
     name: "Shadow The Great",
     url: `${SITE_URL}/bio`,
     description: DESCRIPTION,
     jobTitle: ["Hip-hop artist", "Producer", "Director"],
     homeLocation: { "@type": "Place", name: "Bushwick, Brooklyn, New York" },
-    founder: { "@type": "Organization", name: "Loaf Records", url: SITE_URL },
+    worksFor: { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Loaf Records", url: SITE_URL },
 };
 
 export default function BioPage() {

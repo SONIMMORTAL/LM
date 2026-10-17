@@ -5,6 +5,7 @@ export const metadata: Metadata = {
     description:
         "Early drops, unreleased music, and first word on Loaf Records releases. Request access.",
     openGraph: {
+        url: "/vip",
         images: [
             { url: "/og/og-default.jpg", width: 1200, height: 630, alt: "The Loaf Records crew around the decks" },
         ],

@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 
 import { verifyDownloadToken } from "@/lib/token";
 import { getAlbumBySlug } from "@/lib/albums";
 import { findCommissionTrackSpec, isCommissionAlbumName } from "@/lib/commission-tracklist";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import DownloadPageClient from "./DownloadPageClient";
+
+export const metadata: Metadata = {
+    title: "Album Download",
+    robots: { index: false, follow: false },
+};
 
 // Map album slugs to cover images
 const ALBUM_COVERS: Record<string, string> = {

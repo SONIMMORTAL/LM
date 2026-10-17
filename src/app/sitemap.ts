@@ -14,10 +14,8 @@ const ALBUM_SLUGS = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const lastModified = new Date();
-
-    // /forum and /stoop are permanent redirects to /vip, so the sitemap lists
-    // the destination instead of the redirect.
+    // Exclude redirects and no-index pages such as /vip. Omit lastModified
+    // until actual editorial timestamps are available; build time is not an edit.
     const pages: Array<{
         path: string;
         changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
@@ -26,7 +24,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { path: '/', changeFrequency: 'weekly', priority: 1 },
         { path: '/music', changeFrequency: 'weekly', priority: 0.9 },
         { path: '/shop', changeFrequency: 'daily', priority: 0.9 },
-        { path: '/vip', changeFrequency: 'daily', priority: 0.8 },
         { path: '/videos', changeFrequency: 'weekly', priority: 0.7 },
         { path: '/loaf-films', changeFrequency: 'monthly', priority: 0.7 },
         { path: '/bio', changeFrequency: 'monthly', priority: 0.7 },
@@ -41,7 +38,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return pages.map(({ path, changeFrequency, priority }) => ({
         url: `${SITE_URL}${path}`,
-        lastModified,
         changeFrequency,
         priority,
     }));

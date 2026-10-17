@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+    alternates: { canonical: "/contact" },
     title: "Contact — Bookings, Press & Inquiries",
     description: "Get in touch with Loaf Records for bookings, features, press inquiries, licensing, and business opportunities. Based in Brooklyn, NY.",
     openGraph: {
+        url: "/contact",
         images: [
             { url: "/og/og-default.jpg", width: 1200, height: 630, alt: "The Loaf Records crew around the decks" },
         ],

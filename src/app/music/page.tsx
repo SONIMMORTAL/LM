@@ -7,9 +7,11 @@ import type { Metadata } from "next";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-    title: "Music | Loaf Records — Official Releases",
+    alternates: { canonical: "/music" },
+    title: "Music — Official Releases",
     description: "Listen to the official discography of Shadow The Great and Loaf Records releases. Stream tracks, view official videos, and buy digital albums.",
     openGraph: {
+        url: "/music",
         images: [
             { url: "/og/og-default.jpg", width: 1200, height: 630, alt: "The Loaf Records DJ booth" },
         ],

@@ -778,22 +778,37 @@ export function MobileStudioLanding({
                     {/* Hero Action Console */}
                     <div className="p-4 bg-gradient-to-b from-[#111218] to-[#090A0E]">
                         <div className="grid grid-cols-2 gap-2.5">
+                            {/* Names whichever record is picked in the switcher below, since that's what it plays */}
                             <button
                                 type="button"
                                 onClick={handlePlayActiveAlbum}
-                                className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 py-3.5 px-4 font-mono text-xs font-black uppercase tracking-[0.16em] text-black shadow-[0_0_25px_rgba(245,158,11,0.35)] active:scale-[0.98] transition-transform"
+                                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 py-3 px-3 text-left text-black shadow-[0_0_25px_rgba(245,158,11,0.35)] active:scale-[0.98] transition-transform"
                             >
-                                <Play className="w-4 h-4 fill-current" />
-                                <span>Spin The Commission</span>
+                                <Play className="w-4 h-4 shrink-0 fill-current" />
+                                <span className="min-w-0">
+                                    <span className="block font-mono text-[9px] font-black uppercase tracking-[0.24em] text-black/70">
+                                        Spin
+                                    </span>
+                                    <span className="block font-display text-[length:clamp(14px,4.4vw,17px)] uppercase leading-[1.05] tracking-[0.03em]">
+                                        {activeAlbum.name}
+                                    </span>
+                                </span>
                             </button>
 
                             <a
                                 href="#merch-anatomy"
                                 onClick={() => playCrateFlipSfx()}
-                                className="flex items-center justify-center gap-2 rounded-xl border-2 border-accent-cyan/50 bg-accent-cyan/10 py-3.5 px-4 font-mono text-xs font-bold uppercase tracking-[0.16em] text-accent-cyan hover:bg-accent-cyan hover:text-black active:scale-[0.98] transition-colors"
+                                className="flex items-center gap-2 rounded-xl border-2 border-accent-cyan/50 bg-accent-cyan/10 py-3 px-3 text-left text-accent-cyan hover:bg-accent-cyan hover:text-black active:scale-[0.98] transition-colors"
                             >
-                                <ShoppingBag className="w-4 h-4" />
-                                <span>Shop The Drop</span>
+                                <ShoppingBag className="w-4 h-4 shrink-0" />
+                                <span className="min-w-0">
+                                    <span className="block font-mono text-[9px] font-bold uppercase tracking-[0.24em] opacity-80">
+                                        Shop
+                                    </span>
+                                    <span className="block font-display text-[length:clamp(14px,4.4vw,17px)] uppercase leading-[1.05] tracking-[0.03em]">
+                                        The Drop
+                                    </span>
+                                </span>
                             </a>
                         </div>
                     </div>

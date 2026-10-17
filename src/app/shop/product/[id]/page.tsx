@@ -24,9 +24,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const description = `${product.name}${price ? ` — ${price}` : ''} | Official Loaf Records merch. Limited edition, premium quality.`;
 
     return {
-        title: `${product.name} | Loaf Records Shop`,
+        title: `${product.name} | Official Shop`,
+        alternates: { canonical: `/shop/product/${product.id}` },
         description,
         openGraph: {
+            url: `/shop/product/${product.id}`,
             title: product.name,
             description,
             images: product.thumbnail_url ? [

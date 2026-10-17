@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     description:
         "Photographs from the Loaf Records archive. Trailer and box truck pieces, blackbook pages, and the crew behind them.",
     openGraph: {
+        url: "/gallery",
         title: "Gallery — Behind The Scenes",
         description: "Photographs from the Loaf Records archive.",
         type: "website",

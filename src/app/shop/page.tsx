@@ -8,9 +8,11 @@ import type { Metadata } from "next";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-    title: "Shop | Loaf Records — Official Merch",
+    alternates: { canonical: "/shop" },
+    title: "Shop — Official Merch",
     description: "Browse the official Loaf Records merch store. Limited edition apparel, vinyl, accessories, and more from Shadow The Great. Worldwide shipping.",
     openGraph: {
+        url: "/shop",
         images: [
             { url: "/og/og-default.jpg", width: 1200, height: 630, alt: "Loaf Records official merch" },
         ],

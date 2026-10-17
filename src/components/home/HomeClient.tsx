@@ -2,10 +2,13 @@
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { DungeonMenu } from "@/components/home/DungeonMenu";
+import dynamic from "next/dynamic";
+
 import { MobileStudioLanding } from "@/components/home/MobileStudioLanding";
 import type { Track } from "@/lib/tracks-server";
 import type { PrintfulProduct } from "@/lib/printful";
+
+const DungeonMenu = dynamic(() => import("@/components/home/DungeonMenu").then(mod => mod.DungeonMenu));
 
 /**
  * Whether the intro should be suppressed for this visitor: either they've
@@ -31,8 +34,9 @@ function readIntroSuppressed() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-// The server can't know either fact, so it assumes a first-time visitor.
-const introSuppressedOnServer = () => false;
+// Serve the usable page first, including when JavaScript is unavailable.
+// The optional intro is enabled only after reading the visitor preference.
+const introSuppressedOnServer = () => true;
 
 function subscribeToMobileViewport(onChange: () => void) {
     const mqWidth = window.matchMedia("(max-width: 1023px)");

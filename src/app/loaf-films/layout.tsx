@@ -3,9 +3,11 @@ import { StreetBackdrop } from "@/components/layout/StreetBackdrop";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+    alternates: { canonical: "/loaf-films" },
     title: "Loaf Films | Cinematic Music Video Production — Brooklyn, NY",
     description: "Loaf Films is a Brooklyn-based music video and commercial production company by Loaf Records. Cinema-grade visuals for independent and label-signed artists. Bronze, Silver, and Gold packages available.",
     openGraph: {
+        url: "/loaf-films",
         images: [
             { url: "/og/og-videos.jpg", width: 1200, height: 630, alt: "The Loaf Records screening room" },
         ],

@@ -63,9 +63,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const description = `Listen to ${album.name} by ${album.artist} on Loaf Records. View official music videos, stream the tracklist, and buy digital album download.`;
 
     return {
-        title,
+        title: { absolute: title },
         description,
+        alternates: { canonical: `/music/${slug.toLowerCase()}` },
         openGraph: {
+            url: `/music/${slug.toLowerCase()}`,
             title,
             description,
             images: [{ url: album.cover }],
