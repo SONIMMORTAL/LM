@@ -9,7 +9,7 @@ export const revalidate = 300;
 
 const TITLE = "Loaf Records | Shadow The Great, Brooklyn Hip-Hop & Merch";
 const DESCRIPTION =
-    "Explore Loaf Records, the Brooklyn independent hip-hop label founded by Shadow The Great. Stream albums, shop official merch, and watch Loaf Films music videos.";
+    "Explore Loaf Records, the Brooklyn independent hip-hop label founded by Shadow The Great and Oso Dope. Stream albums, shop merch, and watch Loaf Films music videos.";
 
 export const metadata: Metadata = {
     title: { absolute: TITLE },
@@ -45,7 +45,10 @@ const homeJsonLd = {
             url: absoluteUrl(),
             logo: absoluteUrl("/loaf-records-logo.png"),
             description: DESCRIPTION,
-            founder: { "@id": absoluteUrl("/bio#artist") },
+            founder: [
+                { "@id": absoluteUrl("/bio#artist") },
+                { "@type": "Person", name: "Oso Dope", worksFor: { "@id": absoluteUrl("/#organization") } },
+            ],
             foundingLocation: { "@type": "Place", name: "Brooklyn, New York" },
             sameAs: [
                 "https://instagram.com/loafrecords",
