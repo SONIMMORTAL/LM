@@ -715,17 +715,8 @@ export function MobileStudioLanding({
                ═══════════════════════════════════════════════════════════ */}
             <section className="relative z-10 px-3 sm:px-4 pt-4 pb-6 max-w-2xl mx-auto">
                 <div className="relative rounded-[26px] border-2 border-amber-400/35 bg-[#0B0B0F] shadow-[0_28px_80px_rgba(0,0,0,0.95)] overflow-hidden">
-                    {/* Full-bleed Dungeon Crew Mural Banner */}
+                    {/* Full-bleed banner: the Dungeon Crew mural, giving way to Lost City on tape */}
                     <div className="relative h-64 sm:h-72 w-full overflow-hidden">
-                        <Image
-                            src="/brand/dungeon-crew.png"
-                            alt="Loaf Records Crew in The Dungeon — Shadow The Great, King illa, Ruggz, Rah Tha Ruler, Oso Dope"
-                            fill
-                            priority
-                            sizes="(max-width: 768px) 96vw, 680px"
-                            className="object-cover object-center scale-[1.02]"
-                        />
-                        {/* Lost City on tape over the mural; the mural stays if it can't play */}
                         <LostCityHeroTape />
                         <div
                             aria-hidden

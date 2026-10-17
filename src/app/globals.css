@@ -424,25 +424,35 @@ body {
 /* ========================
    VHS Tape — the Lost City video behind the mobile hero
    ======================== */
-/* Worn-tape colour: hot, a touch warm, slightly soft */
-.vhs-picture {
-  filter: saturate(1.35) contrast(1.12) brightness(0.9) sepia(0.14) blur(0.35px);
+/*
+ * Everything here has to stay smooth on a cheap Android phone: the worn-tape colour is
+ * baked into the video file, nothing blends with or filters the moving picture, and the
+ * animations only move layers (transform), which phones do without repainting.
+ */
+.vhs-noise {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.16;
 }
 
-.vhs-noise {
+/* Oversized so it can jitter around without its edges showing */
+.vhs-noise::before {
+  content: "";
+  position: absolute;
+  inset: -80px;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   background-size: 140px 140px;
-  mix-blend-mode: overlay;
-  opacity: 0.4;
   animation: vhsNoise 0.36s steps(1, end) infinite;
+  will-change: transform;
 }
 
 @keyframes vhsNoise {
-  0% { background-position: 0 0; }
-  25% { background-position: -37px 21px; }
-  50% { background-position: 53px -44px; }
-  75% { background-position: -18px 67px; }
-  100% { background-position: 0 0; }
+  0% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(-37px, 21px, 0); }
+  50% { transform: translate3d(53px, -44px, 0); }
+  75% { transform: translate3d(-18px, 67px, 0); }
+  100% { transform: translate3d(0, 0, 0); }
 }
 
 /* A bright, smeared band that rolls down the picture now and then */
@@ -454,20 +464,19 @@ body {
   background: linear-gradient(
     to bottom,
     transparent,
-    rgba(255, 255, 255, 0.07) 35%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.05) 65%,
+    rgba(255, 255, 255, 0.04) 30%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.03) 70%,
     transparent
   );
-  mix-blend-mode: screen;
-  filter: blur(1px);
-  transform: translateY(-120%);
+  transform: translate3d(0, -120%, 0);
   animation: vhsTracking 7s linear infinite;
+  will-change: transform;
 }
 
 @keyframes vhsTracking {
-  0%, 55% { transform: translateY(-120%); }
-  100% { transform: translateY(600%); }
+  0%, 55% { transform: translate3d(0, -120%, 0); }
+  100% { transform: translate3d(0, 600%, 0); }
 }
 
 /* VCR on-screen display: white, with the colour bleeding off either side */
@@ -479,7 +488,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .vhs-noise,
+  .vhs-noise::before,
   .vhs-tracking {
     animation: none;
   }
