@@ -12,7 +12,7 @@ export function StreetBackdrop({ children }: { children: React.ReactNode }) {
             <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[110vh]">
                 {/* Brick dungeon mural watermark */}
                 <Image
-                    src="/ChatGPT Image Jul 12, 2026, 11_17_09 PM.png"
+                    src="/brand/dungeon-crew.png"
                     alt=""
                     fill
                     sizes="100vw"

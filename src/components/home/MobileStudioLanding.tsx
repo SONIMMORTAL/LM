@@ -74,7 +74,7 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         catalogNo: "LR-007-COMM",
         stampCode: "BKLYN // COMMISSION-07",
         cover: "/THE COMMISSION.png",
-        linerArt: "/ChatGPT Image Jul 12, 2026, 11_17_09 PM.png",
+        linerArt: "/brand/dungeon-crew.png",
         linerCaption: "THE DUNGEON CREW · SHADOW · KING ILLA · RUGGZ · RAH THA RULER",
         insertArt: "/gallery/blackbook-spread.jpg",
         insertCaption: "ORIGINAL BLACKBOOK LYRIC & GRAFFITI INSERT · BROOKLYN NY",
@@ -169,7 +169,7 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         linerCaption: "LIVE STAGE ENERGY · BROOKLYN UNDERGROUND SESSION",
         insertArt: "/LFTD3.jpg",
         insertCaption: "STÜSSY NY ARCHIVE PHOTOGRAPH · LINER BOOKLET",
-        sessionArt: "/ChatGPT Image Jul 12, 2026, 11_17_09 PM.png",
+        sessionArt: "/brand/dungeon-crew.png",
         sessionCaption: "THE BRICK DUNGEON HEADQUARTERS · LOAF CREW",
         accent: "emerald",
         accentHex: "#10B981",
@@ -598,7 +598,7 @@ export function MobileStudioLanding({
             <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
                 {/* Brick Dungeon Mural Watermark */}
                 <Image
-                    src="/ChatGPT Image Jul 12, 2026, 11_17_09 PM.png"
+                    src="/brand/dungeon-crew.png"
                     alt=""
                     fill
                     sizes="100vw"
@@ -713,7 +713,7 @@ export function MobileStudioLanding({
                     {/* Full-bleed Dungeon Crew Mural Banner */}
                     <div className="relative h-64 sm:h-72 w-full overflow-hidden">
                         <Image
-                            src="/ChatGPT Image Jul 12, 2026, 11_17_09 PM.png"
+                            src="/brand/dungeon-crew.png"
                             alt="Loaf Records Crew in The Dungeon — Shadow The Great, King illa, Ruggz, Rah Tha Ruler, Oso Dope"
                             fill
                             priority
