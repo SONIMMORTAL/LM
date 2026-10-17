@@ -3,6 +3,7 @@ import { HomeOverview } from "@/components/home/HomeOverview";
 import { getTracks } from "@/lib/tracks-server";
 import { getPrintfulProducts } from "@/lib/printful";
 import { absoluteUrl } from "@/lib/site";
+import { getChannelUploads } from "@/lib/youtube-feed";
 import type { Metadata } from "next";
 
 export const revalidate = 300;
@@ -87,9 +88,10 @@ const homeJsonLd = {
 };
 
 export default async function Home() {
-    const [tracks, products] = await Promise.all([
+    const [tracks, products, uploads] = await Promise.all([
         getTracks().catch(() => []),
         getPrintfulProducts().catch(() => []),
+        getChannelUploads(),
     ]);
 
     return (
@@ -98,7 +100,7 @@ export default async function Home() {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd).replace(/</g, "\\u003c") }}
             />
-            <HomeClient initialTracks={tracks} initialProducts={products} />
+            <HomeClient initialTracks={tracks} initialProducts={products} newRelease={uploads[0]} />
             <HomeOverview />
         </>
     );

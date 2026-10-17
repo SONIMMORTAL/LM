@@ -43,7 +43,7 @@ export default async function ShopPage() {
                 <div className="relative overflow-hidden rounded-[26px] border-2 border-amber-400/35 bg-[#0B0B0F] shadow-[0_28px_80px_rgba(0,0,0,0.95)]">
                     <div className="relative h-44 sm:h-60 w-full overflow-hidden">
                         <Image
-                            src="/gallery/rooftop-throwies.jpg"
+                            src="/MUSICBACKGRND.png"
                             alt=""
                             fill
                             priority

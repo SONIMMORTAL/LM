@@ -7,6 +7,7 @@ import { VhsTape } from "@/components/videos/VhsTape";
 import { FullTapeShelf, TapeTracklist, fullTapeTitle, type FullTape } from "@/components/videos/FullTapeShelf";
 import { claimAudio, onAudioClaim } from "@/lib/audio-bus";
 import { playVhsClunkSfx } from "@/lib/ui-sfx";
+import type { ChannelUpload } from "@/lib/youtube-feed";
 
 /*
  * Theater screen — the blank TV in the artwork. The rect is measured
@@ -108,9 +109,11 @@ const staticVideos: Video[] = [
 interface VideosPageClientProps {
     /** Video-only releases, with their tracklists, shelved above the music videos. */
     tapes: FullTape[];
+    /** The channel's latest uploads, newest first, straight from YouTube. */
+    uploads: ChannelUpload[];
 }
 
-export function VideosPageClient({ tapes }: VideosPageClientProps) {
+export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
     const [dbVideos, setDbVideos] = useState<Video[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -201,17 +204,22 @@ export function VideosPageClient({ tapes }: VideosPageClientProps) {
         fetchVideos();
     }, []);
 
-    // Combine static and DB videos, prioritizing DB (newest first usually)
+    // The full tapes have their own shelf, so keep them off this one even if
+    // someone also adds them through the admin or they're among the latest uploads.
+    const tapeIds = new Set(tapes.map((t) => t.youtubeId));
+
+    // Whatever's newest on the channel leads, then admin additions, then the classics.
     // Filter out duplicates if any (by youtube_id)
-    const allVideos = [...dbVideos, ...staticVideos].filter((v, i, self) =>
+    const channelVideos: Video[] = uploads
+        .filter((u) => !tapeIds.has(u.youtubeId))
+        .map((u) => ({ id: `yt-${u.youtubeId}`, title: u.title, description: u.description, youtube_id: u.youtubeId }));
+    const allVideos = [...channelVideos, ...dbVideos, ...staticVideos].filter((v, i, self) =>
         i === self.findIndex((t) => (t.youtube_id || t.youtubeId) === (v.youtube_id || v.youtubeId))
     );
 
-    // Featured Video — Lost City plays first on the theater screen when the page loads
-    const featuredVideo = staticVideos[0];
-    // The full tapes have their own shelf, so keep them off this one even if
-    // someone also adds them through the admin.
-    const tapeIds = new Set(tapes.map((t) => t.youtubeId));
+    // Featured Video — the newest upload is on the theater screen when the page loads
+    // (Lost City if YouTube can't be reached)
+    const featuredVideo = channelVideos[0] ?? staticVideos[0];
     const mainVideos = allVideos.filter(v => {
         const id = v.youtube_id || v.youtubeId;
         return id !== (featuredVideo.youtube_id || featuredVideo.youtubeId) && !tapeIds.has(id ?? "");

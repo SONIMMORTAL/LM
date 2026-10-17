@@ -33,6 +33,12 @@ import { AlbumPurchaseModal } from "@/components/music/AlbumPurchaseModal";
 import { LoafDeck } from "@/components/brand/LoafDeck";
 import { OnAirSign } from "@/components/brand/OnAirSign";
 import { LostCityHeroTape } from "@/components/home/LostCityHeroTape";
+import { NewReleaseFeature } from "@/components/home/NewReleaseFeature";
+import { merchLayerArt, type MerchDetails } from "@/lib/merch-layers";
+import type { ChannelUpload } from "@/lib/youtube-feed";
+import useSWR from "swr";
+
+const fetchJson = (url: string) => fetch(url).then((res) => res.json());
 
 interface ShowcaseAlbum {
     id: string;
@@ -77,8 +83,8 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         cover: "/THE COMMISSION.png",
         linerArt: "/brand/dungeon-crew.png",
         linerCaption: "THE DUNGEON CREW · SHADOW · KING ILLA · RUGGZ · RAH THA RULER",
-        insertArt: "/gallery/blackbook-spread.jpg",
-        insertCaption: "ORIGINAL BLACKBOOK LYRIC & GRAFFITI INSERT · BROOKLYN NY",
+        insertArt: "/THE-COMMISSION-7-deluxe-vinyl.png",
+        insertCaption: "THE COMMISSION ON WAX · LOAF RECORDS",
         sessionArt: "/MUSICBACKGRND.png",
         sessionCaption: "LOAF RECORDS ANALOG MIXING BOARD · 24-BIT / 96KHZ MASTER",
         accent: "amber",
@@ -114,8 +120,8 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         cover: "/LC1.jpg",
         linerArt: "/LC2.jpg",
         linerCaption: "PRODUCED BY RUGGZ · MIXED BY KING ILLA · MPC ONE & SP-404SX",
-        insertArt: "/gallery/box-truck-portrait.jpg",
-        insertCaption: "BROOKLYN BOX-TRUCK GRAFFITI & STREET ARCHIVE INSERT",
+        insertArt: "/LC1-2-deluxe-vinyl.png",
+        insertCaption: "LOST CITY ON WAX · LOAF RECORDS",
         sessionArt: "/LFTD3.jpg",
         sessionCaption: "NEW YORK STREET PORTRAIT SERIES · ARCHIVAL PRINT",
         accent: "cyan",
@@ -139,10 +145,10 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         catalogNo: "LR-005-LIFE",
         stampCode: "BKLYN // MORE-LIFE-05",
         cover: "/MORE LIFE VINYL.jpg",
-        linerArt: "/gallery/noxer-canvas.jpg",
-        linerCaption: "NOXER CANVAS STREET ART EDITION · LOAF GALLERY",
-        insertArt: "/gallery/rooftop-throwies.jpg",
-        insertCaption: "BROOKLYN ROOFTOP THROWIES ·LIMITED COLLECTOR SLEEVE",
+        linerArt: "/loafmancrate.jpg",
+        linerCaption: "LOAF MAN DIGGING THE CRATES · LOAF RECORDS",
+        insertArt: "/MORE-LIFE-VINYL-5-deluxe-vinyl.png",
+        insertCaption: "MORE LIFE ON WAX · LOAF RECORDS",
         sessionArt: "/LC2.jpg",
         sessionCaption: "HARDWARE SAMPLER SESSION · SP-404SX + MPC",
         accent: "rose",
@@ -360,12 +366,15 @@ function CrewTag({ name, count, paint, countPaint, tilt }: CrewTagProps) {
 interface MobileStudioLandingProps {
     tracks: Track[];
     products: PrintfulProduct[];
+    /** The newest upload on the Loaf Records YouTube channel, featured under the hero */
+    newRelease?: ChannelUpload;
     onSwitchToRoom: () => void;
 }
 
 export function MobileStudioLanding({
     tracks,
     products,
+    newRelease,
     onSwitchToRoom,
 }: MobileStudioLandingProps) {
     const { cartCount, setIsCartOpen } = useCart();
@@ -378,6 +387,16 @@ export function MobileStudioLanding({
     const [selectedMerchIdx, setSelectedMerchIdx] = useState(0);
     const merchItems = products.length > 0 ? products.slice(0, 8) : FALLBACK_MERCH;
     const activeMerch = merchItems[selectedMerchIdx] || merchItems[0];
+
+    // The piece's own art fans out behind it: its print design and another colour it comes in.
+    // The placeholder merch has no store record, so it keeps the label art.
+    const { data: merchDetails } = useSWR<MerchDetails>(
+        products.length > 0 ? `/api/products/${activeMerch.id}` : null,
+        fetchJson,
+        { revalidateOnFocus: false }
+    );
+    const merchArt = merchLayerArt(merchDetails);
+    const merchColorway = merchArt.colorways[0];
 
     // Modals & inline player state
     const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
@@ -639,9 +658,10 @@ export function MobileStudioLanding({
                         className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-1 [mask-image:linear-gradient(to_right,transparent,black_6px,black_calc(100%-20px),transparent)]"
                     >
                         {[
+                            ...(newRelease ? [{ href: "#new-release", label: "New" }] : []),
                             { href: "#master-anatomy", label: "Music" },
                             { href: "#merch-anatomy", label: "Merch" },
-                            { href: "#cinema-stage", label: "Lost City" },
+                            { href: "/videos", label: "Videos ↗" },
                             { href: "/bio", label: "Bio ↗" },
                             { href: "/shop", label: "Store ↗" },
                             { href: "/gallery", label: "Blackbook ↗" },
@@ -791,6 +811,9 @@ export function MobileStudioLanding({
                     </div>
                 </div>
             </section>
+
+            {/* NEW RELEASE — whatever went up on the channel last */}
+            {newRelease && <NewReleaseFeature video={newRelease} />}
 
             {/* ═══════════════════════════════════════════════════════════
                 CHAPTER 01 — THE ALBUM
@@ -1250,13 +1273,13 @@ export function MobileStudioLanding({
                                     scale: gRigScale,
                                 }}
                             >
-                                {/* Base: rooftop throwies + Loaf Man tag */}
+                                {/* Base: the Loaf record on the deck + Loaf Man tag */}
                                 <motion.div
                                     style={{ x: gL5X, y: gL5Y, z: gL5Z, opacity: gL5Opacity }}
                                     className="absolute inset-0 rounded-2xl border-2 border-amber-400/60 bg-[#0D0B08] overflow-hidden shadow-[0_24px_48px_rgba(0,0,0,0.95)] will-change-transform"
                                 >
                                     <Image
-                                        src="/gallery/rooftop-throwies.jpg"
+                                        src="/static-logo.jpg"
                                         alt=""
                                         fill
                                         sizes="280px"
@@ -1274,34 +1297,39 @@ export function MobileStudioLanding({
                                     </div>
                                 </motion.div>
 
-                                {/* Blackbook lining */}
+                                {/* The design as it's printed on the piece */}
                                 <motion.div
                                     style={{ x: gL4X, y: gL4Y, z: gL4Z, opacity: gL4Opacity }}
                                     className="absolute inset-0 rounded-2xl border-2 border-white/30 bg-[#10131A] overflow-hidden shadow-[0_22px_44px_rgba(0,0,0,0.92)] will-change-transform"
                                 >
                                     <Image
-                                        src="/gallery/blackbook-spread.jpg"
+                                        src={merchArt.artwork ?? "/MUSICBACKGRND.png"}
                                         alt=""
                                         fill
                                         sizes="280px"
-                                        className="object-cover opacity-80"
+                                        className={merchArt.artwork ? "object-contain p-4" : "object-cover opacity-80"}
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                                 </motion.div>
 
-                                {/* Noxer canvas plate */}
+                                {/* The piece in another colour it comes in, on a light well so dark pieces read */}
                                 <motion.div
                                     style={{ x: gL3X, y: gL3Y, z: gL3Z, opacity: gL3Opacity }}
-                                    className="absolute inset-0 rounded-2xl border-2 border-emerald-400/55 bg-[#0A1112] overflow-hidden shadow-[0_22px_44px_rgba(0,0,0,0.92)] will-change-transform"
+                                    className={cn(
+                                        "absolute inset-0 rounded-2xl border-2 border-emerald-400/55 overflow-hidden shadow-[0_22px_44px_rgba(0,0,0,0.92)] will-change-transform",
+                                        merchColorway ? "bg-[#ECECEC]" : "bg-[#0A1112]"
+                                    )}
                                 >
                                     <Image
-                                        src="/gallery/noxer-canvas.jpg"
+                                        src={merchColorway ?? "/brand/loaf-record.jpg"}
                                         alt=""
                                         fill
                                         sizes="280px"
-                                        className="object-cover opacity-90"
+                                        className={merchColorway ? "object-contain p-2" : "object-cover opacity-90"}
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                                    {!merchColorway && (
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                                    )}
                                 </motion.div>
 
                                 {/* Core garment */}
