@@ -19,7 +19,6 @@ import {
     ShoppingBag,
     ArrowUpRight,
     Film,
-    Volume2,
     Monitor,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -28,7 +27,6 @@ import { playCrateFlipSfx, playNeedleDropSfx, playVhsClunkSfx } from "@/lib/ui-s
 import { claimAudio } from "@/lib/audio-bus";
 import { requestWelcomeTrack } from "@/lib/welcome-track";
 import type { Track } from "@/lib/tracks-server";
-import { AlbumPurchaseModal } from "@/components/music/AlbumPurchaseModal";
 import { LoafDeck } from "@/components/brand/LoafDeck";
 import { OnAirSign } from "@/components/brand/OnAirSign";
 import { LostCityHeroTape } from "@/components/home/LostCityHeroTape";
@@ -313,8 +311,6 @@ export function MobileStudioLanding({
     const activeAlbum = SHOWCASE_ALBUMS[selectedAlbumIdx];
 
     // Modals & inline player state
-    const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
-    const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
     const [inlineVideoPlaying, setInlineVideoPlaying] = useState(false);
 
     const prefersReducedMotion = useReducedMotion();
@@ -406,8 +402,6 @@ export function MobileStudioLanding({
     const mL5Z = useTransform(masterExplode, [0, 1], [-24, -110]);
     const mL5Opacity = useTransform(masterExplode, [0, 0.12, 1], [0, 1, 1]);
 
-    // Thread that draws down from the album into the tracklist
-    const mThread = useTransform(masterExplode, [0.55, 1], [0, 1]);
 
     // Reduced motion: skip the scroll choreography and show everything opened up.
     useEffect(() => {
@@ -432,7 +426,6 @@ export function MobileStudioLanding({
                 window.dispatchEvent(
                     new CustomEvent("playMusic", { detail: { trackIndex: globalIdx } })
                 );
-                setPlayingTrackId(track.id);
             }
         },
         [tracks]
@@ -891,7 +884,7 @@ export function MobileStudioLanding({
                     </div>
 
                     {/* ── Featuring: who's on it, tagged up under the album, never over it ── */}
-                    <div className="relative z-20 mx-3 sm:mx-4 mt-3 rounded-2xl border border-white/10 bg-black/25 px-3 pt-3 overflow-hidden">
+                    <div className="relative z-20 mx-3 sm:mx-4 mt-3 mb-4 rounded-2xl border border-white/10 bg-black/25 px-3 pt-3 overflow-hidden">
                         <p
                             className="text-center font-mono text-[9px] font-bold uppercase tracking-[0.26em]"
                             style={{ color: activeAlbum.accentHex }}
@@ -921,135 +914,6 @@ export function MobileStudioLanding({
                                 );
                             })}
                         </motion.ul>
-                    </div>
-
-                    {/* ── Tracklist — revealed directly under the album ── */}
-                    <div
-                        id="studio-tracks"
-                        className="relative z-20 px-4 sm:px-5 pb-5"
-                    >
-                        {/* Thread tying the album to its tracklist */}
-                        <motion.div
-                            aria-hidden
-                            style={{ scaleY: mThread, backgroundColor: activeAlbum.accentHex }}
-                            className="mx-auto w-[2px] h-8 origin-top rounded-full opacity-70"
-                        />
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 18 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, amount: 0.6 }}
-                            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                            className="flex items-center justify-between gap-3 pt-2 pb-3 mb-3 border-b border-white/10"
-                        >
-                            <div className="min-w-0">
-                                <h3 className="font-display text-2xl uppercase tracking-wider text-white leading-none">
-                                    Tracklist
-                                </h3>
-                                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-noir-cloud mt-1">
-                                    {albumTracks.length} {albumTracks.length === 1 ? "track" : "tracks"} · {activeAlbum.year}
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-2 shrink-0">
-                                <button
-                                    type="button"
-                                    onClick={handlePlayActiveAlbum}
-                                    aria-label={`Play ${activeAlbum.name}`}
-                                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white"
-                                >
-                                    <Play className="w-4 h-4 fill-current ml-0.5" />
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setPurchaseModalOpen(true)}
-                                    className="flex items-center gap-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 px-3.5 py-2.5 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-[0_0_20px_rgba(245,158,11,0.3)]"
-                                >
-                                    <ShoppingBag className="w-3.5 h-3.5" />
-                                    <span>${activeAlbum.price.toFixed(2)}</span>
-                                </button>
-                            </div>
-                        </motion.div>
-
-                        {albumTracks.length === 0 ? (
-                            <p className="py-6 text-center font-mono text-[10px] uppercase tracking-[0.24em] text-noir-cloud">
-                                Dropping soon
-                            </p>
-                        ) : (
-                            <ol className="space-y-1.5">
-                                {albumTracks.map((track, idx) => {
-                                    const isCurrent = playingTrackId === track.id;
-                                    const playable = Boolean(track.audio_url);
-                                    return (
-                                        <motion.li
-                                            key={`${activeAlbum.id}-${track.id}`}
-                                            initial={{ opacity: 0, y: 22 }}
-                                            whileInView={{ opacity: 1, y: 0 }}
-                                            viewport={{ once: true, amount: 0.4 }}
-                                            transition={{
-                                                duration: 0.45,
-                                                delay: Math.min(idx, 6) * 0.04,
-                                                ease: [0.22, 1, 0.36, 1],
-                                            }}
-                                        >
-                                            <button
-                                                type="button"
-                                                disabled={!playable}
-                                                onClick={() => handlePlayTrack(track)}
-                                                className={cn(
-                                                    "w-full p-2.5 rounded-xl border flex items-center justify-between gap-3 text-left transition-colors",
-                                                    playable
-                                                        ? "hover:border-amber-400/50 active:scale-[0.99]"
-                                                        : "opacity-45 cursor-not-allowed",
-                                                    isCurrent
-                                                        ? "bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-transparent border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.15)]"
-                                                        : "bg-[#11131A]/90 border-white/[0.07]"
-                                                )}
-                                            >
-                                                <div className="flex items-center gap-3 min-w-0">
-                                                    <span
-                                                        className={cn(
-                                                            "w-7 shrink-0 font-mono text-[11px] font-black tabular-nums",
-                                                            isCurrent ? "text-amber-400" : "text-noir-ash"
-                                                        )}
-                                                    >
-                                                        {String(idx + 1).padStart(2, "0")}
-                                                    </span>
-                                                    <div className="min-w-0">
-                                                        <p
-                                                            className={cn(
-                                                                "text-xs sm:text-sm font-bold truncate",
-                                                                isCurrent ? "text-amber-300" : "text-white"
-                                                            )}
-                                                        >
-                                                            {track.title}
-                                                        </p>
-                                                        <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-noir-cloud truncate">
-                                                            {track.artist || activeAlbum.artist}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <span
-                                                    className={cn(
-                                                        "shrink-0 w-8 h-8 rounded-full flex items-center justify-center border",
-                                                        isCurrent
-                                                            ? "bg-amber-400 text-black border-amber-400"
-                                                            : "bg-black/60 text-white/80 border-white/15"
-                                                    )}
-                                                >
-                                                    {isCurrent ? (
-                                                        <Volume2 className="w-3.5 h-3.5 animate-pulse" />
-                                                    ) : (
-                                                        <Play className="w-3 h-3 fill-current ml-0.5" />
-                                                    )}
-                                                </span>
-                                            </button>
-                                        </motion.li>
-                                    );
-                                })}
-                            </ol>
-                        )}
                     </div>
                 </div>
             </section>
@@ -1161,18 +1025,6 @@ export function MobileStudioLanding({
                     </div>
                 </div>
             </section>
-
-            {/* MODALS */}
-            <AlbumPurchaseModal
-                isOpen={purchaseModalOpen}
-                onClose={() => setPurchaseModalOpen(false)}
-                album={{
-                    name: activeAlbum.name,
-                    price: activeAlbum.price,
-                    cover: activeAlbum.cover,
-                    artist: activeAlbum.artist,
-                }}
-            />
         </div>
     );
 }
