@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 
 export const revalidate = 300;
 
-const TITLE = "Loaf Records | Shadow The Great, Brooklyn Hip-Hop & Merch";
+const TITLE = "Loaf Records | Home of Loaf Muzik";
 const DESCRIPTION =
     "Explore Loaf Records, the Brooklyn independent hip-hop label founded by Shadow The Great and Oso Dope. Stream albums, shop merch, and watch Loaf Films music videos.";
 

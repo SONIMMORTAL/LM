@@ -34,7 +34,7 @@ const bebasNeue = Bebas_Neue({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Loaf Records | Brooklyn Hip-Hop, Music & Merch",
+    default: "Loaf Records | Home of Loaf Muzik",
     template: "%s | Loaf Records",
   },
   description: "The official home of Loaf Records. Brooklyn-born independent record label. Music, merch, and films.",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Loaf Records | Brooklyn Hip-Hop, Music & Merch",
+    title: "Loaf Records | Home of Loaf Muzik",
     description: "The official home of Loaf Records. Brooklyn-born independent record label. Music, merch, and films.",
     url: SITE_URL,
     siteName: "Loaf Records",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Loaf Records | Brooklyn Hip-Hop, Music & Merch",
+    title: "Loaf Records | Home of Loaf Muzik",
     description: "Brooklyn-born independent record label. Music, merch, and films.",
     images: ["/og/og-default.jpg"],
   },
