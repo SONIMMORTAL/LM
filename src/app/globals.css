@@ -479,6 +479,169 @@ body {
   100% { transform: translate3d(0, 600%, 0); }
 }
 
+/* ========================
+   Loaf intro — the crew runs in with the letters
+   (timings mirror RUN_MS / STILL_MS in LoafIntro.tsx)
+   ======================== */
+/* Hidden unless the boot script marked a fresh arrival on the home page */
+.loaf-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.intro-boot .loaf-intro {
+  display: flex;
+}
+
+.intro-seen .loaf-intro,
+.intro-done .loaf-intro {
+  display: none;
+}
+
+.loaf-intro__stage {
+  position: relative;
+  width: min(94vw, 1100px);
+  transform-origin: 50% 55%;
+}
+
+/* Waits off screen to the left until the art has loaded */
+.loaf-intro__run {
+  position: relative;
+  transform: translate3d(-120vw, 0, 0);
+}
+
+.loaf-intro__bob img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Speed lines trailing behind the runners */
+.loaf-intro__lines span {
+  position: absolute;
+  height: 3px;
+  border-radius: 2px;
+  background: #1b1b1b;
+  opacity: 0;
+}
+.loaf-intro__lines span:nth-child(1) { left: -13%; top: 60%; width: 11%; }
+.loaf-intro__lines span:nth-child(2) { left: -10%; top: 69%; width: 8%; }
+.loaf-intro__lines span:nth-child(3) { left: -16%; top: 78%; width: 13%; }
+
+/* Dust kicked up as they skid to a stop */
+.loaf-intro__dust span {
+  position: absolute;
+  bottom: 1%;
+  width: 6%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #d8d2c4;
+  opacity: 0;
+}
+.loaf-intro__dust span:nth-child(1) { left: 2%; }
+.loaf-intro__dust span:nth-child(2) { left: 30%; }
+.loaf-intro__dust span:nth-child(3) { left: 57%; }
+
+.loaf-intro__label {
+  margin-top: clamp(12px, 2.5vw, 22px);
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(10px, 1.4vw, 13px);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #1b1b1b;
+  opacity: 0;
+}
+
+.loaf-intro__skip {
+  position: absolute;
+  left: 50%;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.05);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+/* The run: in from the left, a hair past centre, settle */
+.intro-go .loaf-intro__run { animation: introRun 2.4s linear 0.35s both; }
+.intro-go .loaf-intro__bob { animation: introBob 0.22s ease-in-out 0.35s 10; }
+.intro-go .loaf-intro__lines span { animation: introLines 2.3s linear 0.35s both; }
+.intro-go .loaf-intro__dust span { animation: introDust 0.8s ease-out 2.3s both; }
+.intro-go .loaf-intro__dust span:nth-child(2) { animation-delay: 2.38s; }
+.intro-go .loaf-intro__dust span:nth-child(3) { animation-delay: 2.46s; }
+/* ...then the camera eases in on them, and the site comes up */
+.intro-go .loaf-intro__stage { animation: introPush 2.4s cubic-bezier(0.25, 0.1, 0.25, 1) 2.7s both; }
+.intro-go .loaf-intro__label { animation: introLabel 0.6s ease-out 2.8s both; }
+.intro-go .loaf-intro { animation: introOut 0.6s ease-in 5s forwards; }
+.intro-skip .loaf-intro { animation: introOut 0.35s ease-in forwards; }
+
+@keyframes introRun {
+  0% { transform: translate3d(-120vw, 0, 0); animation-timing-function: cubic-bezier(0.2, 0.7, 0.35, 1); }
+  86% { transform: translate3d(1.6%, 0, 0); animation-timing-function: ease-in-out; }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes introBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-2.2%) rotate(-0.6deg); }
+}
+
+@keyframes introLines {
+  0% { opacity: 0; transform: translateX(0); }
+  10%, 70% { opacity: 0.5; }
+  100% { opacity: 0; transform: translateX(-35%); }
+}
+
+@keyframes introDust {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
+  25% { opacity: 0.75; }
+  100% { opacity: 0; transform: translate(-140%, -45%) scale(1.7); }
+}
+
+@keyframes introPush {
+  from { transform: scale(1); }
+  to { transform: scale(1.07); }
+}
+
+@keyframes introLabel {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes introOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* Reduce Motion: no run, just the art fading in, a hold, and out */
+@media (prefers-reduced-motion: reduce) {
+  .loaf-intro__run { transform: none; }
+  .loaf-intro__bob { opacity: 0; }
+  .intro-go .loaf-intro__run,
+  .intro-go .loaf-intro__stage,
+  .intro-go .loaf-intro__lines span,
+  .intro-go .loaf-intro__dust span { animation: none; }
+  .intro-go .loaf-intro__bob { animation: introLabel 0.5s ease-out both; }
+  .intro-go .loaf-intro__label { animation: introLabel 0.5s ease-out 0.2s both; }
+  .intro-go .loaf-intro { animation: introOut 0.5s ease-in 1.8s forwards; }
+}
+
 /* Record shop: the vinyl easing out of its sleeve */
 @keyframes vinylSlide {
   from { transform: translateX(8%); }

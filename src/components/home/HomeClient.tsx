@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { IntroVideo } from "@/components/home/IntroVideo";
+import { LoafIntro } from "@/components/home/LoafIntro";
 import dynamic from "next/dynamic";
 
 import { MobileStudioLanding } from "@/components/home/MobileStudioLanding";
@@ -53,7 +53,7 @@ export default function HomeClient({
 
     return (
         <div className="relative">
-            <IntroVideo />
+            <LoafIntro />
 
             {/* BESPOKE MOBILE 3D STUDIO LANDING vs DESKTOP 3D CRATE ROOM */}
             {activeExperience === "studio" ? (
