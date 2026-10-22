@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { AlbumPurchaseModal } from "@/components/music/AlbumPurchaseModal";
 import { DJSceneHero } from "@/components/music/DJSceneHero";
 import { VinylInspectModal } from "@/components/three/VinylInspectModal";
 import { RecordCrate } from "@/components/music/RecordCrate";
+import { RecordShopMobile } from "@/components/music/RecordShopMobile";
 import type { Track } from "@/lib/tracks-server";
 
 // Album name → transparent deluxe-vinyl render (spins on the DJ decks)
@@ -145,7 +145,6 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
 
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent-cyan/5 via-transparent to-purple-900/10" />
-                <div className="md:hidden absolute top-0 left-0 w-full h-full bg-gradient-to-b from-accent-cyan/5 to-transparent opacity-50" />
             </div>
 
             {/* DESKTOP DJ BOOTH SCENE (Hidden on mobile so mobile has zero vinyl turntable clutter) */}
@@ -174,60 +173,30 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
                 />
             </section>
 
-            {/* MOBILE FIGMA STUDIO MASTER HEADER (Zero Vinyl Display) */}
-            <section className="md:hidden relative pt-20 pb-4 px-4">
-                <div className="rounded-3xl border border-white/12 bg-gradient-to-b from-[#14161F] via-[#0B0C10] to-[#07070A] p-4 shadow-2xl">
-                    <div className="flex items-center justify-between mb-3">
-                        <span className="font-mono text-[9px] uppercase tracking-[0.26em] text-accent-cyan">
-                            24-Bit Studio Master Catalog
-                        </span>
-                        <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-noir-cloud">
-                            {albums.length} Releases
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-3.5">
-                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/15 shrink-0">
-                            <Image
-                                src={albums[crateIndex]?.cover || "/THE COMMISSION.png"}
-                                alt={albums[crateIndex]?.name || "The Commission"}
-                                fill
-                                sizes="80px"
-                                className="object-cover"
-                            />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber-400">
-                                {albums[crateIndex]?.artist || "Shadow The Great"}
-                            </p>
-                            <h2 className="font-display text-2xl uppercase tracking-wider text-white truncate">
-                                {albums[crateIndex]?.name || "The Commission"}
-                            </h2>
-                            <p className="font-mono text-[10px] text-noir-cloud mt-0.5">
-                                {albums[crateIndex]?.tracks.length || 0} Tracks · Lossless Master
-                            </p>
-                        </div>
-                    </div>
-                    {/* Mobile Album Switcher Pills */}
-                    <div className="mt-3.5 flex items-center gap-1.5 overflow-x-auto hide-scrollbar pb-1">
-                        {albums.map((alb, idx) => (
-                            <button
-                                key={alb.name}
-                                type="button"
-                                onClick={() => setCrateIndex(idx)}
-                                className={`shrink-0 rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-wider border transition-colors ${
-                                    idx === crateIndex
-                                        ? "bg-accent-cyan text-black border-accent-cyan font-bold"
-                                        : "bg-white/[0.04] text-noir-cloud border-white/10"
-                                }`}
-                            >
-                                {alb.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* PHONES: the record shop — the crate, the record you picked, its tracklist. Nothing else. */}
+            <RecordShopMobile
+                records={albums}
+                vinyls={ALBUM_VINYLS}
+                selectedIndex={crateIndex}
+                onSelect={setCrateIndex}
+                currentTrackTitle={currentTrack?.title}
+                isPlaying={isPlaying}
+                onPlayTrack={(track) => {
+                    const globalIndex = getGlobalTrackIndex(track);
+                    if (globalIndex >= 0) playTrack(globalIndex);
+                }}
+                onBuy={(record) => {
+                    setSelectedPurchaseAlbum({
+                        name: record.name,
+                        price: record.price || 9.99,
+                        cover: record.cover,
+                        artist: record.artist,
+                    });
+                    setPurchaseModalOpen(true);
+                }}
+            />
 
-            <section className="relative px-4 sm:px-6 pb-40 pt-4 md:pt-8">
+            <section className="hidden md:block relative px-4 sm:px-6 pb-40 pt-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="hidden md:flex mb-8 items-baseline justify-between border-b border-white/10 pb-4">
                         <h2 className="text-2xl font-black uppercase tracking-tighter text-white">

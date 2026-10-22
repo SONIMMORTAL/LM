@@ -479,6 +479,12 @@ body {
   100% { transform: translate3d(0, 600%, 0); }
 }
 
+/* Record shop: the vinyl easing out of its sleeve */
+@keyframes vinylSlide {
+  from { transform: translateX(8%); }
+  to { transform: translateX(52%); }
+}
+
 /* VCR on-screen display: white, with the colour bleeding off either side */
 .vhs-osd {
   text-shadow:
