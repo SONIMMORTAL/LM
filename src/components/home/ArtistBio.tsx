@@ -1,19 +1,47 @@
 import Image from "next/image";
 import { OnAirSign } from "@/components/brand/OnAirSign";
 
-const ROLES = ["Artist", "Producer", "Director", "Psalm Writer"];
+const TAGS = ["Underground hip-hop", "Independent", "Collective"];
 
 const FACTS = [
-    { label: "From", value: "Bushwick, Brooklyn" },
+    { label: "Based", value: "Brooklyn, NY" },
     { label: "Since", value: "2009" },
     { label: "Studio", value: "The Dungeon" },
-    { label: "Founder", value: "Loaf Records" },
+    { label: "Founders", value: "Shadow & Oso" },
 ];
 
+// The collective, the label and the founders stand out in gold, as they did in the old footer bio
+const KEYWORD = "whitespace-nowrap font-semibold text-amber-300 underline underline-offset-4";
+
+const FOUNDERS = [
+    {
+        name: "Shadow The Great",
+        anchor: "shadow-the-great",
+        roles: ["Artist", "Producer", "Director", "Psalm Writer"],
+        story: [
+            "An independent underground hip-hop artist, producer and director from Bushwick, Brooklyn, and a psalm writer.",
+            "His music journey began around 2009 through a Brooklyn after-school program. He went on to build his own basement studio, The Dungeon, where he produces, mixes and masters his own projects, and crafts a few for others.",
+        ],
+    },
+    {
+        name: "Oso Dope",
+        anchor: "oso-dope",
+        roles: ["Artist", "Musician", "On screen"],
+        story: [
+            "A Brooklyn-based hip-hop artist and musician, and a member of Loaf Muzik.",
+            "On screen he's credited with roles or appearances in Raising Kanan (Starz), The Equalizer (CBS), Wu-Tang: An American Saga and NBA Top Shot ads.",
+        ],
+    },
+];
+
+const chip =
+    "rounded-md border border-white/20 bg-black/80 px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.18em] text-white/90";
+
 /**
- * Shadow The Great's bio, for the /bio page — a card in the landing's stamped style:
- * portrait banner, the story, the facts at a glance, and the motto lit up like the
- * on-air sign at the top of the landing.
+ * The /bio page: Loaf Muzik, the collective, and Loaf Records, its label — then the two
+ * who founded it, Shadow The Great and Oso Dope, each on their own card. A card in the
+ * landing's stamped style, with the facts at a glance and the motto lit up like the on-air
+ * sign at the top of the landing.
  */
 export function ArtistBio() {
     return (
@@ -40,7 +68,7 @@ export function ArtistBio() {
 
                     <div className="absolute bottom-4 left-4 right-4">
                         <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-amber-400">
-                            Bushwick · Brooklyn, NY
+                            Loaf Records · Brooklyn, NY
                         </p>
                         <h1
                             id="bio-heading"
@@ -52,37 +80,62 @@ export function ArtistBio() {
                                 Muzik
                             </span>
                         </h1>
-                        <ul aria-label="Roles" className="mt-2 flex flex-wrap gap-1.5">
-                            {ROLES.map((role) => (
-                                <li
-                                    key={role}
-                                    className="rounded-md border border-white/20 bg-black/80 px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.18em] text-white/90"
-                                >
-                                    {role}
+                        <ul aria-label="About" className="mt-2 flex flex-wrap gap-1.5">
+                            {TAGS.map((tag) => (
+                                <li key={tag} className={chip}>
+                                    {tag}
                                 </li>
                             ))}
                         </ul>
                     </div>
                 </div>
 
-                {/* The story */}
+                {/* The collective and the label */}
                 <div className="space-y-3 px-4 pt-4 sm:px-5 text-sm leading-relaxed text-white/80">
                     <p>
-                        <strong className="text-white">Shadow The Great</strong> is an independent underground
-                        hip-hop artist, producer and director hailing from the Bushwick neighborhood of
-                        Brooklyn, New York. He is a psalm writer and the founder of{" "}
-                        <strong className="text-amber-400">Loaf Records</strong>.
+                        <span className={KEYWORD}>Loaf Muzik</span> is the independent underground hip-hop
+                        collective out of Brooklyn, and <span className={KEYWORD}>Loaf Records</span> is its
+                        label, founded by <a href="#shadow-the-great" className={KEYWORD}>Shadow The Great</a> and{" "}
+                        <a href="#oso-dope" className={KEYWORD}>Oso Dope</a>.
                     </p>
                     <p>
-                        His music journey began around 2009 through a Brooklyn after-school program. He went
-                        on to build his own basement studio, <strong className="text-white">The Dungeon</strong>,
-                        where he produces, mixes and masters his own projects, and crafts a few for others.
+                        Together they&apos;ve performed at AfroPunk, the Apollo Theater, Hot 97&apos;s Hot Box and,
+                        outside New York, Higher Ground in Burlington, VT.
                     </p>
-                    <p>
-                        <strong className="text-white">Loaf Muzik</strong> is the independent underground
-                        hip-hop collective behind it all: based in Brooklyn and managed closely under its own
-                        independent imprint.
-                    </p>
+                </div>
+
+                {/* The founders, one card each */}
+                <div className="space-y-2.5 px-4 pt-4 sm:px-5">
+                    {FOUNDERS.map((founder) => (
+                        <article
+                            key={founder.anchor}
+                            id={founder.anchor}
+                            aria-labelledby={`${founder.anchor}-name`}
+                            className="scroll-mt-28 rounded-2xl border border-white/10 bg-[#101219] p-3.5"
+                        >
+                            <p className="font-mono text-[8px] font-bold uppercase tracking-[0.22em] text-amber-400">
+                                Co-founder · Loaf Records
+                            </p>
+                            <h2
+                                id={`${founder.anchor}-name`}
+                                className="mt-1 font-display text-2xl uppercase leading-none tracking-wider text-white"
+                            >
+                                {founder.name}
+                            </h2>
+                            <ul aria-label={`${founder.name}'s roles`} className="mt-2 flex flex-wrap gap-1.5">
+                                {founder.roles.map((role) => (
+                                    <li key={role} className={chip}>
+                                        {role}
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="mt-2.5 space-y-2 text-sm leading-relaxed text-white/80">
+                                {founder.story.map((line) => (
+                                    <p key={line}>{line}</p>
+                                ))}
+                            </div>
+                        </article>
+                    ))}
                 </div>
 
                 {/* The facts at a glance */}

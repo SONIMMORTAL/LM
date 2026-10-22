@@ -49,6 +49,7 @@ const homeJsonLd = {
                 { "@id": absoluteUrl("/bio#artist") },
                 {
                     "@type": "Person",
+                    "@id": absoluteUrl("/bio#oso-dope"),
                     name: "Oso Dope",
                     jobTitle: ["Hip-hop artist", "Musician"],
                     worksFor: { "@id": absoluteUrl("/#organization") },

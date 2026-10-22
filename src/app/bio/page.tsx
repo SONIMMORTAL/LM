@@ -6,16 +6,16 @@ import { StreetBackdrop } from "@/components/layout/StreetBackdrop";
 import { ArtistBio } from "@/components/home/ArtistBio";
 
 const DESCRIPTION =
-    "Shadow The Great is an independent underground hip-hop artist, producer and director from Bushwick, Brooklyn — a psalm writer and the founder of Loaf Records. Live from The Dungeon to the world.";
+    "Loaf Muzik is an independent underground hip-hop collective from Brooklyn, and Loaf Records its label, founded by Shadow The Great and Oso Dope. Live from The Dungeon to the world.";
 
 export const metadata: Metadata = {
     alternates: { canonical: "/bio" },
-    title: "Bio | Shadow The Great",
+    title: "Bio | Loaf Muzik — Shadow The Great & Oso Dope",
     description: DESCRIPTION,
     openGraph: {
         url: "/bio",
-        images: [{ url: "/og/og-default.jpg", width: 1200, height: 630, alt: "Shadow The Great — Loaf Records" }],
-        title: "Shadow The Great — Bio",
+        images: [{ url: "/og/og-default.jpg", width: 1200, height: 630, alt: "Loaf Muzik — Loaf Records" }],
+        title: "Loaf Muzik — Bio",
         description: DESCRIPTION,
         type: "profile",
         siteName: "Loaf Records",
@@ -23,22 +23,39 @@ export const metadata: Metadata = {
     twitter: {
         images: ["/og/og-default.jpg"],
         card: "summary_large_image",
-        title: "Shadow The Great — Bio",
+        title: "Loaf Muzik — Bio",
         description: DESCRIPTION,
     },
 };
 
-// Person structured data, built only from the facts on the page
+// Structured data for both founders, built only from the facts on the page
+const LABEL = { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Loaf Records", url: SITE_URL };
 const artistJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "@id": `${SITE_URL}/bio#artist`,
-    name: "Shadow The Great",
-    url: `${SITE_URL}/bio`,
-    description: DESCRIPTION,
-    jobTitle: ["Hip-hop artist", "Producer", "Director"],
-    homeLocation: { "@type": "Place", name: "Bushwick, Brooklyn, New York" },
-    worksFor: { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "Loaf Records", url: SITE_URL },
+    "@graph": [
+        {
+            "@type": "Person",
+            "@id": `${SITE_URL}/bio#artist`,
+            name: "Shadow The Great",
+            url: `${SITE_URL}/bio#shadow-the-great`,
+            description:
+                "Independent underground hip-hop artist, producer and director from Bushwick, Brooklyn, a psalm writer and co-founder of Loaf Records.",
+            jobTitle: ["Hip-hop artist", "Producer", "Director"],
+            homeLocation: { "@type": "Place", name: "Bushwick, Brooklyn, New York" },
+            worksFor: LABEL,
+        },
+        {
+            "@type": "Person",
+            "@id": `${SITE_URL}/bio#oso-dope`,
+            name: "Oso Dope",
+            url: `${SITE_URL}/bio#oso-dope`,
+            description:
+                "Brooklyn-based hip-hop artist and musician, a member of Loaf Muzik and co-founder of Loaf Records.",
+            jobTitle: ["Hip-hop artist", "Musician"],
+            homeLocation: { "@type": "Place", name: "Brooklyn, New York" },
+            worksFor: LABEL,
+        },
+    ],
 };
 
 export default function BioPage() {
