@@ -23,12 +23,11 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
-import { playCrateFlipSfx, playNeedleDropSfx, playVhsClunkSfx } from "@/lib/ui-sfx";
+import { playCrateFlipSfx, playVhsClunkSfx } from "@/lib/ui-sfx";
 import { claimAudio } from "@/lib/audio-bus";
 import { requestWelcomeTrack } from "@/lib/welcome-track";
 import type { Track } from "@/lib/tracks-server";
 import { LoafDeck } from "@/components/brand/LoafDeck";
-import { OnAirSign } from "@/components/brand/OnAirSign";
 import { LostCityHeroTape } from "@/components/home/LostCityHeroTape";
 import { NewReleaseFeature } from "@/components/home/NewReleaseFeature";
 import { PRIMARY_NAV } from "@/components/layout/navItems";
@@ -416,26 +415,6 @@ export function MobileStudioLanding({
         requestWelcomeTrack("Lost City");
     }, []);
 
-    // ── Play Track in Global Dynamic Island Player ──────────────────
-    const handlePlayTrack = useCallback(
-        (track: Track | undefined) => {
-            if (!track) return;
-            playNeedleDropSfx();
-            const globalIdx = tracks.findIndex((t) => t.id === track.id);
-            if (globalIdx >= 0 && typeof window !== "undefined") {
-                window.dispatchEvent(
-                    new CustomEvent("playMusic", { detail: { trackIndex: globalIdx } })
-                );
-            }
-        },
-        [tracks]
-    );
-
-    const handlePlayActiveAlbum = useCallback(() => {
-        const firstPlayable = albumTracks.find((t) => !!t.audio_url) || albumTracks[0] || tracks[0];
-        handlePlayTrack(firstPlayable);
-    }, [albumTracks, tracks, handlePlayTrack]);
-
     const toggleMasterExplode = useCallback(() => {
         playCrateFlipSfx();
         masterTapScroll.current = masterScroll.get();
@@ -532,22 +511,18 @@ export function MobileStudioLanding({
             </header>
 
             {/* ═══════════════════════════════════════════════════════════
-                HERO MONUMENT — STAMPED LOAF IDENTITY + LOAF MAN MASCOT
+                HERO — LOST CITY ON TAPE, THE LABEL LINE, LOAF MAN IN THE CORNER
                ═══════════════════════════════════════════════════════════ */}
             <section className="relative z-10 px-3 sm:px-4 pt-4 pb-6 max-w-2xl mx-auto">
                 <div className="relative rounded-[26px] border-2 border-amber-400/35 bg-[#0B0B0F] shadow-[0_28px_80px_rgba(0,0,0,0.95)] overflow-hidden">
-                    {/* Full-bleed banner: the Dungeon Crew mural, giving way to Lost City on tape */}
-                    <div className="relative h-64 sm:h-72 w-full overflow-hidden">
+                    {/* The whole hero: the Dungeon Crew mural, giving way to Lost City on tape */}
+                    <div className="relative h-72 sm:h-80 w-full overflow-hidden">
                         <LostCityHeroTape />
+                        {/* Just enough dark at the bottom for the label line; the video speaks for itself */}
                         <div
                             aria-hidden
-                            className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-[#0B0B0F]/45 to-black/30"
+                            className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0B0B0F]/90 to-transparent"
                         />
-
-                        {/* On-air lightbox, like the one over the studio door */}
-                        <div className="absolute top-3 left-3">
-                            <OnAirSign>Live From The Dungeon</OnAirSign>
-                        </div>
 
                         {/* Loaf Man as a corner watermark with the label line beside him; the video carries the rest */}
                         <div className="absolute bottom-3 left-2.5 flex items-center gap-1 pointer-events-none">
@@ -565,60 +540,6 @@ export function MobileStudioLanding({
                                 <span className="sr-only">Shadow The Great — </span>
                                 LOAF RECORDS · BROOKLYN NY
                             </h1>
-                        </div>
-                    </div>
-
-                    {/* Stamped Crew Roster Ticker Bar */}
-                    <div className="border-y border-amber-400/20 bg-black/90 px-4 py-2 flex items-center justify-between gap-2 overflow-x-auto hide-scrollbar font-mono text-[9px] uppercase tracking-[0.22em]">
-                        <span className="text-amber-400 font-bold shrink-0">THE CREW:</span>
-                        <span className="text-white/85 shrink-0">SHADOW THE GREAT</span>
-                        <span className="text-amber-400/50">•</span>
-                        <span className="text-white/85 shrink-0">KING ILLA</span>
-                        <span className="text-amber-400/50">•</span>
-                        <span className="text-white/85 shrink-0">RUGGZ</span>
-                        <span className="text-amber-400/50">•</span>
-                        <span className="text-white/85 shrink-0">GRANDPADRE</span>
-                        <span className="text-amber-400/50">•</span>
-                        <span className="text-white/85 shrink-0">RAH THA RULER</span>
-                        <span className="text-amber-400/50">•</span>
-                        <span className="text-white/85 shrink-0">COYOTE BEATZ</span>
-                    </div>
-
-                    {/* Hero Action Console */}
-                    <div className="p-4 bg-gradient-to-b from-[#111218] to-[#090A0E]">
-                        <div className="grid grid-cols-2 gap-2.5">
-                            {/* Names whichever record is picked in the switcher below, since that's what it plays */}
-                            <button
-                                type="button"
-                                onClick={handlePlayActiveAlbum}
-                                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 py-3 px-3 text-left text-black shadow-[0_0_25px_rgba(245,158,11,0.35)] active:scale-[0.98] transition-transform"
-                            >
-                                <Play className="w-4 h-4 shrink-0 fill-current" />
-                                <span className="min-w-0">
-                                    <span className="block font-mono text-[9px] font-black uppercase tracking-[0.24em] text-black/70">
-                                        Spin
-                                    </span>
-                                    <span className="block font-display text-[length:clamp(14px,4.4vw,17px)] uppercase leading-[1.05] tracking-[0.03em]">
-                                        {activeAlbum.name}
-                                    </span>
-                                </span>
-                            </button>
-
-                            <Link
-                                href="/shop"
-                                onClick={() => playCrateFlipSfx()}
-                                className="flex items-center gap-2 rounded-xl border-2 border-accent-cyan/50 bg-accent-cyan/10 py-3 px-3 text-left text-accent-cyan hover:bg-accent-cyan hover:text-black active:scale-[0.98] transition-colors"
-                            >
-                                <ShoppingBag className="w-4 h-4 shrink-0" />
-                                <span className="min-w-0">
-                                    <span className="block font-mono text-[9px] font-bold uppercase tracking-[0.24em] opacity-80">
-                                        Shop
-                                    </span>
-                                    <span className="block font-display text-[length:clamp(14px,4.4vw,17px)] uppercase leading-[1.05] tracking-[0.03em]">
-                                        The Drop
-                                    </span>
-                                </span>
-                            </Link>
                         </div>
                     </div>
                 </div>
