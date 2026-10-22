@@ -166,9 +166,9 @@ export function MusicPlayer() {
         const handler = (e: Event) => {
             const { trackIndex } = (e as CustomEvent).detail;
             if (typeof trackIndex === 'number') {
+                // Just start it in the pill; the player only opens when someone taps it
                 setCurrentTrackIndex(trackIndex);
                 setIsPlaying(true);
-                setIsExpanded(true);
             }
         };
         window.addEventListener('playMusic', handler);
