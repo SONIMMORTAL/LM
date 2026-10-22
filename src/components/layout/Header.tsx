@@ -13,6 +13,7 @@ import { useCart } from "@/context/CartContext";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { socialLinks } from "@/components/layout/socialLinks";
 import { playCrateFlipSfx } from "@/lib/ui-sfx";
+import { PRIMARY_NAV, SECONDARY_NAV } from "@/components/layout/navItems";
 
 const navItems = [
     { href: "/", label: "Home" },
@@ -23,17 +24,6 @@ const navItems = [
     { href: "/bio", label: "Bio" },
 ];
 
-// Phones get every section, named the way the home page's tabs name them
-const mobileNavItems = [
-    { href: "/", label: "Home" },
-    { href: "/music", label: "Music" },
-    { href: "/videos", label: "Videos" },
-    { href: "/shop", label: "Store" },
-    { href: "/loaf-films", label: "Films" },
-    { href: "/gallery", label: "Blackbook" },
-    { href: "/bio", label: "Bio" },
-    { href: "/contact", label: "Contact" },
-];
 
 const isCurrent = (pathname: string, href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
@@ -124,7 +114,7 @@ export function Header() {
                         aria-label="Site sections"
                         className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-1 [mask-image:linear-gradient(to_right,transparent,black_6px,black_calc(100%-20px),transparent)]"
                     >
-                        {mobileNavItems.map((item) => {
+                        {PRIMARY_NAV.map((item) => {
                             const current = isCurrent(pathname, item.href);
                             return (
                                 <Link
@@ -370,7 +360,7 @@ export function Header() {
                             </div>
 
                             <ul className="mt-2 border-t border-white/10">
-                                {mobileNavItems.map((item, index) => {
+                                {PRIMARY_NAV.map((item, index) => {
                                     const current = isCurrent(pathname, item.href);
                                     return (
                                         <motion.li
@@ -408,6 +398,26 @@ export function Header() {
                                     );
                                 })}
                             </ul>
+
+                            {/* The rest of the site, small, so nothing is unreachable */}
+                            <p className="mt-3 flex flex-wrap items-center gap-x-1 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-noir-cloud">
+                                {SECONDARY_NAV.map((item, index) => (
+                                    <span key={item.href} className="inline-flex items-center">
+                                        {index > 0 && <span aria-hidden className="mx-1.5 text-amber-400/50">·</span>}
+                                        <Link
+                                            href={item.href}
+                                            onClick={() => playCrateFlipSfx()}
+                                            aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
+                                            className={cn(
+                                                "inline-flex min-h-11 items-center transition-colors hover:text-amber-300",
+                                                isCurrent(pathname, item.href) && "text-amber-400"
+                                            )}
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    </span>
+                                ))}
+                            </p>
 
                             {/* Account & bag, styled like the home page's Spin / Shop buttons */}
                             <div className="mt-6 grid grid-cols-2 gap-2.5">

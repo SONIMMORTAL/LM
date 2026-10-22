@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ArrowUpRight, Music2 } from "lucide-react";
 import Letter3DSwap from "@/components/fancy/text/letter-3d-swap";
-import { HomeOverview } from "@/components/home/HomeOverview";
 import { socialLinks } from "@/components/layout/socialLinks";
 
 const navLinks = [
@@ -19,18 +17,10 @@ const navLinks = [
 ];
 
 export function Footer() {
-    const pathname = usePathname();
-    // Home already renders the bio inside the page
-    const showMobileBio = pathname !== "/" && !pathname.startsWith("/admin");
-
     return (
         <>
-            {/* Phones end on the label's short bio; the full footer below is desktop-only */}
-            {showMobileBio && (
-                <footer aria-label="About Loaf Records" className="lg:hidden">
-                    <HomeOverview />
-                </footer>
-            )}
+            {/* Phones end on the page itself; this only keeps the floating player off the last row */}
+            <div aria-hidden className="h-28 lg:hidden" />
 
             <footer aria-label="Loaf Records footer" className="relative z-10 hidden lg:block border-t border-noir-smoke bg-noir-void">
                 {/* Gradient overlay */}

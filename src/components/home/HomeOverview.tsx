@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { ALBUMS } from "@/lib/albums";
-import { socialLinks } from "@/components/layout/socialLinks";
 
 // The label, its founders and the crew stand out in gold, the way Shadow's bio link always has
 const KEYWORD = "whitespace-nowrap text-amber-300 underline underline-offset-4";
 
-/** Visible, server-rendered context and navigation for both home experiences. */
+/** Visible, server-rendered context and navigation under the desktop home room. */
 export function HomeOverview() {
     return (
         <section aria-labelledby="label-overview" className="relative z-10 border-t border-amber-400/20 bg-[#060608] px-5 py-12 pb-32 text-white">
@@ -56,27 +55,6 @@ export function HomeOverview() {
                             ))}
                         </ul>
                     </nav>
-                </div>
-
-                {/* Phones end here, so the socials the desktop footer carries live on this line */}
-                <div className="mt-10 flex items-center justify-between gap-4 border-t border-white/10 pt-6 lg:hidden">
-                    <div className="flex items-center gap-4">
-                        {socialLinks.map((link) => (
-                            <a
-                                key={link.label}
-                                href={link.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={link.label}
-                                className="-m-2 inline-flex h-11 w-11 items-center justify-center text-white/60 transition-colors hover:text-amber-300"
-                            >
-                                <link.icon className="h-5 w-5" />
-                            </a>
-                        ))}
-                    </div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-                        © {new Date().getFullYear()} Loaf Records
-                    </p>
                 </div>
             </div>
         </section>
