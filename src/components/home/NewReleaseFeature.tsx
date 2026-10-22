@@ -30,7 +30,7 @@ export function NewReleaseFeature({ video }: { video: ChannelUpload }) {
         >
             <div className="rounded-[28px] border-2 border-red-500/35 bg-[#0A0B10]/95 p-4 sm:p-5 overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.95)]">
                 <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex items-center gap-1.5 font-mono text-[8px] font-bold uppercase tracking-[0.26em] text-red-400">
+                    <span className="inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[8px] font-bold uppercase tracking-[0.18em] min-[360px]:tracking-[0.26em] text-red-400">
                         <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-red-500 motion-safe:animate-pulse" />
                         New release · {dropped}
                     </span>
@@ -38,8 +38,8 @@ export function NewReleaseFeature({ video }: { video: ChannelUpload }) {
                         href="/videos"
                         className="shrink-0 inline-flex items-center gap-1 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-wider text-amber-300"
                     >
-                        <Film className="w-3.5 h-3.5" />
-                        <span>All videos ↗</span>
+                        <Film className="hidden min-[360px]:block w-3.5 h-3.5" />
+                        <span className="whitespace-nowrap">All videos ↗</span>
                     </Link>
                 </div>
                 <h2

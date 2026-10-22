@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 
 import { MobileStudioLanding } from "@/components/home/MobileStudioLanding";
 import type { Track } from "@/lib/tracks-server";
-import type { PrintfulProduct } from "@/lib/printful";
 import type { ChannelUpload } from "@/lib/youtube-feed";
 
 const DungeonMenu = dynamic(() => import("@/components/home/DungeonMenu").then(mod => mod.DungeonMenu));
@@ -33,14 +32,12 @@ const isMobileOnServer = () => true;
 
 interface HomeClientProps {
     initialTracks?: Track[];
-    initialProducts?: PrintfulProduct[];
     /** The newest upload on the Loaf Records YouTube channel */
     newRelease?: ChannelUpload;
 }
 
 export default function HomeClient({
     initialTracks = [],
-    initialProducts = [],
     newRelease,
 }: HomeClientProps) {
     const isMobileViewport = useSyncExternalStore(
@@ -62,7 +59,6 @@ export default function HomeClient({
             {activeExperience === "studio" ? (
                 <MobileStudioLanding
                     tracks={initialTracks}
-                    products={initialProducts}
                     newRelease={newRelease}
                     onSwitchToRoom={() => setViewOverride("room")}
                 />

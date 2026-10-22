@@ -28,17 +28,14 @@ import { playCrateFlipSfx, playNeedleDropSfx, playVhsClunkSfx } from "@/lib/ui-s
 import { claimAudio } from "@/lib/audio-bus";
 import { requestWelcomeTrack } from "@/lib/welcome-track";
 import type { Track } from "@/lib/tracks-server";
-import type { PrintfulProduct } from "@/lib/printful";
 import { AlbumPurchaseModal } from "@/components/music/AlbumPurchaseModal";
 import { LoafDeck } from "@/components/brand/LoafDeck";
 import { OnAirSign } from "@/components/brand/OnAirSign";
 import { LostCityHeroTape } from "@/components/home/LostCityHeroTape";
 import { NewReleaseFeature } from "@/components/home/NewReleaseFeature";
-import { merchLayerArt, type MerchDetails } from "@/lib/merch-layers";
+import { PRIMARY_NAV } from "@/components/layout/navItems";
 import type { ChannelUpload } from "@/lib/youtube-feed";
-import useSWR from "swr";
 
-const fetchJson = (url: string) => fetch(url).then((res) => res.json());
 
 interface ShowcaseAlbum {
     id: string;
@@ -49,15 +46,6 @@ interface ShowcaseAlbum {
     catalogNo: string;
     stampCode: string;
     cover: string;
-    /** Layer 2 artwork: Crew / Back cover / Liner photography from the tape */
-    linerArt: string;
-    linerCaption: string;
-    /** Layer 3 artwork: Graffiti blackbook / Street art insert */
-    insertArt: string;
-    insertCaption: string;
-    /** Layer 4 artwork: Studio / Live session photography */
-    sessionArt: string;
-    sessionCaption: string;
     accent: string;
     accentHex: string;
     glowRgba: string;
@@ -71,6 +59,12 @@ interface ShowcaseAlbum {
     };
 }
 
+// A CD's silver: a rainbow sheen around the disc, and a clear hub with the hole in the middle
+const CD_SHEEN =
+    "conic-gradient(from 30deg, #d9dde3, #f5f7fa 8%, #b8c4d6 16%, #ead6f5 24%, #c9f0e8 32%, #f6f3d8 40%, #cfd6e2 50%, #f5f7fa 58%, #c6d0e0 66%, #f1dcf1 74%, #d5f3ec 82%, #f4f1d7 90%, #d9dde3)";
+const CD_HUB =
+    "radial-gradient(circle, #060608 0 30%, rgba(225,230,238,0.85) 31% 46%, rgba(255,255,255,0.35) 47% 70%, rgba(200,210,225,0.6) 71% 100%)";
+
 const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
     {
         id: "the-commission",
@@ -81,12 +75,6 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         catalogNo: "LR-007-COMM",
         stampCode: "BKLYN // COMMISSION-07",
         cover: "/THE COMMISSION.png",
-        linerArt: "/brand/dungeon-crew.png",
-        linerCaption: "THE DUNGEON CREW · SHADOW · KING ILLA · RUGGZ · RAH THA RULER",
-        insertArt: "/THE-COMMISSION-7-deluxe-vinyl.png",
-        insertCaption: "THE COMMISSION ON WAX · LOAF RECORDS",
-        sessionArt: "/MUSICBACKGRND.png",
-        sessionCaption: "LOAF RECORDS ANALOG MIXING BOARD · 24-BIT / 96KHZ MASTER",
         accent: "amber",
         accentHex: "#F59E0B",
         glowRgba: "rgba(245, 158, 11, 0.34)",
@@ -118,12 +106,6 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         catalogNo: "LR-002-LOST",
         stampCode: "BKLYN // LOST-CITY-02",
         cover: "/LC1.jpg",
-        linerArt: "/LC2.jpg",
-        linerCaption: "PRODUCED BY RUGGZ · MIXED BY KING ILLA · MPC ONE & SP-404SX",
-        insertArt: "/LC1-2-deluxe-vinyl.png",
-        insertCaption: "LOST CITY ON WAX · LOAF RECORDS",
-        sessionArt: "/LFTD3.jpg",
-        sessionCaption: "NEW YORK STREET PORTRAIT SERIES · ARCHIVAL PRINT",
         accent: "cyan",
         accentHex: "#00D9FF",
         glowRgba: "rgba(0, 217, 255, 0.34)",
@@ -145,12 +127,6 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         catalogNo: "LR-005-LIFE",
         stampCode: "BKLYN // MORE-LIFE-05",
         cover: "/MORE LIFE VINYL.jpg",
-        linerArt: "/loafmancrate.jpg",
-        linerCaption: "LOAF MAN DIGGING THE CRATES · LOAF RECORDS",
-        insertArt: "/MORE-LIFE-VINYL-5-deluxe-vinyl.png",
-        insertCaption: "MORE LIFE ON WAX · LOAF RECORDS",
-        sessionArt: "/LC2.jpg",
-        sessionCaption: "HARDWARE SAMPLER SESSION · SP-404SX + MPC",
         accent: "rose",
         accentHex: "#F43F5E",
         glowRgba: "rgba(244, 63, 94, 0.34)",
@@ -172,12 +148,6 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         catalogNo: "LR-003-LFTD",
         stampCode: "BKLYN // DUNGEON-03",
         cover: "/LFTD.jpg",
-        linerArt: "/LFTD2.jpg",
-        linerCaption: "LIVE STAGE ENERGY · BROOKLYN UNDERGROUND SESSION",
-        insertArt: "/LFTD3.jpg",
-        insertCaption: "STÜSSY NY ARCHIVE PHOTOGRAPH · LINER BOOKLET",
-        sessionArt: "/brand/dungeon-crew.png",
-        sessionCaption: "THE BRICK DUNGEON HEADQUARTERS · LOAF CREW",
         accent: "emerald",
         accentHex: "#10B981",
         glowRgba: "rgba(16, 185, 129, 0.34)",
@@ -189,45 +159,6 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
             console: "The Dungeon Console · Brooklyn",
             format: "WAV + FLAC + 320kbps MP3 Vault",
         },
-    },
-];
-
-const FALLBACK_MERCH: PrintfulProduct[] = [
-    {
-        id: 101,
-        external_id: "loaf-hoodie",
-        name: "Loaf Records Heavyweight Studio Hoodie",
-        variants: 5,
-        synced: 5,
-        thumbnail_url: "/images/mockups/premium_hoodie.png",
-        is_ignored: false,
-    },
-    {
-        id: 102,
-        external_id: "commission-tee",
-        name: "The Commission Deluxe Graphic Tee",
-        variants: 4,
-        synced: 4,
-        thumbnail_url: "/images/mockups/premium_tee.png",
-        is_ignored: false,
-    },
-    {
-        id: 103,
-        external_id: "lost-city-tee",
-        name: "Lost City Official Streetwear Drop",
-        variants: 4,
-        synced: 4,
-        thumbnail_url: "/BLKLOAF.png",
-        is_ignored: false,
-    },
-    {
-        id: 104,
-        external_id: "loaf-films-crew",
-        name: "Loaf Films Production Crewneck",
-        variants: 3,
-        synced: 3,
-        thumbnail_url: "/LOAFFILMS.png",
-        is_ignored: false,
     },
 ];
 
@@ -365,7 +296,6 @@ function CrewTag({ name, count, paint, countPaint, tilt }: CrewTagProps) {
 
 interface MobileStudioLandingProps {
     tracks: Track[];
-    products: PrintfulProduct[];
     /** The newest upload on the Loaf Records YouTube channel, featured under the hero */
     newRelease?: ChannelUpload;
     onSwitchToRoom: () => void;
@@ -373,7 +303,6 @@ interface MobileStudioLandingProps {
 
 export function MobileStudioLanding({
     tracks,
-    products,
     newRelease,
     onSwitchToRoom,
 }: MobileStudioLandingProps) {
@@ -382,21 +311,6 @@ export function MobileStudioLanding({
     // Active album in the unified 3D Tape Break-Apart + Connected Tracklist Monument
     const [selectedAlbumIdx, setSelectedAlbumIdx] = useState(0);
     const activeAlbum = SHOWCASE_ALBUMS[selectedAlbumIdx];
-
-    // Active product in the 3D Streetwear Break-Apart stage
-    const [selectedMerchIdx, setSelectedMerchIdx] = useState(0);
-    const merchItems = products.length > 0 ? products.slice(0, 8) : FALLBACK_MERCH;
-    const activeMerch = merchItems[selectedMerchIdx] || merchItems[0];
-
-    // The piece's own art fans out behind it: its print design and another colour it comes in.
-    // The placeholder merch has no store record, so it keeps the label art.
-    const { data: merchDetails } = useSWR<MerchDetails>(
-        products.length > 0 ? `/api/products/${activeMerch.id}` : null,
-        fetchJson,
-        { revalidateOnFocus: false }
-    );
-    const merchArt = merchLayerArt(merchDetails);
-    const merchColorway = merchArt.colorways[0];
 
     // Modals & inline player state
     const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
@@ -468,111 +382,45 @@ export function MobileStudioLanding({
 
     // Front cover
     const mL1X = useTransform(masterExplode, [0, 1], [0, -14]);
-    const mL1Y = useTransform(masterExplode, [0, 1], [0, -110]);
-    const mL1Z = useTransform(masterExplode, [0, 1], [4, 110]);
+    const mL1Y = useTransform(masterExplode, [0, 1], [0, -90]);
+    const mL1Z = useTransform(masterExplode, [0, 1], [12, 110]);
 
-    // Liner / crew art
-    const mL2X = useTransform(masterExplode, [0, 1], [0, 16]);
-    const mL2Y = useTransform(masterExplode, [0, 1], [0, -52]);
-    const mL2Z = useTransform(masterExplode, [0, 1], [2, 55]);
-    const mL2Opacity = useTransform(masterExplode, [0, 0.12, 1], [0, 1, 1]);
+    // The disc, sliding out of the case and turning as it comes
+    const mDiscX = useTransform(masterExplode, [0, 1], [0, 22]);
+    const mDiscY = useTransform(masterExplode, [0, 1], [0, -26]);
+    const mDiscZ = useTransform(masterExplode, [0, 1], [0, 50]);
+    // Hidden and still until the case has opened, so a fast scroll never shows the disc
+    // turning through the front cover while the two are still pressed together
+    const mDiscSpin = useTransform(masterExplode, [0.35, 1], [0, 140]);
+    const mDiscOpacity = useTransform(masterExplode, [0, 0.25, 0.4], [0, 0, 1]);
 
-    // Blackbook insert
-    const mL3X = useTransform(masterExplode, [0, 1], [0, -16]);
-    const mL3Y = useTransform(masterExplode, [0, 1], [0, 8]);
-    const mL3Z = useTransform(masterExplode, [0, 1], [0, 0]);
-    const mL3Opacity = useTransform(masterExplode, [0, 0.12, 1], [0, 1, 1]);
-
-    // Session photography
-    const mL4X = useTransform(masterExplode, [0, 1], [0, 18]);
-    const mL4Y = useTransform(masterExplode, [0, 1], [0, 68]);
-    const mL4Z = useTransform(masterExplode, [0, 1], [-2, -55]);
-    const mL4Opacity = useTransform(masterExplode, [0, 0.12, 1], [0, 1, 1]);
+    // The back of the case: tracklist, features, barcode
+    const mBackX = useTransform(masterExplode, [0, 1], [0, -12]);
+    const mBackY = useTransform(masterExplode, [0, 1], [0, 46]);
+    const mBackZ = useTransform(masterExplode, [0, 1], [-12, -40]);
+    const mBackOpacity = useTransform(masterExplode, [0, 0.15, 0.3], [0, 0, 1]);
 
     // Loaf crate base
     const mL5X = useTransform(masterExplode, [0, 1], [0, -10]);
-    const mL5Y = useTransform(masterExplode, [0, 1], [0, 126]);
-    const mL5Z = useTransform(masterExplode, [0, 1], [-4, -110]);
+    const mL5Y = useTransform(masterExplode, [0, 1], [0, 112]);
+    const mL5Z = useTransform(masterExplode, [0, 1], [-24, -110]);
     const mL5Opacity = useTransform(masterExplode, [0, 0.12, 1], [0, 1, 1]);
 
     // Thread that draws down from the album into the tracklist
     const mThread = useTransform(masterExplode, [0.55, 1], [0, 1]);
-
-    /* ═══════════════════════════════════════════════════════════════════════
-       CHAPTER 02 — GARMENT OPENS UP AS THE USER SCROLLS
-       ═══════════════════════════════════════════════════════════════════════ */
-    const merchStageRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress: merchScroll } = useScroll({
-        target: merchStageRef,
-        offset: ["start 80%", "center 50%"],
-    });
-
-    const merchManualMode = useMotionValue(0);
-    const merchManualVal = useMotionValue(0);
-    const merchTapScroll = useRef(0);
-
-    const merchTarget = useTransform(
-        [merchScroll, merchManualMode, merchManualVal],
-        ([s, mode, m]) =>
-            (mode as number) > 0.5 ? (m as number) : Math.max(0, Math.min(1, s as number))
-    );
-
-    const merchExplode = useSpring(merchTarget, {
-        stiffness: 120,
-        damping: 24,
-        mass: 0.5,
-    });
-
-    useMotionValueEvent(merchScroll, "change", (s) => {
-        if (prefersReducedMotion) return;
-        if (merchManualMode.get() > 0.5 && Math.abs(s - merchTapScroll.current) > 0.2) {
-            merchManualMode.set(0);
-        }
-    });
 
     // Reduced motion: skip the scroll choreography and show everything opened up.
     useEffect(() => {
         if (!prefersReducedMotion) return;
         masterManualMode.set(1);
         masterManualVal.set(1);
-        merchManualMode.set(1);
-        merchManualVal.set(1);
-    }, [prefersReducedMotion, masterManualMode, masterManualVal, merchManualMode, merchManualVal]);
+    }, [prefersReducedMotion, masterManualMode, masterManualVal]);
 
     // Welcome to the realm — Lost City greets the visitor when the mobile site boots.
     // (Once per page load; it stands down as soon as they pick any other media.)
     useEffect(() => {
         requestWelcomeTrack("Lost City");
     }, []);
-
-    const gRigRotateX = useTransform(merchExplode, [0, 1], [0, 22]);
-    const gRigRotateY = useTransform(merchExplode, [0, 1], [0, 15]);
-    const gRigRotateZ = useTransform(merchExplode, [0, 1], [0, -3]);
-    const gRigScale = useTransform(merchExplode, [0, 1], [1.08, 0.92]);
-
-    const gL1X = useTransform(merchExplode, [0, 1], [0, 14]);
-    const gL1Y = useTransform(merchExplode, [0, 1], [0, -108]);
-    const gL1Z = useTransform(merchExplode, [0, 1], [3, 105]);
-    const gL1Opacity = useTransform(merchExplode, [0, 0.15, 1], [0, 1, 1]);
-
-    const gL2X = useTransform(merchExplode, [0, 1], [0, -12]);
-    const gL2Y = useTransform(merchExplode, [0, 1], [0, -48]);
-    const gL2Z = useTransform(merchExplode, [0, 1], [1, 50]);
-
-    const gL3X = useTransform(merchExplode, [0, 1], [0, 16]);
-    const gL3Y = useTransform(merchExplode, [0, 1], [0, 12]);
-    const gL3Z = useTransform(merchExplode, [0, 1], [0, 0]);
-    const gL3Opacity = useTransform(merchExplode, [0, 0.15, 1], [0, 1, 1]);
-
-    const gL4X = useTransform(merchExplode, [0, 1], [0, -14]);
-    const gL4Y = useTransform(merchExplode, [0, 1], [0, 70]);
-    const gL4Z = useTransform(merchExplode, [0, 1], [-2, -50]);
-    const gL4Opacity = useTransform(merchExplode, [0, 0.15, 1], [0, 1, 1]);
-
-    const gL5X = useTransform(merchExplode, [0, 1], [0, 10]);
-    const gL5Y = useTransform(merchExplode, [0, 1], [0, 124]);
-    const gL5Z = useTransform(merchExplode, [0, 1], [-4, -105]);
-    const gL5Opacity = useTransform(merchExplode, [0, 0.15, 1], [0, 1, 1]);
 
     // ── Play Track in Global Dynamic Island Player ──────────────────
     const handlePlayTrack = useCallback(
@@ -601,13 +449,6 @@ export function MobileStudioLanding({
         masterManualVal.set(masterExplode.get() > 0.5 ? 0 : 1);
         masterManualMode.set(1);
     }, [masterScroll, masterExplode, masterManualMode, masterManualVal]);
-
-    const toggleMerchExplode = useCallback(() => {
-        playCrateFlipSfx();
-        merchTapScroll.current = merchScroll.get();
-        merchManualVal.set(merchExplode.get() > 0.5 ? 0 : 1);
-        merchManualMode.set(1);
-    }, [merchScroll, merchExplode, merchManualMode, merchManualVal]);
 
     return (
         <div className="relative min-h-screen bg-[#060608] text-[#F5F5F7] pb-28 overflow-x-hidden selection:bg-amber-400 selection:text-black">
@@ -657,27 +498,14 @@ export function MobileStudioLanding({
                         aria-label="Loaf Records mobile sections"
                         className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-1 [mask-image:linear-gradient(to_right,transparent,black_6px,black_calc(100%-20px),transparent)]"
                     >
-                        {[
-                            ...(newRelease ? [{ href: "#new-release", label: "New" }] : []),
-                            { href: "#master-anatomy", label: "Music" },
-                            { href: "#merch-anatomy", label: "Merch" },
-                            { href: "/videos", label: "Videos ↗" },
-                            { href: "/bio", label: "Bio ↗" },
-                            { href: "/shop", label: "Store ↗" },
-                            { href: "/gallery", label: "Blackbook ↗" },
-                        ].map((pill) => {
+                        {PRIMARY_NAV.map((pill) => {
                             const pillClass =
                                 "shrink-0 inline-flex items-center rounded-lg border border-white/15 bg-black/70 px-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-noir-cloud hover:text-amber-400 hover:border-amber-400/50 transition-colors";
-                            // Other pages go through the router so the mini player keeps playing;
-                            // a plain link would reload the site and cut the music off
-                            return pill.href.startsWith("/") ? (
+                            // Through the router, so the mini player keeps playing across pages
+                            return (
                                 <Link key={pill.label} href={pill.href} onClick={() => playCrateFlipSfx()} className={pillClass}>
                                     {pill.label}
                                 </Link>
-                            ) : (
-                                <a key={pill.label} href={pill.href} onClick={() => playCrateFlipSfx()} className={pillClass}>
-                                    {pill.label}
-                                </a>
                             );
                         })}
                     </nav>
@@ -740,7 +568,7 @@ export function MobileStudioLanding({
                                     priority
                                 />
                             </div>
-                            <h1 className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
+                            <h1 className="font-mono text-[10px] uppercase tracking-[0.2em] min-[360px]:tracking-[0.3em] text-amber-400 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
                                 <span className="sr-only">Shadow The Great — </span>
                                 LOAF RECORDS · BROOKLYN NY
                             </h1>
@@ -783,8 +611,8 @@ export function MobileStudioLanding({
                                 </span>
                             </button>
 
-                            <a
-                                href="#merch-anatomy"
+                            <Link
+                                href="/shop"
                                 onClick={() => playCrateFlipSfx()}
                                 className="flex items-center gap-2 rounded-xl border-2 border-accent-cyan/50 bg-accent-cyan/10 py-3 px-3 text-left text-accent-cyan hover:bg-accent-cyan hover:text-black active:scale-[0.98] transition-colors"
                             >
@@ -797,7 +625,7 @@ export function MobileStudioLanding({
                                         The Drop
                                     </span>
                                 </span>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -808,7 +636,7 @@ export function MobileStudioLanding({
 
             {/* ═══════════════════════════════════════════════════════════
                 CHAPTER 01 — THE ALBUM
-                Scrolling opens the album up into its liner pieces, the people
+                Scrolling opens the album up like a CD case (front, disc, back insert), the people
                 on the project are sprayed on the wall underneath it, and the
                 tracklist reveals below that.
                ═══════════════════════════════════════════════════════════ */}
@@ -899,13 +727,18 @@ export function MobileStudioLanding({
                         </div>
                     </div>
 
-                    {/* ── Album stage: opens up as you scroll ── */}
-                    <div className="relative z-20 px-1 sm:px-4 pt-5 pb-1">
+                    {/* ── Album stage: opens up as you scroll, inside its own display case.
+                         The clip-path keeps every layer in the box, Safari's 3D included,
+                         which ignores overflow:hidden on a rounded parent. ── */}
+                    <div className="relative z-20 px-3 sm:px-4 pt-5 pb-1">
                         <div
                             ref={masterStageRef}
-                            className="relative h-[440px] sm:h-[480px] w-full flex items-center justify-center select-none"
+                            className="relative h-[460px] sm:h-[500px] w-full flex items-center justify-center select-none rounded-2xl border border-white/10 bg-black/30 shadow-[inset_0_2px_28px_rgba(0,0,0,0.85)] [clip-path:inset(0_round_1rem)]"
                             style={{ perspective: "1350px" }}
                         >
+                            <span aria-hidden className="absolute left-3 top-2.5 font-mono text-[8px] font-bold uppercase tracking-[0.24em] text-white/35">
+                                Listening booth · {activeAlbum.catalogNo}
+                            </span>
                             <motion.div
                                 className="relative w-52 h-52 sm:w-72 sm:h-72 flex items-center justify-center will-change-transform"
                                 style={{
@@ -938,63 +771,85 @@ export function MobileStudioLanding({
                                     </div>
                                 </motion.div>
 
-                                {/* Session photography + waveform */}
+                                {/* Back of the case: spines, the tracklist with its features, barcode */}
                                 <motion.div
                                     aria-hidden
-                                    style={{ x: mL4X, y: mL4Y, z: mL4Z, opacity: mL4Opacity }}
-                                    className="absolute inset-0 rounded-2xl border-2 border-emerald-400/50 bg-[#08110F] overflow-hidden shadow-[0_22px_45px_rgba(0,0,0,0.92)] will-change-transform"
+                                    style={{ x: mBackX, y: mBackY, z: mBackZ, opacity: mBackOpacity }}
+                                    className="absolute inset-0 rounded-[6px] border-2 border-white/30 bg-[#0E0F14] overflow-hidden shadow-[0_22px_45px_rgba(0,0,0,0.92)] will-change-transform"
                                 >
                                     <Image
-                                        src={activeAlbum.sessionArt}
+                                        src={activeAlbum.cover}
                                         alt=""
                                         fill
                                         sizes="280px"
-                                        className="object-cover opacity-85"
+                                        className="object-cover opacity-20 blur-[2px] scale-110"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent" />
-                                    <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-end justify-between gap-[3px] h-5">
-                                        {[65, 92, 74, 98, 60, 88, 95, 70, 84, 96, 72, 90, 68, 86, 78, 94].map(
-                                            (h, i) => (
-                                                <span
-                                                    key={i}
-                                                    className="flex-1 rounded-t-sm bg-emerald-400/90"
-                                                    style={{ height: `${h}%` }}
-                                                />
-                                            )
-                                        )}
+                                    {/* Folded spines, printed down each side */}
+                                    {(["left-0", "right-0"] as const).map((side) => (
+                                        <span
+                                            key={side}
+                                            className={cn(
+                                                "absolute inset-y-0 flex w-[7%] items-center justify-center overflow-hidden border-white/20",
+                                                side === "left-0" ? "left-0 border-r" : "right-0 border-l"
+                                            )}
+                                            style={{ backgroundColor: activeAlbum.accentHex }}
+                                        >
+                                            <span className="whitespace-nowrap font-mono text-[6px] font-black uppercase tracking-[0.2em] text-black [writing-mode:vertical-rl]">
+                                                {activeAlbum.artist} · {activeAlbum.name}
+                                            </span>
+                                        </span>
+                                    ))}
+                                    <div className="absolute inset-y-0 left-[9%] right-[9%] flex flex-col py-2">
+                                        <p className="truncate font-display text-[11px] sm:text-sm uppercase leading-none tracking-[0.06em] text-white">
+                                            {activeAlbum.name}
+                                        </p>
+                                        <ol className="mt-1 min-h-0 flex-1 overflow-hidden text-[6.5px] sm:text-[8px] leading-[1.4] text-white/85">
+                                            {albumTracks.slice(0, 14).map((track, i) => (
+                                                <li key={track.id} className="truncate">
+                                                    <span className="font-mono text-white/50">{String(i + 1).padStart(2, "0")}</span>{" "}
+                                                    {track.title}
+                                                </li>
+                                            ))}
+                                            {albumTracks.length > 14 && (
+                                                <li className="font-mono text-white/50">+{albumTracks.length - 14} more</li>
+                                            )}
+                                        </ol>
+                                        <div className="mt-1 flex items-end justify-between gap-2">
+                                            <span className="font-mono text-[5.5px] sm:text-[7px] uppercase leading-tight tracking-[0.14em] text-white/60">
+                                                Loaf Records · {activeAlbum.catalogNo}
+                                                <br />℗ {activeAlbum.year} Brooklyn NY
+                                            </span>
+                                            {/* Barcode */}
+                                            <span
+                                                className="h-5 w-12 shrink-0 bg-white"
+                                                style={{
+                                                    backgroundImage:
+                                                        "repeating-linear-gradient(90deg, #000 0 1px, transparent 1px 2px, #000 2px 4px, transparent 4px 5px, #000 5px 6px, transparent 6px 8px)",
+                                                    backgroundClip: "content-box",
+                                                    padding: "2px 3px",
+                                                }}
+                                            />
+                                        </div>
                                     </div>
                                 </motion.div>
 
-                                {/* Blackbook insert */}
+                                {/* The disc: silver rim, the art printed on it, the clear hub */}
                                 <motion.div
                                     aria-hidden
-                                    style={{ x: mL3X, y: mL3Y, z: mL3Z, opacity: mL3Opacity }}
-                                    className="absolute inset-0 rounded-2xl border-2 border-amber-300/55 bg-[#120F07] overflow-hidden shadow-[0_22px_45px_rgba(0,0,0,0.92)] will-change-transform"
+                                    style={{ x: mDiscX, y: mDiscY, z: mDiscZ, opacity: mDiscOpacity }}
+                                    className="absolute inset-0 flex items-center justify-center will-change-transform"
                                 >
-                                    <Image
-                                        src={activeAlbum.insertArt}
-                                        alt=""
-                                        fill
-                                        sizes="280px"
-                                        className="object-cover opacity-90"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                                </motion.div>
-
-                                {/* Liner / crew art */}
-                                <motion.div
-                                    aria-hidden
-                                    style={{ x: mL2X, y: mL2Y, z: mL2Z, opacity: mL2Opacity }}
-                                    className="absolute inset-0 rounded-2xl border-2 border-accent-cyan/55 bg-[#091318] overflow-hidden shadow-[0_22px_45px_rgba(0,0,0,0.92)] will-change-transform"
-                                >
-                                    <Image
-                                        src={activeAlbum.linerArt}
-                                        alt=""
-                                        fill
-                                        sizes="280px"
-                                        className="object-cover opacity-95"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                                    <motion.div
+                                        style={{ rotate: mDiscSpin, background: CD_SHEEN }}
+                                        className="relative aspect-square w-[94%] rounded-full shadow-[0_18px_40px_rgba(0,0,0,0.9)]"
+                                    >
+                                        <span className="absolute inset-[3%] overflow-hidden rounded-full ring-1 ring-black/30">
+                                            <Image src={activeAlbum.cover} alt="" fill sizes="280px" className="object-cover" />
+                                            {/* Gloss across the print */}
+                                            <span className="absolute inset-0 rounded-full opacity-35 mix-blend-screen" style={{ background: CD_SHEEN }} />
+                                        </span>
+                                        <span className="absolute inset-[34%] rounded-full" style={{ background: CD_HUB }} />
+                                    </motion.div>
                                 </motion.div>
 
                                 {/* Front cover */}
@@ -1010,14 +865,21 @@ export function MobileStudioLanding({
                                             toggleMasterExplode();
                                         }
                                     }}
-                                    className="absolute inset-0 rounded-2xl overflow-hidden border-2 border-white/40 bg-[#14161F] shadow-[0_26px_55px_rgba(0,0,0,0.95)] cursor-pointer will-change-transform"
+                                    className="absolute inset-0 rounded-[6px] overflow-hidden border-2 border-white/40 bg-[#14161F] shadow-[0_26px_55px_rgba(0,0,0,0.95)] cursor-pointer will-change-transform"
                                 >
+                                    {/* Loaded with the page, so the cover is there before anything opens up behind it */}
                                     <Image
                                         src={activeAlbum.cover}
                                         alt={`${activeAlbum.name} album cover`}
                                         fill
+                                        loading="eager"
                                         sizes="(max-width: 640px) 208px, 288px"
                                         className="object-cover"
+                                    />
+                                    {/* The jewel case's hinge down the left edge */}
+                                    <span
+                                        aria-hidden
+                                        className="pointer-events-none absolute inset-y-0 left-0 w-[6%] border-r border-white/30 bg-gradient-to-r from-white/25 via-white/10 to-white/5"
                                     />
                                     <div
                                         aria-hidden
@@ -1028,13 +890,13 @@ export function MobileStudioLanding({
                         </div>
                     </div>
 
-                    {/* ── The crew wall: who's on it, tagged up under the album, never over it ── */}
-                    <div className="relative z-20 px-4 sm:px-5 pt-3">
+                    {/* ── Featuring: who's on it, tagged up under the album, never over it ── */}
+                    <div className="relative z-20 mx-3 sm:mx-4 mt-3 rounded-2xl border border-white/10 bg-black/25 px-3 pt-3 overflow-hidden">
                         <p
                             className="text-center font-mono text-[9px] font-bold uppercase tracking-[0.26em]"
                             style={{ color: activeAlbum.accentHex }}
                         >
-                            The crew
+                            Featuring
                         </p>
                         {/* Keyed by album, so switching records sprays the new crew on fresh */}
                         <motion.ul
@@ -1188,263 +1050,6 @@ export function MobileStudioLanding({
                                 })}
                             </ol>
                         )}
-                    </div>
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════════════════════════
-                CHAPTER 02 — STAMPED 3D STREETWEAR MERCH DROP + LOOKBOOK
-                (Zero Blank Space Underneath · Graffiti & Mascot Art Inside Panels)
-               ═══════════════════════════════════════════════════════════ */}
-            <section
-                id="merch-anatomy"
-                aria-label="Loaf Records merch"
-                className="relative z-10 px-3 sm:px-4 py-4 max-w-2xl mx-auto"
-            >
-                <div className="relative rounded-[28px] border-2 border-accent-cyan/30 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden">
-                    {/* Ambient Streetwear Glow */}
-                    <div
-                        aria-hidden
-                        className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-full h-[460px]"
-                        style={{
-                            background:
-                                "radial-gradient(circle at 50% 42%, rgba(0, 217, 255, 0.24) 0%, rgba(245, 158, 11, 0.14) 48%, transparent 70%)",
-                        }}
-                    />
-
-                    {/* Top Merch Header */}
-                    <div className="relative z-20 p-4 sm:p-5 border-b border-white/10 bg-black/60">
-                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-accent-cyan">
-                            Loaf Records · Brooklyn NY
-                        </p>
-                        <h2 className="font-display text-3xl sm:text-4xl uppercase tracking-[0.03em] text-white leading-none mt-1">
-                            The Drop
-                        </h2>
-
-                        {/* Product Selector Strip */}
-                        <div className="mt-3 flex items-center gap-1.5 overflow-x-auto hide-scrollbar pb-1">
-                            {merchItems.map((item, idx) => {
-                                const active = idx === selectedMerchIdx;
-                                return (
-                                    <button
-                                        key={item.id}
-                                        type="button"
-                                        onClick={() => {
-                                            playCrateFlipSfx();
-                                            setSelectedMerchIdx(idx);
-                                        }}
-                                        className={cn(
-                                            "shrink-0 rounded-xl px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] border transition-colors max-w-[190px] truncate",
-                                            active
-                                                ? "bg-accent-cyan text-black border-accent-cyan"
-                                                : "bg-black/60 text-noir-cloud border-white/10 hover:text-white"
-                                        )}
-                                    >
-                                        {item.name}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* ── Garment break-apart — street art inside every layer, no labels ── */}
-                    <div className="relative z-20 px-4 pt-6 pb-4">
-                        <div
-                            ref={merchStageRef}
-                            className="relative h-[410px] sm:h-[440px] w-full flex items-center justify-center select-none"
-                            style={{ perspective: "1350px" }}
-                        >
-                            <motion.div
-                                className="relative w-56 h-56 sm:w-72 sm:h-72 flex items-center justify-center will-change-transform"
-                                style={{
-                                    transformStyle: "preserve-3d",
-                                    rotateX: gRigRotateX,
-                                    rotateY: gRigRotateY,
-                                    rotateZ: gRigRotateZ,
-                                    scale: gRigScale,
-                                }}
-                            >
-                                {/* Base: the Loaf record on the deck + Loaf Man tag */}
-                                <motion.div
-                                    style={{ x: gL5X, y: gL5Y, z: gL5Z, opacity: gL5Opacity }}
-                                    className="absolute inset-0 rounded-2xl border-2 border-amber-400/60 bg-[#0D0B08] overflow-hidden shadow-[0_24px_48px_rgba(0,0,0,0.95)] will-change-transform"
-                                >
-                                    <Image
-                                        src="/static-logo.jpg"
-                                        alt=""
-                                        fill
-                                        sizes="280px"
-                                        className="object-cover opacity-60"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                                    <div className="absolute bottom-2 right-2 w-12 h-12 drop-shadow-[0_6px_14px_rgba(0,0,0,0.9)]">
-                                        <Image
-                                            src="/loafman.png"
-                                            alt=""
-                                            fill
-                                            sizes="48px"
-                                            className="object-contain"
-                                        />
-                                    </div>
-                                </motion.div>
-
-                                {/* The design as it's printed on the piece */}
-                                <motion.div
-                                    style={{ x: gL4X, y: gL4Y, z: gL4Z, opacity: gL4Opacity }}
-                                    className="absolute inset-0 rounded-2xl border-2 border-white/30 bg-[#10131A] overflow-hidden shadow-[0_22px_44px_rgba(0,0,0,0.92)] will-change-transform"
-                                >
-                                    <Image
-                                        src={merchArt.artwork ?? "/MUSICBACKGRND.png"}
-                                        alt=""
-                                        fill
-                                        sizes="280px"
-                                        className={merchArt.artwork ? "object-contain p-4" : "object-cover opacity-80"}
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                                </motion.div>
-
-                                {/* The piece in another colour it comes in, on a light well so dark pieces read */}
-                                <motion.div
-                                    style={{ x: gL3X, y: gL3Y, z: gL3Z, opacity: gL3Opacity }}
-                                    className={cn(
-                                        "absolute inset-0 rounded-2xl border-2 border-emerald-400/55 overflow-hidden shadow-[0_22px_44px_rgba(0,0,0,0.92)] will-change-transform",
-                                        merchColorway ? "bg-[#ECECEC]" : "bg-[#0A1112]"
-                                    )}
-                                >
-                                    <Image
-                                        src={merchColorway ?? "/brand/loaf-record.jpg"}
-                                        alt=""
-                                        fill
-                                        sizes="280px"
-                                        className={merchColorway ? "object-contain p-2" : "object-cover opacity-90"}
-                                    />
-                                    {!merchColorway && (
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                                    )}
-                                </motion.div>
-
-                                {/* Core garment */}
-                                <motion.div
-                                    style={{ x: gL2X, y: gL2Y, z: gL2Z }}
-                                    onClick={toggleMerchExplode}
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-label={`${activeMerch.name} — tap to open up`}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter" || e.key === " ") {
-                                            e.preventDefault();
-                                            toggleMerchExplode();
-                                        }
-                                    }}
-                                    className="absolute inset-0 rounded-2xl overflow-hidden bg-gradient-to-b from-[#1B1D26] to-[#0C0D12] border-2 border-white/35 shadow-[0_26px_55px_rgba(0,0,0,0.95)] cursor-pointer will-change-transform"
-                                >
-                                    <Image
-                                        src={activeMerch.thumbnail_url}
-                                        alt={activeMerch.name}
-                                        fill
-                                        sizes="280px"
-                                        className="object-cover"
-                                    />
-                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3">
-                                        <p className="font-display text-base uppercase tracking-wider text-white leading-none truncate">
-                                            {activeMerch.name}
-                                        </p>
-                                    </div>
-                                </motion.div>
-
-                                {/* Foreground frame + crown seal */}
-                                <motion.div
-                                    aria-hidden
-                                    style={{ x: gL1X, y: gL1Y, z: gL1Z, opacity: gL1Opacity }}
-                                    className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-accent-cyan/80 bg-gradient-to-tr from-accent-cyan/15 via-transparent to-amber-400/15 will-change-transform"
-                                >
-                                    <LoafDeck size={40} className="absolute top-2.5 right-2.5" />
-                                </motion.div>
-                            </motion.div>
-                        </div>
-
-                        {/* Buy bar */}
-                        <div className="mt-2 rounded-2xl border border-white/15 bg-black/80 p-3 flex items-center justify-between gap-2">
-                            <div className="min-w-0">
-                                <p className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-amber-400">
-                                    {activeMerch.variants} Sizes / Colors
-                                </p>
-                                <p className="text-xs font-bold text-white truncate">
-                                    {activeMerch.name}
-                                </p>
-                            </div>
-
-                            <Link
-                                href={
-                                    products.length > 0
-                                        ? `/shop/product/${activeMerch.id}`
-                                        : "/shop"
-                                }
-                                onClick={() => playNeedleDropSfx()}
-                                className="shrink-0 flex items-center gap-1.5 rounded-xl bg-accent-cyan px-4 py-2 font-mono text-[10px] font-black uppercase tracking-wider text-black shadow-glow-sm"
-                            >
-                                <ShoppingBag className="w-3.5 h-3.5" />
-                                <span>Cop It</span>
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* ── CONNECTED MERCH CAPSULE LOOKBOOK GRID ── */}
-                    <div className="relative z-20 border-t-2 border-accent-cyan/25 bg-[#08090D] p-4 sm:p-5">
-                        <div className="flex items-end justify-between mb-3.5">
-                            <div>
-                                <span className="font-mono text-[8px] font-bold uppercase tracking-[0.26em] text-amber-400 block">
-                                    LOAF RECORDS
-                                </span>
-                                <h3 className="font-display text-2xl uppercase tracking-wider text-white leading-none mt-0.5">
-                                    Streetwear
-                                </h3>
-                            </div>
-                            <Link
-                                href="/shop"
-                                className="inline-flex items-center gap-1 rounded-lg border border-accent-cyan/40 bg-accent-cyan/10 px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-accent-cyan"
-                            >
-                                <span>Full Store</span>
-                                <ArrowUpRight className="w-3.5 h-3.5" />
-                            </Link>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                            {merchItems.slice(0, 4).map((item, idx) => (
-                                <Link
-                                    key={item.id}
-                                    href={products.length > 0 ? `/shop/product/${item.id}` : "/shop"}
-                                    onClick={() => playCrateFlipSfx()}
-                                    className="group relative rounded-2xl border border-white/15 bg-[#101219] overflow-hidden flex flex-col justify-between p-2.5 hover:border-amber-400/60 transition-colors"
-                                >
-                                    <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-black mb-2.5 border border-white/10">
-                                        <Image
-                                            src={item.thumbnail_url}
-                                            alt={item.name}
-                                            fill
-                                            sizes="(max-width: 768px) 44vw, 240px"
-                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                        <span className="absolute top-2 left-2 rounded bg-black/85 border border-amber-400/40 px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-widest text-amber-400">
-                                            DROP // 0{idx + 1}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <h4 className="text-xs font-bold text-white line-clamp-1">
-                                            {item.name}
-                                        </h4>
-                                        <div className="mt-1.5 flex items-center justify-between">
-                                            <span className="font-mono text-[8px] uppercase tracking-wider text-noir-cloud">
-                                                {item.variants} Sizes / Colors
-                                            </span>
-                                            <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-accent-cyan flex items-center gap-0.5">
-                                                COP <ArrowUpRight className="w-3 h-3" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
                     </div>
                 </div>
             </section>
