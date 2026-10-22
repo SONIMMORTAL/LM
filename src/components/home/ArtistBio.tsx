@@ -26,11 +26,12 @@ export function ArtistBio() {
                 {/* Portrait banner */}
                 <div className="relative h-72 sm:h-80 w-full overflow-hidden">
                     <Image
-                        src="/SHDW.avif"
-                        alt="Shadow The Great and Ruggz, seen from behind in their jackets, looking out at the Manhattan skyline"
+                        src="/brand/bio-loaf-muzik.jpg"
+                        alt="Two of Loaf Muzik in black tees on a dark club floor, one in front in wide-leg jeans, the other behind him with an arm up"
                         fill
+                        priority
                         sizes="(max-width: 768px) 96vw, 680px"
-                        className="object-cover object-[70%_42%]"
+                        className="object-cover object-[40%_18%]"
                     />
                     <div
                         aria-hidden
@@ -46,9 +47,9 @@ export function ArtistBio() {
                             className="font-display uppercase leading-[0.86] tracking-[0.02em] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]"
                             style={{ fontSize: "clamp(2.5rem, 11vw, 3.75rem)" }}
                         >
-                            Shadow{" "}
+                            Loaf{" "}
                             <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-accent-cyan bg-clip-text text-transparent">
-                                The Great
+                                Muzik
                             </span>
                         </h1>
                         <ul aria-label="Roles" className="mt-2 flex flex-wrap gap-1.5">
