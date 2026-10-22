@@ -524,11 +524,14 @@ export function MusicPlayer() {
                     "border border-noir-smoke"
                 )}
                 variants={{
+                    // Both states carry the same cap: leaving it off one made Framer animate
+                    // max-width from 92vw to 0vw on close, squeezing the pill to a sliver
                     collapsed: {
                         width: "auto",
+                        maxWidth: "92vw",
                         height: "48px",
                         borderRadius: "9999px",
-                        padding: "6px 12px"
+                        padding: "6px 6px 6px 8px"
                     },
                     expanded: {
                         width: "384px",
@@ -577,6 +580,9 @@ export function MusicPlayer() {
                             key="collapsed"
                             track={currentTrack}
                             isPlaying={isPlaying}
+                            onPlayPause={togglePlay}
+                            onNext={nextTrack}
+                            onPrev={prevTrackFn}
                         />
                     )}
                 </AnimatePresence>
@@ -586,35 +592,60 @@ export function MusicPlayer() {
 }
 
 // ─── Collapsed "pill" view ──────────────────────────────────────────
-function CollapsedPlayer({ track, isPlaying }: { track: Track; isPlaying: boolean }) {
+// Back, play/pause and skip live on the pill itself, so the music can be run from
+// anywhere on the page without opening the player; tapping the art or title opens it.
+function CollapsedPlayer({
+    track, isPlaying, onPlayPause, onNext, onPrev,
+}: {
+    track: Track; isPlaying: boolean;
+    onPlayPause: () => void; onNext: () => void; onPrev: () => void;
+}) {
+    const control = "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-noir-cloud transition-colors hover:text-foreground";
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.18 }}
-            className="flex items-center gap-3 whitespace-nowrap"
+            className="flex h-full items-center gap-2 whitespace-nowrap"
         >
             <div className="relative w-8 h-8 rounded-md overflow-hidden flex-shrink-0 ring-1 ring-white/10">
                 <Image src={getAlbumCover(track?.album)} alt={track?.album || "Album"} fill sizes="32px" className="object-cover" />
             </div>
-            <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-foreground truncate max-w-32">
+            <div className="min-w-0 flex flex-col leading-tight">
+                <span className="text-[13px] font-medium text-foreground truncate max-w-[clamp(84px,32vw,150px)]">
                     {track?.title || "Select Music"}
                 </span>
-                <span className="text-noir-ash">•</span>
-                <span className="text-sm text-noir-cloud truncate max-w-24">
+                <span className="text-[11px] text-noir-cloud truncate max-w-[clamp(84px,32vw,150px)]">
                     {track?.artist || "Loaf Records"}
                 </span>
             </div>
-            {isPlaying && (
-                <div className="flex items-end gap-[2px] h-3.5 pl-0.5" aria-hidden>
-                    <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-1" />
-                    <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-2" />
-                    <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-3" />
-                    <span className="w-[2px] h-full bg-accent-cyan rounded-full eq-bar-4" />
-                </div>
-            )}
+            <div className="ml-1 flex items-center">
+                <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); onPrev(); }}
+                    className={cn(control, "min-h-0")}
+                    aria-label="Previous track"
+                >
+                    <SkipBack className="w-4 h-4" />
+                </button>
+                <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); onPlayPause(); }}
+                    className="flex h-9 w-9 min-h-0 shrink-0 items-center justify-center rounded-full bg-accent-cyan text-noir-void"
+                    aria-label={isPlaying ? "Pause" : "Play"}
+                >
+                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+                </button>
+                <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); onNext(); }}
+                    className={cn(control, "min-h-0")}
+                    aria-label="Next track"
+                >
+                    <SkipForward className="w-4 h-4" />
+                </button>
+            </div>
         </motion.div>
     );
 }
@@ -652,7 +683,7 @@ function ExpandedPlayer({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.18 }}
-            className="p-4 w-full sm:w-[384px]"
+            className="p-4 w-full sm:w-[384px] max-h-[calc(100vh-8rem)] max-h-[calc(100dvh-8rem)] overflow-y-auto overscroll-contain"
         >
             {/* Close button */}
             <button
