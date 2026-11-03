@@ -12,6 +12,8 @@ import { VideoFacade } from "@/components/ui/VideoFacade";
 interface AlbumDetailsClientProps {
     albumName: string;
     artist: string;
+    /** Their artist page, when they have one */
+    artistHref?: string;
     cover: string;
     gradient: string;
     accentColor: string;
@@ -24,6 +26,7 @@ interface AlbumDetailsClientProps {
 export function AlbumDetailsClient({
     albumName,
     artist,
+    artistHref,
     cover,
     gradient,
     accentColor,
@@ -111,7 +114,15 @@ export function AlbumDetailsClient({
 
                             <div className="text-center lg:text-left space-y-3">
                                 <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white uppercase leading-none">{albumName}</h1>
-                                <p className="text-lg text-accent-cyan font-medium">{artist}</p>
+                                <p className="text-lg text-accent-cyan font-medium">
+                                    {artistHref ? (
+                                        <Link href={artistHref} className="underline-offset-4 hover:underline">
+                                            {artist}
+                                        </Link>
+                                    ) : (
+                                        artist
+                                    )}
+                                </p>
                                 <div className="flex items-center justify-center lg:justify-start gap-4 text-sm text-noir-cloud">
                                     <span>{tracks.length} tracks</span>
                                     <span>•</span>

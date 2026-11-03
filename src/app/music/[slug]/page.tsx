@@ -1,6 +1,8 @@
-import { SITE_URL } from "@/lib/site";
 import { getTracks } from "@/lib/tracks-server";
 import { AlbumDetailsClient } from "@/components/music/AlbumDetailsClient";
+import { albumBySlug, albumDescription, albumTrackCredits } from "@/lib/discography";
+import { LOAF_MUZIK, crewMemberPath, findCrewMember } from "@/lib/crew";
+import { albumNode, breadcrumbNode, jsonLd, loafMuzikNode, personNode } from "@/lib/structured-data";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -11,63 +13,34 @@ interface PageProps {
     params: Promise<{ slug: string }>;
 }
 
-const ALBUM_METADATA: Record<string, {
-    name: string;
-    artist: string;
-    cover: string;
-    gradient: string;
-    accentColor: string;
-    youtubeId?: string;
-    price: number;
-}> = {
-    "the-commission": {
-        name: "The Commission",
-        artist: "Shadow The Great",
-        cover: "/THE COMMISSION.png",
-        gradient: "from-amber-500/20 via-orange-600/10 to-red-900/20",
-        accentColor: "amber",
-        price: 9.99
-    },
-    "lost-city": {
-        name: "Lost City",
-        artist: "Shadow The Great",
-        cover: "/LC1.jpg",
-        gradient: "from-blue-900/20 via-cyan-900/10 to-slate-900/20",
-        accentColor: "cyan",
-        price: 9.99
-    },
-    "more-life": {
-        name: "More Life",
-        artist: "Shadow The Great",
-        cover: "/MORE LIFE VINYL.jpg",
-        gradient: "from-rose-500/20 via-pink-600/10 to-purple-900/20",
-        accentColor: "rose",
-        price: 9.99
-    },
-    "live-from-the-dungeon": {
-        name: "Live From The Dungeon",
-        artist: "Shadow The Great",
-        cover: "/LFTD.jpg",
-        gradient: "from-emerald-500/20 via-green-600/10 to-teal-900/20",
-        accentColor: "emerald",
-        price: 9.99
-    }
-};
+/** Where the album's artist name links: their page, or the collective's bio */
+function artistPath(artist: string): string | undefined {
+    if (artist === LOAF_MUZIK.name) return "/bio";
+    const member = findCrewMember(artist);
+    return member ? crewMemberPath(member) : undefined;
+}
+
+function artistNode(artist: string) {
+    if (artist === LOAF_MUZIK.name) return [loafMuzikNode()];
+    const member = findCrewMember(artist);
+    return member ? [personNode(member)] : [];
+}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;
-    const album = ALBUM_METADATA[slug.toLowerCase()];
+    const album = albumBySlug(slug);
     if (!album) return {};
 
+    const songs = albumTrackCredits(album, await getTracks().catch(() => []));
     const title = `${album.name} | ${album.artist} — Loaf Records`;
-    const description = `Listen to ${album.name} by ${album.artist} on Loaf Records. View official music videos, stream the tracklist, and buy digital album download.`;
+    const description = albumDescription(album, songs);
 
     return {
         title: { absolute: title },
         description,
-        alternates: { canonical: `/music/${slug.toLowerCase()}` },
+        alternates: { canonical: `/music/${album.slug}` },
         openGraph: {
-            url: `/music/${slug.toLowerCase()}`,
+            url: `/music/${album.slug}`,
             title,
             description,
             images: [{ url: album.cover }],
@@ -84,55 +57,34 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function AlbumReleasePage({ params }: PageProps) {
     const { slug } = await params;
-    const album = ALBUM_METADATA[slug.toLowerCase()];
+    const album = albumBySlug(slug);
     if (!album) {
         notFound();
     }
 
     const allTracks = await getTracks();
-    // Filter tracks by album name
     const albumTracks = allTracks.filter(t => t.album === album.name);
+    const songs = albumTrackCredits(album, albumTracks);
 
-    // Formulate JSON-LD schema
-    const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": "MusicAlbum",
-        "name": album.name,
-        "image": `${SITE_URL}${album.cover}`, // fallback site domain
-        "byArtist": {
-            "@type": "MusicGroup",
-            "name": album.artist
-        },
-        "numTracks": albumTracks.length,
-        "offers": album.price > 0 ? {
-            "@type": "Offer",
-            "price": album.price,
-            "priceCurrency": "USD",
-            "availability": "https://schema.org/InStock",
-            "url": `${SITE_URL}/music/${slug}`
-        } : undefined,
-        "track": albumTracks.map((t, idx) => ({
-            "@type": "MusicRecording",
-            "name": t.title,
-            "position": idx + 1,
-            "byArtist": {
-                "@type": "MusicGroup",
-                "name": t.artist
-            }
-        }))
-    };
+    // The album, everyone on it and where it sits in the site, for search engines
+    const structuredData = jsonLd([
+        albumNode(album, songs),
+        ...artistNode(album.artist),
+        breadcrumbNode([
+            { name: "Home", path: "/" },
+            { name: "Music", path: "/music" },
+            { name: album.name, path: `/music/${album.slug}` },
+        ]),
+    ]);
 
     return (
         <div className="min-h-screen pt-24 pb-16">
-            {/* Inject JSON-LD Schema */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
-            
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
+
             <AlbumDetailsClient
                 albumName={album.name}
                 artist={album.artist}
+                artistHref={artistPath(album.artist)}
                 cover={album.cover}
                 gradient={album.gradient}
                 accentColor={album.accentColor}

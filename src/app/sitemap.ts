@@ -1,17 +1,9 @@
 import { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/site';
-
-/**
- * Album detail routes under /music/[slug]. The video-only tapes (darkside,
- * lord-knows, munchies) are left off: their old album URLs now redirect to
- * /videos, which is already listed below.
- */
-const ALBUM_SLUGS = [
-    'lost-city',
-    'the-commission',
-    'more-life',
-    'live-from-the-dungeon',
-];
+import { CREW } from '@/lib/crew';
+// Album detail routes under /music/[slug]. The video-only tapes (darkside, lord-knows,
+// munchies) are left off: their old album URLs now redirect to /videos, listed below.
+import { ALBUM_RELEASES } from '@/lib/discography';
 
 export default function sitemap(): MetadataRoute.Sitemap {
     // Exclude redirects and no-index pages such as /vip. Omit lastModified
@@ -29,8 +21,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { path: '/bio', changeFrequency: 'monthly', priority: 0.7 },
         { path: '/gallery', changeFrequency: 'monthly', priority: 0.6 },
         { path: '/contact', changeFrequency: 'yearly', priority: 0.5 },
-        ...ALBUM_SLUGS.map((slug) => ({
-            path: `/music/${slug}`,
+        ...ALBUM_RELEASES.map((album) => ({
+            path: `/music/${album.slug}`,
+            changeFrequency: 'monthly' as const,
+            priority: 0.8,
+        })),
+        ...CREW.filter((member) => member.hasPage).map((member) => ({
+            path: `/artists/${member.slug}`,
             changeFrequency: 'monthly' as const,
             priority: 0.8,
         })),

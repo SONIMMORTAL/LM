@@ -8,6 +8,7 @@ import {
     isCommissionAlbumName,
     normalizeCommissionTracks,
 } from '@/lib/commission-tracklist';
+import { withoutUnfeatured } from '@/lib/credits';
 
 export interface Track {
     id: string;
@@ -238,11 +239,12 @@ const getCachedTracks = unstable_cache(loadTracks, ['tracks-catalogue-v2'], {
  * share. Their track indexes must line up, so they all read from here.
  *
  * Video tapes are left out — none of their rows has audio, so in the player's
- * list they were silent entries that next and shuffle could land on.
+ * list they were silent entries that next and shuffle could land on. Names the
+ * site doesn't feature are taken out of the credits (see lib/credits).
  */
 export async function getTracks(): Promise<Track[]> {
     const tracks = await getCachedTracks();
-    return tracks.filter((track) => !isVideoTapeAlbum(track.album));
+    return tracks.filter((track) => !isVideoTapeAlbum(track.album)).map(withoutUnfeatured);
 }
 
 /** Each video tape's track titles, in running order, keyed by album name. */
@@ -251,7 +253,7 @@ export async function getVideoTapeTracklists(): Promise<Record<string, string[]>
     return Object.fromEntries(
         VIDEO_TAPES.map((tape) => [
             tape.name,
-            tracks.filter((track) => track.album === tape.name).map((track) => track.title),
+            tracks.filter((track) => track.album === tape.name).map((track) => withoutUnfeatured(track).title),
         ])
     );
 }

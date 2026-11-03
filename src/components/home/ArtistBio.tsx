@@ -1,5 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { OnAirSign } from "@/components/brand/OnAirSign";
+import { CREW, LOAF_FAQ, LOAF_MUZIK, OSO_DOPE, PRESS, SHADOW_THE_GREAT, crewMemberPath, type CrewMember } from "@/lib/crew";
 
 const TAGS = ["Underground hip-hop", "Independent", "Collective"];
 
@@ -10,38 +12,27 @@ const FACTS = [
     { label: "Founders", value: "Shadow & Oso" },
 ];
 
-// The collective, the label and the founders stand out in gold, as they did in the old footer bio
+// The collective, the label and the crew stand out in gold, as they did in the old footer bio
 const KEYWORD = "whitespace-nowrap font-semibold text-amber-300 underline underline-offset-4";
 
-const FOUNDERS = [
-    {
-        name: "Shadow The Great",
-        anchor: "shadow-the-great",
-        roles: ["Artist", "Producer", "Director", "Psalm Writer"],
-        story: [
-            "An independent underground hip-hop artist, producer and director from Bushwick, Brooklyn, and a psalm writer.",
-            "His music journey began around 2009 through a Brooklyn after-school program. He went on to build his own basement studio, The Dungeon, where he produces, mixes and masters his own projects, and crafts a few for others.",
-        ],
-    },
-    {
-        name: "Oso Dope",
-        anchor: "oso-dope",
-        roles: ["Artist", "Musician", "On screen"],
-        story: [
-            "A Brooklyn-based hip-hop artist and musician, and a member of Loaf Muzik.",
-            "On screen he's credited with roles or appearances in Raising Kanan (Starz), The Equalizer (CBS), Wu-Tang: An American Saga and NBA Top Shot ads.",
-        ],
-    },
-];
+/** A crew member's name, linked to their page or their card below */
+function CrewName({ member }: { member: CrewMember }) {
+    return (
+        <Link href={member.hasPage ? crewMemberPath(member) : `#${member.slug}`} className={KEYWORD}>
+            {member.name}
+        </Link>
+    );
+}
 
 const chip =
     "rounded-md border border-white/20 bg-black/80 px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.18em] text-white/90";
 
 /**
- * The /bio page: Loaf Muzik, the collective, and Loaf Records, its label — then the two
- * who founded it, Shadow The Great and Oso Dope, each on their own card. A card in the
- * landing's stamped style, with the facts at a glance and the motto lit up like the on-air
- * sign at the top of the landing.
+ * The /bio page: Loaf Muzik, the collective, and Loaf Records, its label — then its
+ * founders, Shadow The Great and Oso Dope, each on their own card. A card in the landing's stamped
+ * style, with the facts at a glance, the questions people ask, the press, and the motto
+ * lit up like the on-air sign at the top of the landing. The facts come from lib/crew,
+ * which the structured data and /llms.txt read too.
  */
 export function ArtistBio() {
     return (
@@ -93,47 +84,59 @@ export function ArtistBio() {
                 {/* The collective and the label */}
                 <div className="space-y-3 px-4 pt-4 sm:px-5 text-sm leading-relaxed text-white/80">
                     <p>
-                        <span className={KEYWORD}>Loaf Muzik</span> is the independent underground hip-hop
-                        collective out of Brooklyn, and <span className={KEYWORD}>Loaf Records</span> is its
-                        label, founded by <a href="#shadow-the-great" className={KEYWORD}>Shadow The Great</a> and{" "}
-                        <a href="#oso-dope" className={KEYWORD}>Oso Dope</a>.
+                        <span className={KEYWORD}>Loaf Muzik</span> (you&apos;ll also see it written Loaf Music) is the
+                        independent underground hip-hop collective out of Brooklyn, home to{" "}
+                        <CrewName member={SHADOW_THE_GREAT} /> and <CrewName member={OSO_DOPE} />.{" "}
+                        <span className={KEYWORD}>Loaf Records</span> is its label, and the two of them founded it.
                     </p>
                     <p>
-                        Together they&apos;ve performed at AfroPunk, the Apollo Theater, Hot 97&apos;s Hot Box and,
-                        outside New York, Higher Ground in Burlington, VT.
+                        It started out as Meatloaf Muzik and won AFROPUNK&apos;s Battle of the Bands, which put the crew on
+                        the festival&apos;s bill.
+                    </p>
+                    <p>
+                        Together they&apos;ve performed at AfroPunk, the Apollo Theater, Hot 97&apos;s Hot Box and, outside New York,
+                        Higher Ground in Burlington, VT.
                     </p>
                 </div>
 
                 {/* The founders, one card each */}
                 <div className="space-y-2.5 px-4 pt-4 sm:px-5">
-                    {FOUNDERS.map((founder) => (
+                    {CREW.map((member) => (
                         <article
-                            key={founder.anchor}
-                            id={founder.anchor}
-                            aria-labelledby={`${founder.anchor}-name`}
+                            key={member.slug}
+                            id={member.slug}
+                            aria-labelledby={`${member.slug}-name`}
                             className="scroll-mt-28 rounded-2xl border border-white/10 bg-[#101219] p-3.5"
                         >
                             <p className="font-mono text-[8px] font-bold uppercase tracking-[0.22em] text-amber-400">
-                                Co-founder · Loaf Records
+                                {member.founder ? "Co-founder · Loaf Records" : "Member · Loaf Muzik"}
                             </p>
                             <h2
-                                id={`${founder.anchor}-name`}
+                                id={`${member.slug}-name`}
                                 className="mt-1 font-display text-2xl uppercase leading-none tracking-wider text-white"
                             >
-                                {founder.name}
+                                {member.name}
                             </h2>
-                            <ul aria-label={`${founder.name}'s roles`} className="mt-2 flex flex-wrap gap-1.5">
-                                {founder.roles.map((role) => (
+                            <ul aria-label={`${member.name}'s roles`} className="mt-2 flex flex-wrap gap-1.5">
+                                {member.roles.map((role) => (
                                     <li key={role} className={chip}>
                                         {role}
                                     </li>
                                 ))}
                             </ul>
                             <div className="mt-2.5 space-y-2 text-sm leading-relaxed text-white/80">
-                                {founder.story.map((line) => (
+                                {member.story.map((line) => (
                                     <p key={line}>{line}</p>
                                 ))}
                             </div>
+                            {member.hasPage && (
+                                <Link
+                                    href={crewMemberPath(member)}
+                                    className="mt-2 inline-flex items-center font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-amber-300 underline underline-offset-4"
+                                >
+                                    {member.name}&apos;s music →
+                                </Link>
+                            )}
                         </article>
                     ))}
                 </div>
@@ -151,6 +154,48 @@ export function ArtistBio() {
                         </div>
                     ))}
                 </dl>
+
+                {/* The questions people ask, answered */}
+                <section id="faq" aria-labelledby="bio-faq" className="scroll-mt-28 px-4 pt-6 sm:px-5">
+                    <p className="font-mono text-[8px] font-bold uppercase tracking-[0.22em] text-amber-400">Asked and answered</p>
+                    <h2 id="bio-faq" className="mt-1 font-display text-2xl uppercase leading-none tracking-wider text-white">
+                        About {LOAF_MUZIK.name}
+                    </h2>
+                    <dl className="mt-3 space-y-3">
+                        {LOAF_FAQ.map((entry) => (
+                            <div key={entry.question} className="rounded-2xl border border-white/10 bg-[#101219] px-3.5 py-3">
+                                <dt className="font-display text-lg uppercase leading-tight tracking-wider text-white">
+                                    {entry.question}
+                                </dt>
+                                <dd className="mt-1 text-sm leading-relaxed text-white/80">{entry.answer}</dd>
+                            </div>
+                        ))}
+                    </dl>
+                </section>
+
+                {/* Who's written about them */}
+                <section aria-labelledby="bio-press" className="px-4 pt-6 sm:px-5">
+                    <h2 id="bio-press" className="font-mono text-[8px] font-bold uppercase tracking-[0.22em] text-amber-400">
+                        In the press
+                    </h2>
+                    <ul className="mt-2 space-y-1.5">
+                        {PRESS.map((article) => (
+                            <li key={article.url} className="text-sm leading-snug text-white/80">
+                                <span className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-noir-cloud">
+                                    {article.outlet}
+                                </span>{" "}
+                                <a
+                                    href={article.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline underline-offset-4 hover:text-amber-300"
+                                >
+                                    {article.title}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
 
                 {/* The motto, lit up like the sign over the studio door */}
                 <div className="flex justify-center px-4 py-6 text-center">
