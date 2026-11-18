@@ -285,14 +285,14 @@ export function RecordCrate({
                             aria-hidden
                             className={cn(
                                 "h-[3px] rounded-full transition-all duration-300",
-                                i === selectedIndex ? "w-6 bg-accent-cyan" : "w-2 bg-white/20"
+                                i === selectedIndex ? "w-6 bg-[#365332]" : "w-2 bg-[#141714]/20"
                             )}
                         />
                     ))}
                 </div>
             </div>
 
-            <p className="hidden md:block mt-3 text-center text-[10px] font-mono uppercase tracking-[0.3em] text-noir-ash">
+            <p className="hidden md:block mt-3 text-center text-[10px] font-mono uppercase tracking-[0.3em] text-[#61675E]">
                 <span>Drag or press ← → to dig · ↵ loads deck A</span>
             </p>
 
@@ -304,11 +304,11 @@ export function RecordCrate({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.28 }}
-                    className="mx-auto mt-2 md:mt-10 grid max-w-5xl gap-8 md:gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
+                    className="mx-auto mt-2 md:mt-8 grid max-w-5xl gap-8 md:gap-10 rounded-3xl border-2 border-[#141714]/15 bg-white p-6 md:p-8 shadow-[0_18px_48px_rgba(20,23,20,0.08)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
                 >
                     {/* left: identity + actions */}
                     <div>
-                        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.3em] text-accent-cyan">
+                        <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-[#365332]">
                             {isFree ? (
                                 <>
                                     <Youtube className="h-3.5 w-3.5" />
@@ -322,11 +322,11 @@ export function RecordCrate({
                             )}
                         </div>
 
-                        <h2 className="mt-2 text-4xl font-black uppercase tracking-tighter text-white sm:text-5xl">
+                        <h2 className="mt-2 text-4xl font-black uppercase tracking-tighter text-[#141714] sm:text-5xl">
                             {album.name}
                         </h2>
-                        <p className="mt-1 text-noir-cloud">{album.artist}</p>
-                        <p className="mt-1 font-mono text-xs text-noir-ash">
+                        <p className="mt-1 text-[#3E443B]">{album.artist}</p>
+                        <p className="mt-1 font-mono text-xs text-[#61675E]">
                             {album.tracks.length} {album.tracks.length === 1 ? "track" : "tracks"}
                         </p>
 
@@ -339,7 +339,7 @@ export function RecordCrate({
                                             album.tracks.find((t) => t.audio_url) ?? album.tracks[0]
                                         );
                                     }}
-                                    className="flex items-center gap-2 rounded-full bg-accent-cyan px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-noir-void transition-all hover:bg-white hover:shadow-glow-md"
+                                    className="flex items-center gap-2 rounded-full bg-[#141714] px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-all hover:bg-[#365332]"
                                 >
                                     <Play className="h-4 w-4" />
                                     Play album
@@ -351,7 +351,7 @@ export function RecordCrate({
                                             ? `/videos?v=${album.youtubeId}`
                                             : "/videos"
                                     }
-                                    className="flex items-center gap-2 rounded-full bg-accent-cyan px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-noir-void transition-colors hover:bg-white"
+                                    className="flex items-center gap-2 rounded-full bg-[#141714] px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#365332]"
                                 >
                                     <Play className="h-4 w-4" />
                                     Watch on the big screen
@@ -361,7 +361,7 @@ export function RecordCrate({
                             {!isFree && (
                                 <button
                                     onClick={() => onBuy(album)}
-                                    className="flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-white/10"
+                                    className="flex items-center gap-2 rounded-full border-2 border-[#141714]/20 bg-[#FAF9F6] px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-[#141714] transition-colors hover:border-[#365332] hover:text-[#365332]"
                                 >
                                     <ShoppingBag className="h-4 w-4" />
                                     Buy ${album.price?.toFixed(2)}
@@ -371,7 +371,7 @@ export function RecordCrate({
 
                         {hasAudio && (
                             <div className="hidden md:block mt-6">
-                                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-noir-ash">
+                                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#61675E]">
                                     Drop it on a deck
                                 </p>
                                 <div className="mt-2 flex gap-2">
@@ -382,7 +382,7 @@ export function RecordCrate({
                                                 playNeedleDropSfx();
                                                 onLoadToDeck(selectedIndex, deck);
                                             }}
-                                            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 font-mono text-xs uppercase tracking-widest text-noir-cloud transition-colors hover:border-accent-cyan/40 hover:text-white"
+                                            className="flex items-center gap-2 rounded-lg border border-[#141714]/15 bg-[#FAF9F6] px-4 py-2 font-mono text-xs uppercase tracking-widest text-[#3E443B] transition-colors hover:border-[#365332] hover:text-[#365332]"
                                         >
                                             <Disc3 className="h-3.5 w-3.5" />
                                             Deck {deck === 0 ? "A" : "B"}
@@ -398,22 +398,20 @@ export function RecordCrate({
                         {album.tracks.length > 0 ? (
                             <>
                             {!hasAudio && (
-                                <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-noir-ash">
+                                <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#61675E]">
                                     Video release · tracklisting
                                 </p>
                             )}
-                            <ol className="divide-y divide-white/5 border-y border-white/5">
+                            <ol className="divide-y divide-[#141714]/10 border-y border-[#141714]/10">
                                 {album.tracks.map((track, i) => {
                                     const isCurrent = currentTrackTitle === track.title;
                                     const number = String(i + 1).padStart(2, "0");
 
-                                    // No audio behind this row — show it as the
-                                    // tracklisting it is, not a dead button.
                                     if (!track.audio_url) {
                                         return (
                                             <li
                                                 key={track.id}
-                                                className="flex items-center gap-3 px-2 py-2.5 text-noir-ash"
+                                                className="flex items-center gap-3 px-2 py-2.5 text-[#61675E]"
                                             >
                                                 <span className="w-6 shrink-0 text-right font-mono text-[11px]">
                                                     {number}
@@ -435,13 +433,13 @@ export function RecordCrate({
                                                 className={cn(
                                                     "group flex w-full items-center gap-3 px-2 py-2.5 text-left transition-colors",
                                                     isCurrent
-                                                        ? "text-accent-cyan"
-                                                        : "text-noir-cloud hover:bg-white/5 hover:text-white"
+                                                        ? "font-semibold text-[#365332]"
+                                                        : "text-[#141714] hover:bg-[#FAF9F6] hover:text-[#365332]"
                                                 )}
                                             >
-                                                <span className="w-6 shrink-0 text-right font-mono text-[11px] text-noir-ash">
+                                                <span className="w-6 shrink-0 text-right font-mono text-[11px] text-[#61675E]">
                                                     {isCurrent && isPlaying ? (
-                                                        <Pause className="ml-auto h-3 w-3" />
+                                                        <Pause className="ml-auto h-3 w-3 text-[#365332]" />
                                                     ) : (
                                                         number
                                                     )}
@@ -457,9 +455,9 @@ export function RecordCrate({
                             </ol>
                             </>
                         ) : (
-                            <div className="flex h-full min-h-40 flex-col items-center justify-center rounded-xl border border-dashed border-white/10 text-center">
-                                <Disc3 className="mb-3 h-8 w-8 text-noir-smoke" />
-                                <p className="text-sm text-noir-ash">
+                            <div className="flex h-full min-h-40 flex-col items-center justify-center rounded-xl border border-dashed border-[#141714]/20 text-center">
+                                <Disc3 className="mb-3 h-8 w-8 text-[#61675E]" />
+                                <p className="text-sm text-[#61675E]">
                                     Watch this one on the video page
                                 </p>
                             </div>

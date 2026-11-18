@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseChannelFeed, splitVideoTitle } from '../src/lib/youtube-feed.ts';
+import { parseChannelFeed, splitVideoTitle, tidyTitle } from '../src/lib/youtube-feed.ts';
 
 const entry = (id: string, title: string, published: string, link = `https://www.youtube.com/watch?v=${id}`) => `
  <entry>
@@ -60,5 +60,32 @@ describe('Loaf Records channel feed', () => {
             credits: 'Prod by Ruggz',
         });
         assert.deepEqual(splitVideoTitle('Get Money - Shadow The Great'), { headline: 'Get Money - Shadow The Great', credits: undefined });
+    });
+});
+
+describe('tidyTitle', () => {
+    test('closes up the space YouTube titles leave before a comma', () => {
+        assert.equal(tidyTitle('Get Money - Shadow The Great , Rah Tha Ruler'), 'Get Money - Shadow The Great, Rah Tha Ruler');
+        assert.equal(tidyTitle('Shadow The Great - Darkside  (Full Mixtape)'), 'Shadow The Great - Darkside (Full Mixtape)');
+        assert.equal(tidyTitle('Abel feat Rah Tha Ruler ,Shadow The Great'), 'Abel feat Rah Tha Ruler, Shadow The Great');
+    });
+});
+
+describe('descriptions', () => {
+    const feed = (description: string) => `<feed><entry>
+  <yt:videoId>abcdefghijk</yt:videoId><title>T</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=abcdefghijk"/>
+  <published>2026-01-01T00:00:00+00:00</published>
+  <media:group><media:description>${description}</media:description></media:group>
+</entry></feed>`;
+
+    test('skip the tracklist to find the line that says something', () => {
+        assert.equal(parseChannelFeed(feed('1.Desperado 0:00\n2.Lost City 3:10'))[0].description, '');
+        assert.equal(parseChannelFeed(feed('1 Intro (feat. Coyote Beatz)\nDirected by Sage Wolf'))[0].description, 'Directed by Sage Wolf');
+        assert.equal(parseChannelFeed(feed('00:00 Intro\nOfficial video'))[0].description, 'Official video');
+    });
+
+    test('keep a line that only starts with a year', () => {
+        assert.equal(parseChannelFeed(feed('2026 visual by Loaf Films'))[0].description, '2026 visual by Loaf Films');
     });
 });

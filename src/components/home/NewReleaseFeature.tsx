@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Film, Play } from "lucide-react";
 import { claimAudio, onAudioClaim } from "@/lib/audio-bus";
+import { YouTubeThumb } from "@/components/ui/YouTubeThumb";
 import { playVhsClunkSfx } from "@/lib/ui-sfx";
 import { splitVideoTitle, type ChannelUpload } from "@/lib/youtube-feed";
 
@@ -28,31 +28,33 @@ export function NewReleaseFeature({ video }: { video: ChannelUpload }) {
             aria-labelledby="new-release-title"
             className="relative z-10 px-3 sm:px-4 py-4 max-w-2xl mx-auto scroll-mt-20"
         >
-            <div className="rounded-[28px] border-2 border-red-500/35 bg-[#0A0B10]/95 p-4 sm:p-5 overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.95)]">
-                <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[8px] font-bold uppercase tracking-[0.18em] min-[360px]:tracking-[0.26em] text-red-400">
-                        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-red-500 motion-safe:animate-pulse" />
-                        New release · {dropped}
-                    </span>
-                    <Link
-                        href="/videos"
-                        className="shrink-0 inline-flex items-center gap-1 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-wider text-amber-300"
+            <div className="overflow-hidden rounded-[28px] border-2 border-[#141714] bg-white shadow-[0_20px_50px_rgba(20,23,20,0.12)]">
+                <div aria-hidden className="tiger-camo-strip h-2 w-full" />
+                <div className="p-4 sm:p-5">
+                    <div className="flex items-center justify-between gap-3">
+                        <span className="inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[8px] font-bold uppercase tracking-[0.18em] min-[360px]:tracking-[0.26em] text-red-600">
+                            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+                            New release · {dropped}
+                        </span>
+                        <Link
+                            href="/videos"
+                            className="shrink-0 inline-flex items-center gap-1 rounded-xl border border-[#141714]/20 bg-[#F2F1EC] px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[#141714] hover:border-[#365332] hover:text-[#365332]"
+                        >
+                            <Film className="hidden min-[360px]:block w-3.5 h-3.5" />
+                            <span className="whitespace-nowrap">All videos ↗</span>
+                        </Link>
+                    </div>
+                    <h2
+                        id="new-release-title"
+                        className="font-display text-2xl sm:text-3xl uppercase tracking-wider text-[#141714] leading-[0.95] mt-1.5 line-clamp-2"
                     >
-                        <Film className="hidden min-[360px]:block w-3.5 h-3.5" />
-                        <span className="whitespace-nowrap">All videos ↗</span>
-                    </Link>
-                </div>
-                <h2
-                    id="new-release-title"
-                    className="font-display text-2xl sm:text-3xl uppercase tracking-wider text-white leading-[0.95] mt-1.5 line-clamp-2"
-                >
-                    {headline}
-                </h2>
-                <p className="mt-1 mb-3 font-mono text-[9px] uppercase tracking-[0.18em] text-noir-cloud truncate">
-                    {credits ?? "Loaf Records · On YouTube"}
-                </p>
+                        {headline}
+                    </h2>
+                    <p className="mt-1 mb-3 font-mono text-[9px] uppercase tracking-[0.18em] text-[#61675E] truncate">
+                        {credits ?? "Loaf Records · On YouTube"}
+                    </p>
 
-                <div className="relative aspect-video w-full rounded-2xl overflow-hidden border-2 border-white/20 bg-black shadow-2xl">
+                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden border-2 border-[#141714] bg-black shadow-xl">
                     {playing ? (
                         <iframe
                             className="w-full h-full"
@@ -72,8 +74,8 @@ export function NewReleaseFeature({ video }: { video: ChannelUpload }) {
                             aria-label={`Play ${headline}`}
                             className="group relative block w-full h-full text-left"
                         >
-                            <Image
-                                src={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                            <YouTubeThumb
+                                youtubeId={video.youtubeId}
                                 alt=""
                                 fill
                                 sizes="(max-width: 768px) 92vw, 600px"
@@ -97,6 +99,7 @@ export function NewReleaseFeature({ video }: { video: ChannelUpload }) {
                             </span>
                         </button>
                     )}
+                </div>
                 </div>
             </div>
         </section>

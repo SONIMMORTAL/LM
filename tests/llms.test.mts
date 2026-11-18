@@ -29,12 +29,17 @@ describe('llms.txt', () => {
             assert.ok(text.includes(name), name);
         }
         assert.match(text, /\[Oso Dope\]\(https:\/\/[^)]+\/artists\/oso-dope\)/);
-        assert.ok(!/kidaf|shine sinatra/i.test(text));
+        assert.ok(!/shine sinatra/i.test(text));
+        // Kidaf only where his albums are: never in the crew, the answers or the links
+        const albums = text.slice(text.indexOf('## Albums'), text.indexOf('## Mixtapes'));
+        assert.ok(!/kidaf/i.test(text.replace(albums, '')));
+        assert.ok(albums.includes('featuring Kidaf'));
     });
 
     test("lists each album's songs with who's on them", () => {
         assert.match(text, /### \[Live From The Dungeon\]\([^)]+\/music\/live-from-the-dungeon\)/);
-        assert.ok(text.includes('1. Nitty Gritty (feat. Laron)'));
+        assert.ok(text.includes('1. Nitty Gritty (feat. Kidaf & Laron)'));
+        assert.ok(text.includes('### [Knowledge Born]'));
         assert.ok(text.includes('1. Killa (feat. Grandpadre & Paydro)'));
     });
 
@@ -70,8 +75,9 @@ describe('structured data', () => {
             .itemListElement[0].item;
         assert.equal(track.name, 'Nitty Gritty');
         assert.match(track.byArtist[0]['@id'], /\/bio#loaf-muzik$/);
-        assert.deepEqual(track.byArtist[1], { '@type': 'Person', name: 'Laron' });
-        assert.equal(track.byArtist.length, 2);
+        assert.deepEqual(track.byArtist[1], { '@type': 'Person', name: 'Kidaf' });
+        assert.deepEqual(track.byArtist[2], { '@type': 'Person', name: 'Laron' });
+        assert.match(node.description as string, /featuring Kidaf/);
         assert.equal(node.datePublished, '2015-10-01');
     });
 

@@ -176,7 +176,7 @@ export function CartSidebar() {
                                     </div>
                                     <button
                                         onClick={handleCheckout}
-                                        className="w-full py-4 bg-accent-cyan text-noir-void font-bold uppercase tracking-wider rounded-xl hover:bg-white transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                                        className="w-full py-4 bg-accent-cyan text-white font-bold uppercase tracking-wider rounded-xl hover:bg-foreground transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                                     >
                                         Proceed to Checkout
                                         <ArrowRight className="w-5 h-5" />

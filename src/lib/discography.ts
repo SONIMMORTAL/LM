@@ -1,11 +1,12 @@
 /**
  * The albums with a page of their own at /music/<slug>: how each page looks, and the
  * release facts the structured data and /llms.txt give search engines. The songs
- * themselves come from the catalogue (lib/tracks-server); the tapes that only play as
- * full YouTube uploads are in lib/video-tapes.
+ * themselves come from the catalogue (lib/tracks-server), except for albums that only
+ * stream elsewhere, which carry their tracklist here; the tapes that only play as full
+ * YouTube uploads are in lib/video-tapes.
  */
 
-import { isFeatured, listNames } from "./crew.ts";
+import { isFeatured, isListedCollaborator, listNames } from "./crew.ts";
 import { isCredited, trackCredits, type TrackCredits } from "./credits.ts";
 
 export interface AlbumRelease {
@@ -22,8 +23,15 @@ export interface AlbumRelease {
     /** ISO date, where it's on the record */
     released?: string;
     producer?: string;
-    /** The release's own pages elsewhere */
-    sameAs?: string[];
+    /** The album's bio, a paragraph each: shown on its page and given to search engines */
+    about?: string[];
+    /** Where else it streams, shown as buttons on its page */
+    listen?: Array<{ service: string; url: string }>;
+    /**
+     * For an album that isn't in the catalogue (it streams elsewhere, not on the site):
+     * its songs as the streaming services credit them
+     */
+    tracklist?: Array<{ title: string; artist: string }>;
 }
 
 export const ALBUM_RELEASES: AlbumRelease[] = [
@@ -50,7 +58,7 @@ export const ALBUM_RELEASES: AlbumRelease[] = [
         slug: "more-life",
         name: "More Life",
         artist: "Shadow The Great",
-        cover: "/MORE LIFE VINYL.jpg",
+        cover: "/more-life-cover-hd.jpg",
         gradient: "from-rose-500/20 via-pink-600/10 to-purple-900/20",
         accentColor: "rose",
         price: 9.99,
@@ -64,9 +72,59 @@ export const ALBUM_RELEASES: AlbumRelease[] = [
         accentColor: "emerald",
         price: 9.99,
         released: "2015-10-01",
-        sameAs: ["https://loafmuzik.bandcamp.com/album/live-from-the-dungeon"],
+        about: [
+            "Loaf Muzik's 2015 album, out October 1, 2015: Shadow The Great and Oso Dope, featuring Kidaf, over beats from Mr Green, AMOTBEATS, Incrediible, Laron, Captain Mudd, Stew Bird, King illa, Brous One, Tuamie, pdp and JUJ.",
+        ],
+        listen: [
+            { service: "Bandcamp", url: "https://loafmuzik.bandcamp.com/album/live-from-the-dungeon" },
+            { service: "Spotify", url: "https://open.spotify.com/album/1652egIQXv7qWWDbee7hxv" },
+            { service: "Apple Music", url: "https://music.apple.com/us/album/live-from-the-dungeon/1605916855" },
+            { service: "Deezer", url: "https://www.deezer.com/album/288696892" },
+        ],
+    },
+    {
+        slug: "knowledge-born",
+        name: "Knowledge Born",
+        artist: "Loaf Muzik",
+        cover: "/knowledge-born.jpg",
+        gradient: "from-yellow-400/20 via-amber-600/10 to-zinc-900/20",
+        accentColor: "amber",
+        price: 0,
+        released: "2017-10-09",
+        about: [
+            "Loaf Muzik's 2017 album with Kidz in Brooklyn, out October 9, 2017 on Loaf Records: 16 tracks from Shadow The Great and Oso Dope, featuring Kidaf, with King illa on the outro.",
+        ],
+        listen: [
+            { service: "Spotify", url: "https://open.spotify.com/album/1ElII7EKuJzMGRKtbwwknU" },
+            { service: "Apple Music", url: "https://music.apple.com/us/album/knowledge-born/1589804145" },
+            { service: "Deezer", url: "https://www.deezer.com/album/264871342" },
+        ],
+        // As Spotify, Apple Music and Deezer credit them
+        tracklist: [
+            { title: "1865 (feat. Shine Sinatra, Shadow The Great & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Words You Heard (feat. Oso Dope & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Timeless (feat. Shadow The Great, Kidaf & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Toast to the suckas (feat. Kidaf, Shadow The Great & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Rollin (feat. Shine Sinatra, Kidaf & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "What We Have (feat. Shadow The Great, Oso Dope & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "The Message (feat. Oso Dope, Shadow The Great, Shine Sinatra, Kidaf & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Hustlin (feat. Shadow The Great, Oso Dope & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Autopsy (feat. Shadow The Great, Shine Sinatra, Oso Dope, Kidaf & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Stay Immortal (feat. Shine Sinatra & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Justice (feat. Shadow The Great, Kidaf, Oso Dope, Shine Sinatra & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Broadway Junction (feat. Shadow The Great & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Old Earth (feat. Shadow The Great, Oso Dope, Kidaf, Shine Sinatra & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Born to be King (feat. Shadow The Great, Shine Sinatra, Kidaf, Oso Dope & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Man Down (feat. Shine Sinatra & Kidz in Brooklyn)", artist: "Loaf Muzik" },
+            { title: "Outro (feat. King illa)", artist: "Loaf Muzik" },
+        ],
     },
 ];
+
+/** The album's pages elsewhere, for search engines */
+export function albumSameAs(album: AlbumRelease): string[] {
+    return (album.listen ?? []).map((link) => link.url);
+}
 
 export function albumBySlug(slug: string): AlbumRelease | undefined {
     return ALBUM_RELEASES.find((album) => album.slug === slug.toLowerCase());
@@ -87,8 +145,8 @@ export interface CatalogueTrack {
 export function albumTrackCredits(album: AlbumRelease, tracks: CatalogueTrack[]): TrackCredits[] {
     // Loaf Muzik's album: its rows name Shadow The Great as the artist, and their titles say who's on them
     const albumArtist = album.artist === "Loaf Muzik" ? album.artist : undefined;
-    return tracks
-        .filter((track) => track.album === album.name)
+    const rows = album.tracklist ?? tracks.filter((track) => track.album === album.name);
+    return rows
         .map((track) => trackCredits(track, albumArtist))
         .map((song) => ({ ...song, featured: song.featured.filter(isFeatured) }));
 }
@@ -115,7 +173,10 @@ export function albumDescription(album: AlbumRelease, credits: TrackCredits[]): 
     const producer = album.producer ? ` Produced by ${album.producer}.` : "";
     const songs = credits.slice(0, 3).map((song) => song.title);
     const songList = songs.length ? ` ${credits.length} tracks including ${listNames(songs)}.` : "";
-    return `${album.name}${year} by ${album.artist}${withGuests}.${producer}${songList} Stream it free and buy the download on Loaf Records.`;
+    const where = album.tracklist
+        ? ` Listen on ${listNames((album.listen ?? []).map((link) => link.service))}.`
+        : " Stream it free and buy the download on Loaf Records.";
+    return `${album.name}${year} by ${album.artist}${withGuests}.${producer}${songList}${where}`;
 }
 
 /** One album as it touches an artist: all of it when it's theirs, or the songs they're on */
@@ -144,7 +205,7 @@ export function artistCollaborators(name: string, albums: ArtistAlbumCredit[]): 
     const counts = new Map<string, { name: string; count: number }>();
     const count = (who: string) => {
         const key = who.toLowerCase();
-        if (key === lower) return;
+        if (key === lower || !isListedCollaborator(who)) return;
         const entry = counts.get(key) ?? { name: who, count: 0 };
         entry.count += 1;
         counts.set(key, entry);

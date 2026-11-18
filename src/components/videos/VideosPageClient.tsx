@@ -4,17 +4,19 @@ import { Play, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { VhsTape } from "@/components/videos/VhsTape";
+import { YouTubeThumb } from "@/components/ui/YouTubeThumb";
 import { FullTapeShelf, TapeTracklist, fullTapeTitle, type FullTape } from "@/components/videos/FullTapeShelf";
 import { claimAudio, onAudioClaim } from "@/lib/audio-bus";
 import { playVhsClunkSfx } from "@/lib/ui-sfx";
-import type { ChannelUpload } from "@/lib/youtube-feed";
+import { tidyTitle, type ChannelUpload } from "@/lib/youtube-feed";
 
 /*
- * Theater screen — the blank TV in the artwork. The rect is measured
- * as % of the 1536x1024 scene; the screen area is black in the art,
- * so the 16:9 player centered inside it blends seamlessly.
+ * Theater screen — the blank TV inside the screening room artwork.
+ * Measured directly from /brand/films-theater-4k.webp (on the 1024x682 original; the file is
+ * now a 3840x2558 4x upscale of it, so the percentages hold) so the 16:9 YouTube player
+ * sits flush inside the TV bezel across desktop and phones.
  */
-const SCREEN_RECT = { left: 28.5, top: 21.3, width: 43.1, height: 30.7 };
+const SCREEN_RECT = { left: 28.39, top: 21.09, width: 43.29, height: 30.57 };
 
 // Video type definition
 interface Video {
@@ -213,9 +215,10 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
     const channelVideos: Video[] = uploads
         .filter((u) => !tapeIds.has(u.youtubeId))
         .map((u) => ({ id: `yt-${u.youtubeId}`, title: u.title, description: u.description, youtube_id: u.youtubeId }));
-    const allVideos = [...channelVideos, ...dbVideos, ...staticVideos].filter((v, i, self) =>
-        i === self.findIndex((t) => (t.youtube_id || t.youtubeId) === (v.youtube_id || v.youtubeId))
-    );
+    // Admin and hand-entered titles get the same tidy-up as the channel's
+    const allVideos = [...channelVideos, ...dbVideos, ...staticVideos]
+        .filter((v, i, self) => i === self.findIndex((t) => (t.youtube_id || t.youtubeId) === (v.youtube_id || v.youtubeId)))
+        .map((v) => ({ ...v, title: tidyTitle(v.title) }));
 
     // Featured Video — the newest upload is on the theater screen when the page loads
     // (Lost City if YouTube can't be reached)
@@ -296,23 +299,25 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
     const tapeOnScreen = tapes.find((t) => t.youtubeId === onScreen.id);
 
     return (
-        <div className="min-h-screen bg-noir-void text-foreground selection:bg-accent-cyan/30">
+        <div className="min-h-screen bg-transparent text-[#141714] selection:bg-[#365332]/20">
             <h1 className="sr-only">Videos — Loaf Records</h1>
 
-            {/* THEATER — whatever you pick plays on the big screen */}
+            {/* THEATER — framed screening room */}
             <section
                 ref={theaterRef}
                 aria-label="Loaf Records screening room"
-                className="relative pt-16 md:pt-20 scroll-mt-16 flex justify-center overflow-hidden"
+                className="relative pt-20 md:pt-24 px-4 sm:px-6 scroll-mt-16 flex justify-center overflow-hidden"
             >
-                <div className="relative w-full max-w-[150vh]">
+                <div className="relative w-full max-w-[1440px] overflow-hidden rounded-3xl border-2 border-[#141714] bg-[#0B0B0F] shadow-[0_24px_60px_rgba(20,23,20,0.14)]">
+                    <div aria-hidden className="tiger-camo-strip h-2 w-full" />
                     <div className="relative aspect-[3/2] w-full select-none">
                         <Image
-                            src="/scenes/theater-scene.jpg"
-                            alt="The Loaf Records crew watching the big screen"
+                            src="/brand/films-theater-4k.webp"
+                            alt="The Loaf Records crew on the couch, watching the big screen under the Malcolm X poster"
                             fill
                             priority
-                            quality={85}
+                            fetchPriority="high"
+                            quality={90}
                             sizes="(max-width: 1536px) 100vw, 1536px"
                             className="object-contain"
                         />
@@ -352,8 +357,8 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
                                     className="group absolute inset-0 block h-full w-full cursor-pointer"
                                     aria-label={`Play ${onScreen.title || "video"}`}
                                 >
-                                    <Image
-                                        src={`https://img.youtube.com/vi/${onScreen.id}/maxresdefault.jpg`}
+                                    <YouTubeThumb
+                                        youtubeId={onScreen.id}
                                         alt=""
                                         fill
                                         sizes="45vw"
@@ -394,13 +399,13 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
                             </div>
                         </div>
 
-                        {/* Fade into the page */}
+                        {/* Subtle frame edge */}
                         <div
                             aria-hidden
-                            className="absolute inset-x-0 bottom-0 h-[14%] pointer-events-none"
+                            className="absolute inset-x-0 bottom-0 h-[10%] pointer-events-none"
                             style={{
                                 background:
-                                    "linear-gradient(to top, var(--color-noir-void) 0%, transparent 100%)",
+                                    "linear-gradient(to top, rgba(11, 11, 15, 0.55) 0%, transparent 100%)",
                             }}
                         />
                     </div>
@@ -408,9 +413,9 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
             </section>
 
             {/* Now showing caption */}
-            <div className="flex justify-center px-6 pb-6">
-                <p className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase text-noir-ash text-center">
-                    Now showing · <span className="text-noir-cloud">{(onScreen.title || "").split("|")[0].trim()}</span>
+            <div className="flex justify-center px-6 pt-4 pb-6">
+                <p className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase text-[#61675E] text-center">
+                    Now showing · <span className="font-semibold text-[#141714]">{tidyTitle((onScreen.title || "").split("|")[0])}</span>
                 </p>
             </div>
 
@@ -433,12 +438,12 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
             {/* MAIN CATALOG */}
             <section className="relative pt-14 pb-24 md:py-24 px-6 z-10">
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex items-end justify-between mb-8 md:mb-16 border-b border-white/10 pb-4 md:pb-6">
+                    <div className="flex items-end justify-between mb-8 md:mb-16 border-b-2 border-[#141714]/15 pb-4 md:pb-6">
                         <div>
-                            <h2 className="text-5xl md:text-8xl font-bold tracking-tighter opacity-10 uppercase select-none">
+                            <h2 className="text-5xl md:text-8xl font-bold tracking-tighter text-[#141714]/10 uppercase select-none">
                                 Tapes
                             </h2>
-                            <h3 className="text-lg sm:text-2xl font-bold text-accent-cyan -mt-6 md:-mt-8 uppercase tracking-widest pl-2">
+                            <h3 className="text-lg sm:text-2xl font-bold text-[#365332] -mt-6 md:-mt-8 uppercase tracking-widest pl-2">
                                 Official Music Videos
                             </h3>
                         </div>
@@ -446,15 +451,15 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
                             href="https://www.youtube.com/@LoafRecords/videos"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-noir-cloud hover:text-white transition-colors"
+                            className="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-[#3E443B] hover:text-[#141714] transition-colors"
                         >
-                            View All on YouTube <span className="text-accent-cyan">→</span>
+                            View All on YouTube <span className="text-[#365332]">→</span>
                         </a>
                     </div>
 
                     {isLoading ? (
                         <div className="flex justify-center py-20">
-                            <Loader2 className="w-10 h-10 text-accent-cyan animate-spin" />
+                            <Loader2 className="w-10 h-10 text-[#365332] animate-spin" />
                         </div>
                     ) : (
                         <div className="relative">
@@ -472,7 +477,7 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
                             {/* the shelf the tapes are standing on */}
                             <div
                                 aria-hidden
-                                className="pointer-events-none absolute inset-x-0 -bottom-6 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent"
+                                className="pointer-events-none absolute inset-x-0 -bottom-6 h-px bg-gradient-to-r from-transparent via-[#141714]/20 to-transparent"
                             />
                         </div>
                     )}
@@ -480,18 +485,18 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
             </section>
 
             {/* LIVE SECTION */}
-            <section className="relative py-24 px-6 bg-noir-wood/20 border-t border-white/5">
+            <section className="relative py-24 px-6 border-t-2 border-[#141714]/10 bg-white/75">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                         <div>
-                            <span className="block text-accent-pink text-xs font-bold tracking-[0.2em] mb-2 uppercase text-white/70">
+                            <span className="block text-xs font-bold tracking-[0.2em] mb-2 uppercase text-[#365332]">
                                 Uncut & Raw
                             </span>
-                            <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter">
-                                Live With <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">LOAF!</span>
+                            <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter text-[#141714]">
+                                Live With <span className="text-[#365332]">LOAF!</span>
                             </h2>
                         </div>
-                        <p className="text-noir-cloud max-w-sm text-sm">
+                        <p className="text-[#3E443B] max-w-sm text-sm">
                             Step into the studio and onto the stage. Exclusive performances, interviews, and the real grime of Brooklyn.
                         </p>
                     </div>
@@ -504,10 +509,11 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
                                 onClick={() => handlePlay(video.youtube_id || video.youtubeId!, video.title)}
                             >
                                 <div className="aspect-[4/5] relative rounded-xl overflow-hidden bg-noir-slate border border-white/5 mb-4 shadow-lg group-hover:shadow-accent-cyan/10 transition-shadow">
-                                    <Image
-                                        src={`https://img.youtube.com/vi/${video.youtube_id || video.youtubeId}/hqdefault.jpg`}
+                                    <YouTubeThumb
+                                        youtubeId={(video.youtube_id || video.youtubeId)!}
                                         alt={video.title}
                                         fill
+                                        sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 25vw"
                                         className="object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />

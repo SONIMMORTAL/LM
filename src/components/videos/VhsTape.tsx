@@ -124,7 +124,7 @@ export const VhsTape = memo(function VhsTape({
             </div>
 
             {/* what the tape is, for anyone who wants it spelled out */}
-            <p className="mt-3 truncate text-sm font-bold tracking-tight text-white transition-colors group-hover:text-accent-cyan">
+            <p className="mt-3 line-clamp-2 min-h-[2lh] text-sm font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-accent-cyan">
                 {video.title}
             </p>
             {video.description && (

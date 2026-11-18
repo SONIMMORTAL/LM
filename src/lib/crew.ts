@@ -41,7 +41,7 @@ export const SHADOW_THE_GREAT: CrewMember = {
     ],
     homeLocation: "Bushwick, Brooklyn, New York",
     hasPage: true,
-    sameAs: ["https://www.last.fm/music/Shadow+The+Great"],
+    sameAs: ["https://open.spotify.com/artist/0if6Vx2WY48XgtW14QzcWU", "https://www.last.fm/music/Shadow+The+Great"],
 };
 
 export const OSO_DOPE: CrewMember = {
@@ -57,20 +57,33 @@ export const OSO_DOPE: CrewMember = {
     ],
     homeLocation: "Brooklyn, New York",
     hasPage: true,
-    sameAs: [],
+    sameAs: ["https://open.spotify.com/artist/6qyGqFPq241MRREsTt3399"],
 };
 
 /** The members of Loaf Muzik, founders first */
 export const CREW: CrewMember[] = [SHADOW_THE_GREAT, OSO_DOPE];
 
+const sameName = (list: string[], name: string) => list.some((entry) => entry.toLowerCase() === name.trim().toLowerCase());
+
 /**
  * Credited on some of the catalogue's songs, but not to be featured: the site leaves them out
  * of its credits, guest lists, descriptions, structured data and /llms.txt.
  */
-export const NOT_FEATURED = ["Kidaf", "Shine Sinatra"];
+export const NOT_FEATURED = ["Shine Sinatra"];
+
+/**
+ * Not on the roster, but credited on the albums they're on (Kidaf: Live From The Dungeon and
+ * Knowledge Born). Named there and nowhere else: not in the bio, the crew or the artist pages.
+ */
+export const ALBUM_CREDIT_ONLY = ["Kidaf"];
 
 export function isFeatured(name: string): boolean {
-    return !NOT_FEATURED.some((left) => left.toLowerCase() === name.trim().toLowerCase());
+    return !sameName(NOT_FEATURED, name);
+}
+
+/** Whether a name can be listed among an artist's collaborators */
+export function isListedCollaborator(name: string): boolean {
+    return isFeatured(name) && !sameName(ALBUM_CREDIT_ONLY, name);
 }
 
 export const LOAF_MUZIK = {
@@ -85,7 +98,13 @@ export const LOAF_MUZIK = {
     ],
     location: "Brooklyn, New York",
     genres: ["Hip-hop", "Underground hip-hop", "East Coast hip-hop"],
-    sameAs: ["https://loafmuzik.bandcamp.com", "https://www.last.fm/music/LOAF+MUZIK"],
+    sameAs: [
+        "https://open.spotify.com/artist/2BvJc1CBYB5KRCzJfweIiK",
+        "https://music.apple.com/us/artist/loaf-muzik/1060484178",
+        "https://www.deezer.com/artist/9294324",
+        "https://loafmuzik.bandcamp.com",
+        "https://www.last.fm/music/LOAF+MUZIK",
+    ],
 };
 
 export const LOAF_RECORDS = {
@@ -166,10 +185,10 @@ export const LOAF_FAQ: Array<{ question: string; answer: string }> = [
     },
     {
         question: "What albums has Shadow The Great released?",
-        answer: "Lost City, The Commission and More Life, plus the mixtapes Darkside, Lord Knows and The Munchies. With Loaf Muzik he made Live From The Dungeon.",
+        answer: "Lost City, The Commission and More Life, plus the mixtapes Darkside, Lord Knows and The Munchies. With Loaf Muzik he made Live From The Dungeon (2015) and Knowledge Born (2017).",
     },
     {
         question: "Where can I listen to Loaf Muzik and Shadow The Great?",
-        answer: "Every album streams free on loafrecords.shop, where you can also buy the downloads. The videos are on the Loaf Records YouTube channel and the site's Videos page.",
+        answer: "Shadow The Great's albums and Live From The Dungeon stream free on loafrecords.shop, where you can also buy the downloads. Loaf Muzik is on Spotify, Apple Music and Bandcamp, and the videos are on the Loaf Records YouTube channel and the site's Videos page.",
     },
 ];

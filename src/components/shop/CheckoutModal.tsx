@@ -208,7 +208,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                                 </p>
                                 <button
                                     onClick={handleClose}
-                                    className="mt-8 px-8 py-3 bg-accent-cyan text-noir-void font-bold rounded-lg hover:bg-white transition-colors"
+                                    className="mt-8 px-8 py-3 bg-accent-cyan text-white font-bold rounded-lg hover:bg-foreground transition-colors"
                                 >
                                     Continue Shopping
                                 </button>
@@ -386,7 +386,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full py-4 bg-accent-cyan text-noir-void font-bold uppercase tracking-wider rounded-xl hover:bg-white transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        className="w-full py-4 bg-accent-cyan text-white font-bold uppercase tracking-wider rounded-xl hover:bg-foreground transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                     >
                                         {isSubmitting ? (
                                             <>

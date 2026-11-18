@@ -21,7 +21,7 @@ interface AlbumData {
 
 // Map album slugs to cover images
 const ALBUM_COVERS: Record<string, string> = {
-    "more-life": "/MORE LIFE VINYL.jpg",
+    "more-life": "/more-life-cover-hd.jpg",
     "the-commission": "/THE COMMISSION.png",
     "lost-city": "/LC1.jpg",
 };
@@ -55,7 +55,7 @@ export default function DownloadPageClient({ albumData, error }: { albumData?: A
 
     if (error) {
         return (
-            <div className="min-h-screen bg-noir-void text-white flex flex-col items-center justify-center p-4">
+            <div className="min-h-screen bg-noir-void text-foreground flex flex-col items-center justify-center p-4">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -65,7 +65,7 @@ export default function DownloadPageClient({ albumData, error }: { albumData?: A
                         <AlertCircle className="w-8 h-8 text-red-500" />
                     </div>
                     <h1 className="text-2xl font-bold text-red-500 mb-4">{error === "invalid" ? "Invalid Link" : error === "expired" ? "Link Expired" : "Album Not Found"}</h1>
-                    <p className="text-neutral-400 mb-8">
+                    <p className="text-noir-cloud mb-8">
                         {error === "invalid"
                             ? "Please check your email for the correct download link."
                             : error === "expired"
@@ -74,7 +74,7 @@ export default function DownloadPageClient({ albumData, error }: { albumData?: A
                     </p>
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background hover:bg-accent-cyan hover:text-white rounded-full transition-colors font-semibold"
                     >
                         <MoveLeft size={16} />
                         Return Home
@@ -86,7 +86,7 @@ export default function DownloadPageClient({ albumData, error }: { albumData?: A
 
     if (!albumData) {
         return (
-            <div className="min-h-screen bg-noir-void text-white flex items-center justify-center">
+            <div className="min-h-screen bg-noir-void text-foreground flex items-center justify-center">
                 <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -100,7 +100,7 @@ export default function DownloadPageClient({ albumData, error }: { albumData?: A
     const downloadProgress = (downloadedTracks.size / albumData.tracks.length) * 100;
 
     return (
-        <div className="min-h-screen bg-noir-void text-white relative overflow-hidden">
+        <div className="min-h-screen bg-noir-void text-foreground relative overflow-hidden">
             {/* Background Gradient */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent-cyan/5 via-transparent to-purple-900/10" />
@@ -149,15 +149,13 @@ export default function DownloadPageClient({ albumData, error }: { albumData?: A
                         </AnimatePresence>
                     </motion.div>
 
-                    <h1 className="text-4xl font-black tracking-tight mb-2">
-                        <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-                            {albumData.name.toUpperCase()}
-                        </span>
+                    <h1 className="text-4xl font-black tracking-tight mb-2 text-foreground">
+                        {albumData.name.toUpperCase()}
                     </h1>
-                    <p className="text-neutral-500 text-sm tracking-widest uppercase">Official Download</p>
+                    <p className="text-noir-ash text-sm tracking-widest uppercase">Official Download</p>
 
                     {/* Expiration Notice */}
-                    <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full text-xs text-neutral-400">
+                    <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-noir-slate border border-noir-smoke rounded-full text-xs text-noir-cloud">
                         <Clock size={14} />
                         Links expire in 24 hours
                     </div>
@@ -173,7 +171,7 @@ export default function DownloadPageClient({ albumData, error }: { albumData?: A
                     <button
                         onClick={handleDownloadAll}
                         disabled={isDownloadingAll}
-                        className="w-full py-4 px-6 bg-gradient-to-r from-accent-cyan to-cyan-400 text-noir-void font-bold rounded-xl shadow-lg shadow-accent-cyan/25 hover:shadow-accent-cyan/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                        className="w-full py-4 px-6 bg-accent-cyan hover:bg-foreground text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                     >
                         {isDownloadingAll ? (
                             <>
@@ -215,61 +213,64 @@ export default function DownloadPageClient({ albumData, error }: { albumData?: A
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
-                    className="bg-gradient-to-br from-noir-charcoal/80 to-noir-slate/40 backdrop-blur-xl rounded-2xl border border-white/10 p-6 md:p-8"
+                    className="bg-noir-charcoal rounded-2xl border-2 border-foreground/15 overflow-hidden shadow-sm"
                 >
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-lg font-semibold text-white">Tracks</h2>
-                        <span className="text-xs text-neutral-500">{albumData.tracks.length} files</span>
-                    </div>
+                    <div aria-hidden className="tiger-camo-strip h-1.5 w-full" />
+                    <div className="p-6 md:p-8">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-semibold text-foreground">Tracks</h2>
+                            <span className="text-xs text-noir-ash">{albumData.tracks.length} files</span>
+                        </div>
 
-                    <ul className="space-y-2">
-                        {albumData.tracks.map((track, i) => {
-                            const isDownloaded = downloadedTracks.has(track.name);
+                        <ul className="space-y-2">
+                            {albumData.tracks.map((track, i) => {
+                                const isDownloaded = downloadedTracks.has(track.name);
 
-                            return (
-                                <motion.li
-                                    key={i}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.05 * i }}
-                                    className={`flex items-center justify-between p-4 rounded-xl transition-all group ${isDownloaded
-                                        ? "bg-accent-cyan/10 border border-accent-cyan/20"
-                                        : "bg-noir-void/50 hover:bg-white/5"
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-4 overflow-hidden">
-                                        <span className={`text-sm font-mono w-6 shrink-0 ${isDownloaded ? "text-accent-cyan" : "text-neutral-600"}`}>
-                                            {String(i + 1).padStart(2, "0")}
-                                        </span>
-                                        <span className={`truncate transition-colors ${isDownloaded ? "text-accent-cyan" : "text-neutral-200 group-hover:text-white"}`} title={track.name}>
-                                            {track.name.replace(/\.(mp3|wav|m4a|flac)$/i, "")}
-                                        </span>
-                                    </div>
-
-                                    {track.url ? (
-                                        isDownloaded ? (
-                                            <span className="flex items-center gap-2 text-accent-cyan text-sm font-medium">
-                                                <CheckCircle2 size={16} />
-                                                Downloaded
+                                return (
+                                    <motion.li
+                                        key={i}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.05 * i }}
+                                        className={`flex items-center justify-between p-4 rounded-xl transition-all group ${isDownloaded
+                                            ? "bg-accent-cyan/10 border border-accent-cyan/30"
+                                            : "bg-noir-slate/60 hover:bg-noir-slate"
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-4 overflow-hidden">
+                                            <span className={`text-sm font-mono w-6 shrink-0 ${isDownloaded ? "text-accent-cyan" : "text-noir-ash"}`}>
+                                                {String(i + 1).padStart(2, "0")}
                                             </span>
+                                            <span className={`truncate transition-colors ${isDownloaded ? "text-accent-cyan" : "text-foreground"}`} title={track.name}>
+                                                {track.name.replace(/\.(mp3|wav|m4a|flac)$/i, "")}
+                                            </span>
+                                        </div>
+
+                                        {track.url ? (
+                                            isDownloaded ? (
+                                                <span className="flex items-center gap-2 text-accent-cyan text-sm font-medium">
+                                                    <CheckCircle2 size={16} />
+                                                    Downloaded
+                                                </span>
+                                            ) : (
+                                                <a
+                                                    href={track.url}
+                                                    download={track.name}
+                                                    onClick={() => handleDownload(track.name)}
+                                                    className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-accent-cyan hover:text-white transition-colors shrink-0 ml-4"
+                                                >
+                                                    <Download size={14} />
+                                                    Download
+                                                </a>
+                                            )
                                         ) : (
-                                            <a
-                                                href={track.url}
-                                                download={track.name}
-                                                onClick={() => handleDownload(track.name)}
-                                                className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-neutral-200 transition-colors shrink-0 ml-4"
-                                            >
-                                                <Download size={14} />
-                                                Download
-                                            </a>
-                                        )
-                                    ) : (
-                                        <span className="text-red-500 text-xs">Error</span>
-                                    )}
-                                </motion.li>
-                            );
-                        })}
-                    </ul>
+                                            <span className="text-red-500 text-xs">Error</span>
+                                        )}
+                                    </motion.li>
+                                );
+                            })}
+                        </ul>
+                    </div>
                 </motion.div>
 
                 {/* Footer */}
@@ -281,13 +282,13 @@ export default function DownloadPageClient({ albumData, error }: { albumData?: A
                 >
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors"
+                        className="inline-flex items-center gap-2 text-noir-cloud hover:text-foreground transition-colors"
                     >
                         <MoveLeft size={16} />
                         Back to Store
                     </Link>
 
-                    <p className="mt-8 text-neutral-600 text-xs">
+                    <p className="mt-8 text-noir-ash text-xs">
                         Need help? Contact{" "}
                         <a href="mailto:loafrecords1@gmail.com" className="text-accent-cyan hover:underline">
                             loafrecords1@gmail.com

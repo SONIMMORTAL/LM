@@ -16,7 +16,7 @@ import {
     findCrewMember,
     type CrewMember,
 } from "./crew.ts";
-import type { AlbumRelease } from "./discography.ts";
+import { albumSameAs, type AlbumRelease } from "./discography.ts";
 import type { TrackCredits } from "./credits.ts";
 
 type Node = Record<string, unknown>;
@@ -128,7 +128,8 @@ export function albumNode(album: AlbumRelease, songs: TrackCredits[]): Node {
         genre: LOAF_MUZIK.genres,
         ...(album.released ? { datePublished: album.released } : {}),
         ...(album.producer ? { producer: artistRef(album.producer) } : {}),
-        ...(album.sameAs ? { sameAs: album.sameAs } : {}),
+        ...(album.about ? { description: album.about.join(" ") } : {}),
+        ...(album.listen ? { sameAs: albumSameAs(album) } : {}),
         numTracks: songs.length,
         track: {
             "@type": "ItemList",

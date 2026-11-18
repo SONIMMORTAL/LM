@@ -1,41 +1,34 @@
 import Image from "next/image";
 
 /**
- * The mobile landing's street atmosphere — brick dungeon mural, amber halftone,
- * noir vignette — for the pages you reach from it (Store, Loaf Films), so tapping
- * through feels like the same place. Painted as page backgrounds rather than a
- * fixed layer, so nothing repaints on scroll.
+ * Clean White + Tiger-Stripe Camo canvas backdrop framing content pages (`/bio`,
+ * `/loaf-films`, `/artists/*`) so every page matches Loaf Records' white & tiger-camo aesthetic.
  */
 export function StreetBackdrop({ children }: { children: React.ReactNode }) {
     return (
-        <div className="relative isolate overflow-hidden bg-[#060608] text-[#F5F5F7] selection:bg-amber-400 selection:text-black">
-            <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[110vh]">
-                {/* Brick dungeon mural watermark */}
-                <Image
-                    src="/brand/dungeon-crew.png"
-                    alt=""
-                    fill
-                    sizes="100vw"
-                    className="object-cover object-top opacity-[0.16]"
-                />
-                {/* Noir vignette, fading the mural out into the page */}
+        <div className="relative isolate overflow-hidden bg-[#FAF9F6] text-[#141714] selection:bg-[#365332] selection:text-white">
+            {/* Soft washed tiger-stripe camo wallpaper */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+                <div className="tiger-camo-strip absolute inset-0 opacity-[0.14]" />
                 <div
                     className="absolute inset-0"
                     style={{
                         background:
-                            "radial-gradient(ellipse 95% 70% at 50% 15%, rgba(245,158,11,0.12) 0%, rgba(6,6,8,0.88) 55%, #060608 100%)",
+                            "radial-gradient(ellipse 90% 70% at 50% 12%, rgba(255,255,255,0.78) 0%, rgba(250,249,246,0.92) 70%, #FAF9F6 100%)",
                     }}
                 />
+                {/* Faint top studio watermark */}
+                <div className="relative mx-auto h-[520px] max-w-6xl opacity-[0.06]">
+                    <Image
+                        src="/brand/dungeon-studio-4k.webp"
+                        alt=""
+                        fill
+                        sizes="50vw"
+                        quality={70}
+                        className="object-cover object-top"
+                    />
+                </div>
             </div>
-            {/* Halftone dot & street grain, all the way down */}
-            <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 -z-10 opacity-[0.12]"
-                style={{
-                    backgroundImage: "radial-gradient(rgba(245, 158, 11, 0.22) 1px, transparent 1px)",
-                    backgroundSize: "16px 16px",
-                }}
-            />
             {children}
         </div>
     );

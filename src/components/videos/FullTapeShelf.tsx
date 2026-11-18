@@ -42,19 +42,19 @@ export function FullTapeShelf({ tapes, nowShowingId, onPlay }: FullTapeShelfProp
     return (
         <section aria-labelledby="full-tapes-heading" className="relative px-6 pt-10 pb-2 md:pt-16 md:pb-8 z-10">
             <div className="max-w-7xl mx-auto">
-                <div className="flex items-end justify-between mb-5 md:mb-12 border-b border-white/10 pb-4 md:pb-6">
+                <div className="flex items-end justify-between mb-5 md:mb-12 border-b-2 border-[#141714]/15 pb-4 md:pb-6">
                     <div>
-                        <p aria-hidden className="text-5xl md:text-8xl font-bold tracking-tighter opacity-10 uppercase select-none">
+                        <p aria-hidden className="text-5xl md:text-8xl font-bold tracking-tighter text-[#141714]/10 uppercase select-none">
                             Full Tapes
                         </p>
                         <h2
                             id="full-tapes-heading"
-                            className="text-lg sm:text-2xl font-bold text-accent-cyan -mt-6 md:-mt-8 uppercase tracking-widest pl-2"
+                            className="text-lg sm:text-2xl font-bold text-[#365332] -mt-6 md:-mt-8 uppercase tracking-widest pl-2"
                         >
                             Watch the whole tape
                         </h2>
                     </div>
-                    <p className="hidden sm:block max-w-xs text-right text-sm text-noir-cloud">
+                    <p className="hidden sm:block max-w-xs text-right text-sm text-[#3E443B]">
                         Front to back, on the big screen.
                     </p>
                 </div>
@@ -72,9 +72,9 @@ export function FullTapeShelf({ tapes, nowShowingId, onPlay }: FullTapeShelfProp
                                     aria-label={`Watch ${tape.name} by ${tape.artist} on the big screen`}
                                     className={cn(
                                         "group relative block aspect-square w-full overflow-hidden rounded-sm",
-                                        "shadow-[0_18px_40px_-15px_rgba(0,0,0,0.9)] md:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] ring-1 transition-shadow",
-                                        isOnScreen ? "ring-2 ring-accent-cyan" : "ring-white/10 hover:ring-white/25",
-                                        "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent-cyan"
+                                        "shadow-[0_14px_34px_-10px_rgba(20,23,20,0.28)] ring-2 transition-shadow",
+                                        isOnScreen ? "ring-[#365332]" : "ring-[#141714]/15 hover:ring-[#365332]",
+                                        "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#365332]"
                                     )}
                                 >
                                     <Image
@@ -106,7 +106,7 @@ export function FullTapeShelf({ tapes, nowShowingId, onPlay }: FullTapeShelfProp
 
                                 <div className="mt-2 md:mt-4 lg:flex lg:items-baseline lg:justify-between lg:gap-3">
                                     <div className="min-w-0">
-                                        <h3 className="truncate text-sm sm:text-lg md:text-2xl lg:text-3xl font-black uppercase tracking-tighter text-white">
+                                        <h3 className="truncate text-sm sm:text-lg md:text-2xl lg:text-3xl font-black uppercase tracking-tighter text-[#141714]">
                                             {tape.name}
                                         </h3>
                                         <p className="hidden md:block text-sm text-noir-cloud">{tape.artist}</p>
@@ -145,12 +145,12 @@ export function TapeTracklist({ tape, label = "Tracklist", className }: TapeTrac
     if (tape.tracks.length === 0) return null;
 
     return (
-        <details className={cn("group/list border-t border-white/10", className)}>
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3 font-mono text-[10px] uppercase tracking-[0.3em] text-noir-ash transition-colors hover:text-white [&::-webkit-details-marker]:hidden">
+        <details className={cn("group/list border-t border-noir-smoke", className)}>
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3 font-mono text-[10px] uppercase tracking-[0.3em] text-noir-ash transition-colors hover:text-foreground [&::-webkit-details-marker]:hidden">
                 <span className="truncate">{label}</span>
                 <ChevronDown className="h-3.5 w-3.5 shrink-0 transition-transform group-open/list:rotate-180" />
             </summary>
-            <ol className="divide-y divide-white/5 border-t border-white/5">
+            <ol className="divide-y divide-noir-smoke/50 border-t border-noir-smoke/50">
                 {tape.tracks.map((title, i) => (
                     <li
                         // Titles can repeat on a tape; the position can't.

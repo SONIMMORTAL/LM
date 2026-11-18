@@ -23,11 +23,10 @@ interface LlmsInput {
 const PAGES: Array<{ name: string; path: string; about: string }> = [
     { name: "Music", path: "/music", about: "every album, streaming free, with digital downloads to buy" },
     { name: "Videos", path: "/videos", about: "music videos, live performances and full mixtapes, newest upload first" },
-    { name: "Store", path: "/shop", about: "official Loaf Records merch: apparel, vinyl and accessories, shipped worldwide" },
-    { name: "Loaf Films", path: "/loaf-films", about: "the label's Brooklyn music video and commercial production company" },
+    { name: "Shop", path: "/shop", about: "official Loaf Wear & Loaf Records merch: apparel, vinyl and accessories, shipped worldwide" },
+    { name: "Films", path: "/loaf-films", about: "Loaf Films — Brooklyn music video & commercial production, bookings and packages" },
     { name: "Bio", path: "/bio", about: "the Loaf Muzik story, its members and common questions" },
     { name: "Blackbook", path: "/gallery", about: "the crew's art: blackbook pages, trailer and box truck pieces" },
-    { name: "Contact", path: "/contact", about: "bookings, features, press, licensing and business" },
 ];
 
 const DATE = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "America/New_York" });
@@ -39,7 +38,7 @@ export function buildLlmsTxt({ tracks, tapes, tapeTracklists, uploads }: LlmsInp
     add(
         `# ${LOAF_RECORDS.name}: Home of ${LOAF_MUZIK.name}`,
         "",
-        `> ${LOAF_RECORDS.name} is the Brooklyn independent hip-hop label founded by Shadow The Great and Oso Dope, and the home of ${LOAF_MUZIK.name} (also written Loaf Music or Loaf Musik), the collective of ${listNames(CREW.map((m) => m.name))}. ${absoluteUrl("/")} is the official site for all of them: their albums stream free here, and the downloads, merch and videos are here too.`,
+        `> ${LOAF_RECORDS.name} is the Brooklyn independent hip-hop label founded by Shadow The Great and Oso Dope, and the home of ${LOAF_MUZIK.name} (also written Loaf Music or Loaf Musik), the collective of ${listNames(CREW.map((m) => m.name))}. ${absoluteUrl("/")} is the official site for all of them: their albums stream free here (Knowledge Born streams on Spotify, Apple Music and Deezer), and the downloads, merch and videos are here too.`,
         "",
         "## The crew",
         "",
@@ -61,6 +60,8 @@ export function buildLlmsTxt({ tracks, tapes, tapeTracklists, uploads }: LlmsInp
         ].filter(Boolean);
         const guests = albumGuests(songs);
         add(`### [${album.name}](${absoluteUrl(`/music/${album.slug}`)})`, "", `${facts.join(" · ")}.${guests.length ? ` With ${listNames(guests)}.` : ""}`, "");
+        if (album.about) add(...album.about, "");
+        if (album.listen) add(`Listen: ${album.listen.map((link) => `[${link.service}](${link.url})`).join(" · ")}`, "");
         songs.forEach((song, index) => add(`${index + 1}. ${creditedTitle(song)}`));
         if (songs.length) add("");
     }

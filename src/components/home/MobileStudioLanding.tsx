@@ -123,7 +123,7 @@ const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
         year: "2025",
         catalogNo: "LR-005-LIFE",
         stampCode: "BKLYN // MORE-LIFE-05",
-        cover: "/MORE LIFE VINYL.jpg",
+        cover: "/more-life-cover-hd.jpg",
         accent: "rose",
         accentHex: "#F43F5E",
         glowRgba: "rgba(244, 63, 94, 0.34)",
@@ -423,35 +423,15 @@ export function MobileStudioLanding({
     }, [masterScroll, masterExplode, masterManualMode, masterManualVal]);
 
     return (
-        <div className="relative min-h-screen bg-[#060608] text-[#F5F5F7] pb-28 overflow-x-hidden selection:bg-amber-400 selection:text-black">
-            {/* ═══════════════════════════════════════════════════════════
-                STAMPED GLOBAL ATMOSPHERE — BRICK DUNGEON & GRAFFITI TEXTURE
-                (Eliminates generic flat black background!)
-               ═══════════════════════════════════════════════════════════ */}
+        <div className="relative min-h-screen tiger-camo-surface text-[#141714] pb-28 overflow-x-hidden selection:bg-[#365332] selection:text-white">
+            {/* Soft white studio wash over tiger-stripe camo */}
             <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-                {/* Brick Dungeon Mural Watermark */}
-                <Image
-                    src="/brand/dungeon-crew.png"
-                    alt=""
-                    fill
-                    sizes="100vw"
-                    className="object-cover object-top opacity-[0.16] scale-105"
-                />
-                {/* Halftone Dot & Street Grain Overlay */}
-                <div
-                    className="absolute inset-0 opacity-25"
-                    style={{
-                        backgroundImage:
-                            "radial-gradient(rgba(245, 158, 11, 0.22) 1px, transparent 1px)",
-                        backgroundSize: "16px 16px",
-                    }}
-                />
-                {/* Deep Noir Vignette */}
+                <div className="tiger-camo-strip absolute inset-0 opacity-[0.12]" />
                 <div
                     className="absolute inset-0"
                     style={{
                         background:
-                            "radial-gradient(ellipse 95% 70% at 50% 15%, rgba(245,158,11,0.12) 0%, rgba(6,6,8,0.88) 55%, #050507 100%)",
+                            "radial-gradient(ellipse 95% 70% at 50% 15%, rgba(255,255,255,0.75) 0%, rgba(250,249,246,0.92) 60%, #FAF9F6 100%)",
                     }}
                 />
             </div>
@@ -459,21 +439,18 @@ export function MobileStudioLanding({
             {/* ═══════════════════════════════════════════════════════════
                 STICKY HEADER
                ═══════════════════════════════════════════════════════════ */}
-            {/* The nav banner stands on its own: deck, tabs, bag. The hero below carries the name */}
-            <header className="sticky top-0 z-40 bg-[#07070A]/90 backdrop-blur-xl border-b-2 border-amber-400/25 safe-top">
+            <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b-2 border-[#141714]/20 safe-top">
+                <div aria-hidden className="tiger-camo-strip h-[3px] w-full" />
                 <div className="max-w-2xl mx-auto px-3 sm:px-4 py-2 flex items-center gap-2">
-                    {/* The Loaf Records deck — same mark as the desktop */}
                     <LoafDeck size={40} label="Loaf Records" priority />
 
-                    {/* Stamped Navigation Tabs — faded at the edges so it reads as a scroller */}
                     <nav
                         aria-label="Loaf Records mobile sections"
                         className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-1 [mask-image:linear-gradient(to_right,transparent,black_6px,black_calc(100%-20px),transparent)]"
                     >
                         {PRIMARY_NAV.map((pill) => {
                             const pillClass =
-                                "shrink-0 inline-flex items-center rounded-lg border border-white/15 bg-black/70 px-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-noir-cloud hover:text-amber-400 hover:border-amber-400/50 transition-colors";
-                            // Through the router, so the mini player keeps playing across pages
+                                "shrink-0 inline-flex items-center rounded-lg border border-[#141714]/15 bg-[#F2F1EC] px-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-[#3E443B] hover:text-[#141714] hover:border-[#365332] transition-colors";
                             return (
                                 <Link key={pill.label} href={pill.href} onClick={() => playCrateFlipSfx()} className={pillClass}>
                                     {pill.label}
@@ -488,9 +465,9 @@ export function MobileStudioLanding({
                             playCrateFlipSfx();
                             onSwitchToRoom();
                         }}
-                        className="hidden sm:flex shrink-0 items-center gap-1.5 rounded-xl border border-white/20 bg-white/[0.05] px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-white hover:border-amber-400 transition-colors"
+                        className="hidden sm:flex shrink-0 items-center gap-1.5 rounded-xl border border-[#141714]/20 bg-white px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-[#141714] hover:border-[#365332] transition-colors"
                     >
-                        <Monitor className="w-3.5 h-3.5 text-amber-400" />
+                        <Monitor className="w-3.5 h-3.5 text-[#365332]" />
                         <span>Room View</span>
                     </button>
 
@@ -498,11 +475,11 @@ export function MobileStudioLanding({
                         type="button"
                         onClick={() => setIsCartOpen(true)}
                         aria-label="Open shopping bag"
-                        className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-amber-400/35 bg-amber-400/10 text-amber-300 hover:bg-amber-400 hover:text-black transition-colors"
+                        className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-[#141714]/25 bg-[#F2F1EC] text-[#141714] hover:bg-[#141714] hover:text-white transition-colors"
                     >
                         <ShoppingBag className="w-4 h-4" />
                         {cartCount > 0 && (
-                            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-accent-cyan text-black font-mono text-[9px] font-black flex items-center justify-center">
+                            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#365332] text-white font-mono text-[9px] font-black flex items-center justify-center">
                                 {cartCount}
                             </span>
                         )}
@@ -511,11 +488,12 @@ export function MobileStudioLanding({
             </header>
 
             {/* ═══════════════════════════════════════════════════════════
-                HERO — LOST CITY ON TAPE, THE LABEL LINE, LOAF MAN IN THE CORNER
+                HERO — CRUNCH TIME ON TAPE, THE LABEL LINE, LOAF MAN IN THE CORNER
                ═══════════════════════════════════════════════════════════ */}
             <section className="relative z-10 px-3 sm:px-4 pt-4 pb-6 max-w-2xl mx-auto">
-                <div className="relative rounded-[26px] border-2 border-amber-400/35 bg-[#0B0B0F] shadow-[0_28px_80px_rgba(0,0,0,0.95)] overflow-hidden">
-                    {/* The whole hero: the Dungeon Crew mural, giving way to Lost City on tape */}
+                <div className="relative rounded-[26px] border-2 border-[#141714] bg-[#0B0B0F] shadow-[0_22px_56px_rgba(20,23,20,0.16)] overflow-hidden">
+                    <div aria-hidden className="tiger-camo-strip h-2 w-full" />
+                    {/* The whole hero: the Dungeon Crew mural, giving way to Crunch Time on tape */}
                     <div className="relative h-72 sm:h-80 w-full overflow-hidden">
                         <LostCityHeroTape />
                         {/* Just enough dark at the bottom for the label line; the video speaks for itself */}
@@ -559,7 +537,8 @@ export function MobileStudioLanding({
                 aria-label={`${activeAlbum.name} by ${activeAlbum.artist} — album and tracklist`}
                 className="relative z-10 px-3 sm:px-4 py-4 max-w-2xl mx-auto"
             >
-                <div className="relative rounded-[28px] border-2 border-white/15 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden">
+                <div className="relative rounded-[28px] border-2 border-[#141714] bg-[#0F120F] shadow-[0_22px_56px_rgba(20,23,20,0.16)] overflow-hidden">
+                    <div aria-hidden className="tiger-camo-strip h-2 w-full" />
                     {/* Per-album ambient glow */}
                     <div
                         aria-hidden
@@ -628,8 +607,8 @@ export function MobileStudioLanding({
                                             </p>
                                             <p
                                                 className={cn(
-                                                    "font-mono text-[7px] uppercase tracking-widest truncate",
-                                                    isSelected ? "text-black/70" : "text-noir-ash"
+                                                    "font-mono text-[9px] uppercase tracking-widest truncate",
+                                                    isSelected ? "text-black/75" : "text-white/70"
                                                 )}
                                             >
                                                 {alb.year}
@@ -847,26 +826,28 @@ export function MobileStudioLanding({
                 aria-label="Lost City Screening Room"
                 className="relative z-10 px-3 sm:px-4 py-4 max-w-2xl mx-auto"
             >
-                <div className="rounded-[28px] border-2 border-white/15 bg-[#0A0B10]/95 p-4 sm:p-5 overflow-hidden shadow-2xl">
+                <div className="overflow-hidden rounded-[28px] border-2 border-[#141714] bg-white shadow-[0_20px_50px_rgba(20,23,20,0.12)]">
+                    <div aria-hidden className="tiger-camo-strip h-2 w-full" />
+                    <div className="p-4 sm:p-5">
                     <div className="flex items-center justify-between mb-3">
                         <div>
-                            <span className="font-mono text-[8px] font-bold uppercase tracking-[0.26em] text-amber-400 block">
+                            <span className="font-mono text-[8px] font-bold uppercase tracking-[0.26em] text-[#365332] block">
                                 LOAF FILMS
                             </span>
-                            <h2 className="font-display text-2xl sm:text-3xl uppercase tracking-wider text-white leading-none mt-0.5">
+                            <h2 className="font-display text-2xl sm:text-3xl uppercase tracking-wider text-[#141714] leading-none mt-0.5">
                                 Lost City — Official Visual
                             </h2>
                         </div>
                         <Link
                             href="/videos"
-                            className="inline-flex items-center gap-1 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-wider text-amber-300"
+                            className="inline-flex items-center gap-1 rounded-xl border border-[#141714]/20 bg-[#F2F1EC] px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[#141714] hover:border-[#365332] hover:text-[#365332]"
                         >
                             <Film className="w-3.5 h-3.5" />
                             <span>TV Room ↗</span>
                         </Link>
                     </div>
 
-                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden border-2 border-white/20 bg-black shadow-2xl">
+                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden border-2 border-[#141714] bg-black shadow-xl">
                         {inlineVideoPlaying ? (
                             <iframe
                                 className="w-full h-full"
@@ -916,9 +897,9 @@ export function MobileStudioLanding({
                     </div>
 
                     {/* Loaf Films Production Strip */}
-                    <div className="mt-3 flex items-center justify-between rounded-2xl border border-white/15 bg-black/70 px-3.5 py-3">
+                    <div className="mt-3 flex items-center justify-between rounded-2xl border border-[#141714]/15 bg-[#FAF9F6] px-3.5 py-3">
                         <div className="flex items-center gap-3">
-                            <div className="relative w-9 h-9 rounded-lg overflow-hidden bg-black border border-white/15 shrink-0">
+                            <div className="relative w-9 h-9 rounded-lg overflow-hidden bg-black border border-[#141714]/20 shrink-0">
                                 <Image
                                     src="/LOAFFILMS.png"
                                     alt="Loaf Films"
@@ -928,21 +909,22 @@ export function MobileStudioLanding({
                                 />
                             </div>
                             <div>
-                                <p className="text-xs font-bold uppercase tracking-wider text-white">
+                                <p className="text-xs font-bold uppercase tracking-wider text-[#141714]">
                                     Loaf Films Production House
                                 </p>
-                                <p className="font-mono text-[8px] uppercase tracking-widest text-noir-cloud">
+                                <p className="font-mono text-[8px] uppercase tracking-widest text-[#61675E]">
                                     Music Videos · Direction · Brooklyn NY
                                 </p>
                             </div>
                         </div>
                         <Link
                             href="/loaf-films"
-                            className="inline-flex items-center gap-1 rounded-xl bg-white/10 hover:bg-white/20 px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-wider text-amber-400"
+                            className="inline-flex items-center gap-1 rounded-xl bg-[#141714] hover:bg-[#365332] px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-wider text-white transition-colors"
                         >
                             <span>Book</span>
                             <ArrowUpRight className="w-3.5 h-3.5" />
                         </Link>
+                    </div>
                     </div>
                 </div>
             </section>

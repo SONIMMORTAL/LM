@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 
 // The VHS colour grade is baked into these encodes (H.264 Main, streamable), so phones only
 // decode and draw them — no filter runs on the video while it plays.
-const TAPE_SRC = "/lost-city-tape.mp4"; // 640x360, ~370 kbps
-const TAPE_LITE_SRC = "/lost-city-tape-lite.mp4"; // 426x240, ~160 kbps, for slow connections
-// The whole video again as an animated image (AV1, 384x216, 12 fps, 2.5 MB). Phones that refuse
+const TAPE_SRC = "/crunch-time-tape.mp4"; // 640x360, ~360 kbps
+const TAPE_LITE_SRC = "/crunch-time-tape-lite.mp4"; // 426x240, ~155 kbps, for slow connections
+// The whole video again as an animated image (AV1, 384x216, 12 fps, 1.3 MB). Phones that refuse
 // to autoplay video still play moving images, so this is what plays when the video can't.
-const TAPE_FILM_SRC = "/lost-city-tape-loop.avif";
+const TAPE_FILM_SRC = "/crunch-time-tape-loop.avif";
 
 // Phones only: wide screens swap to the room after hydration, and shouldn't start downloading it.
 // Set on the <source>, so the browser decides before any script runs.
@@ -25,8 +25,9 @@ type Deck = "loading" | "playing" | "paused";
 const SILENT_REFUSAL_MS = 2500;
 
 /**
- * The whole Lost City video running muted behind the mobile hero, like a tape left playing
- * in the deck, with VHS scanlines, grain and a rolling tracking band over it.
+ * Crunch Time ("Crunch Time - Oso Dope , Shadow The Great | Prod by Ruggz") running muted behind
+ * the mobile hero, like a tape left playing in the deck, with VHS scanlines, grain and a rolling
+ * tracking band over it.
  *
  * It's in the server HTML, so it starts as the page appears. The video itself is never
  * hidden — some phones won't autoplay a video they can't see — instead the Dungeon Crew
@@ -206,15 +207,16 @@ export function LostCityHeroTape() {
                 <div className="crt-scanlines absolute inset-0 opacity-70" />
             </div>
 
-            {/* The mural, until frames are moving */}
+            {/* The studio mural, until frames are moving */}
             <div className="absolute inset-0 transition-opacity duration-500 group-data-[playing]:opacity-0">
                 <Image
-                    src="/brand/dungeon-crew.png"
-                    alt="Loaf Records Crew in The Dungeon — Shadow The Great, King illa, Ruggz, Rah Tha Ruler, Oso Dope"
+                    src="/brand/dungeon-studio-4k.webp"
+                    alt="Loaf Records crew inside The Dungeon studio — writing, recording, and producing under the LOAF wall piece"
                     fill
                     priority
+                    fetchPriority="high"
                     sizes="(max-width: 768px) 96vw, 680px"
-                    className="object-cover object-center scale-[1.02]"
+                    className="object-cover object-center"
                 />
             </div>
 
@@ -226,7 +228,7 @@ export function LostCityHeroTape() {
                 <button
                     type="button"
                     onClick={toggle}
-                    aria-label={deck === "playing" ? "Pause the Lost City video" : "Play the Lost City video"}
+                    aria-label={deck === "playing" ? "Pause the Crunch Time header video" : "Play the Crunch Time header video"}
                     className="vhs-osd pointer-events-auto absolute right-1.5 top-1.5 z-[1] min-h-11 min-w-11 px-2 py-2 text-right font-mono font-bold uppercase leading-tight text-white"
                 >
                     {deck === "playing" ? (

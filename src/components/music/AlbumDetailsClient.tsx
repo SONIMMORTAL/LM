@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { Play, Disc3, Music2, ChevronLeft, ShoppingCart, Headphones } from "lucide-react";
+import { motion } from "framer-motion";
+import { Play, ChevronLeft, ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +14,10 @@ interface AlbumDetailsClientProps {
     artist: string;
     /** Their artist page, when they have one */
     artistHref?: string;
+    /** The album's bio, a paragraph each */
+    about?: string[];
+    /** Where else it streams */
+    listen?: Array<{ service: string; url: string }>;
     cover: string;
     gradient: string;
     accentColor: string;
@@ -27,34 +31,30 @@ export function AlbumDetailsClient({
     albumName,
     artist,
     artistHref,
+    about,
+    listen,
     cover,
     gradient,
-    accentColor,
     youtubeId,
     price,
     tracks,
     allTracks
 }: AlbumDetailsClientProps) {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+    const [playerTrackIndex, setPlayerTrackIndex] = useState<number | null>(null);
     const [hoveredTrack, setHoveredTrack] = useState<string | null>(null);
     const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
 
-    useEffect(() => {
-        if (tracks.length > 0) {
-            // Find global track index for the first track of this album
-            const globalIndex = allTracks.findIndex(t => t.id === tracks[0].id);
-            if (globalIndex >= 0) {
-                setCurrentTrackIndex(globalIndex);
-            }
-        }
-    }, [tracks, allTracks]);
+    const firstTrackGlobalIndex = tracks.length > 0
+        ? Math.max(0, allTracks.findIndex(t => t.id === tracks[0].id))
+        : 0;
+    const currentTrackIndex = playerTrackIndex ?? firstTrackGlobalIndex;
 
     useEffect(() => {
         const handleGlobalState = (e: Event) => {
             const detail = (e as CustomEvent).detail;
             setIsPlaying(detail.isPlaying);
-            setCurrentTrackIndex(detail.currentTrackIndex);
+            setPlayerTrackIndex(detail.currentTrackIndex);
         };
         if (typeof window !== "undefined") {
             window.addEventListener('globalPlayerState', handleGlobalState);
@@ -81,7 +81,8 @@ export function AlbumDetailsClient({
 
             <div className={`absolute inset-0 bg-gradient-to-r ${gradient} rounded-3xl blur-3xl opacity-20 -z-10`} />
 
-            <div className="bg-gradient-to-br from-noir-charcoal/80 to-noir-slate/40 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            <div className="bg-white rounded-3xl border-2 border-[#141714]/15 overflow-hidden shadow-[0_22px_56px_rgba(20,23,20,0.10)]">
+                <div aria-hidden className="tiger-camo-strip h-2 w-full" />
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
                     
                     {/* Album Left Column */}
@@ -113,7 +114,7 @@ export function AlbumDetailsClient({
                             </motion.div>
 
                             <div className="text-center lg:text-left space-y-3">
-                                <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white uppercase leading-none">{albumName}</h1>
+                                <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-foreground uppercase leading-none">{albumName}</h1>
                                 <p className="text-lg text-accent-cyan font-medium">
                                     {artistHref ? (
                                         <Link href={artistHref} className="underline-offset-4 hover:underline">
@@ -126,7 +127,7 @@ export function AlbumDetailsClient({
                                 <div className="flex items-center justify-center lg:justify-start gap-4 text-sm text-noir-cloud">
                                     <span>{tracks.length} tracks</span>
                                     <span>•</span>
-                                    <span className="text-white font-semibold">
+                                    <span className="text-foreground font-semibold">
                                         {price === 0 ? "FREE" : `$${price.toFixed(2)}`}
                                     </span>
                                 </div>
@@ -137,17 +138,43 @@ export function AlbumDetailsClient({
                             <div className="mt-8">
                                 <button
                                     onClick={() => setPurchaseModalOpen(true)}
-                                    className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-gradient-to-r from-accent-cyan to-cyan-400 text-noir-void font-bold rounded-xl shadow-lg hover:scale-102 transition-all uppercase tracking-wider text-sm"
+                                    className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-[#141714] hover:bg-[#365332] text-white font-bold rounded-xl shadow-md transition-colors uppercase tracking-wider text-sm"
                                 >
                                     <ShoppingCart className="w-5 h-5" />
                                     Purchase Download
                                 </button>
                             </div>
                         )}
+
+                        {(about || listen) && (
+                            <div className="mt-8 space-y-4">
+                                {about?.map((line) => (
+                                    <p key={line} className="text-sm leading-relaxed text-noir-cloud">
+                                        {line}
+                                    </p>
+                                ))}
+                                {listen && (
+                                    <ul aria-label="Also on" className="flex flex-wrap gap-2">
+                                        {listen.map((link) => (
+                                            <li key={link.url}>
+                                                <a
+                                                    href={link.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center rounded-lg border border-noir-smoke bg-noir-slate/60 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-foreground hover:border-accent-cyan hover:text-accent-cyan transition-colors"
+                                                >
+                                                    {link.service} ↗
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* Album Right Column - Tracklist & Video */}
-                    <div className="lg:col-span-7 border-t lg:border-t-0 lg:border-l border-white/10 flex flex-col">
+                    <div className="lg:col-span-7 border-t lg:border-t-0 lg:border-l border-noir-smoke flex flex-col">
                         <div className="p-8 flex-1">
                             <h2 className="text-sm font-bold text-noir-cloud uppercase tracking-wider mb-6">Tracklist</h2>
                             
@@ -164,8 +191,8 @@ export function AlbumDetailsClient({
                                             onMouseLeave={() => setHoveredTrack(null)}
                                             onClick={() => playTrack(track.id)}
                                             className={`group relative flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-300 ${isCurrentTrack
-                                                ? "bg-gradient-to-r from-accent-cyan/20 to-transparent border-l-2 border-accent-cyan"
-                                                : "hover:bg-white/5"
+                                                ? "bg-gradient-to-r from-accent-cyan/15 to-transparent border-l-2 border-accent-cyan"
+                                                : "hover:bg-noir-slate/60"
                                                 }`}
                                         >
                                             <div className="w-8 flex items-center justify-center">
@@ -185,7 +212,7 @@ export function AlbumDetailsClient({
                                             </div>
 
                                             <div className="flex-1 min-w-0">
-                                                <p className={`font-medium truncate transition-colors ${isCurrentTrack ? "text-accent-cyan" : "text-white group-hover:text-accent-cyan"}`}>
+                                                <p className={`font-medium truncate transition-colors ${isCurrentTrack ? "text-accent-cyan" : "text-foreground group-hover:text-accent-cyan"}`}>
                                                     {track.title}
                                                 </p>
                                                 <p className="text-sm text-noir-ash truncate">{track.artist}</p>

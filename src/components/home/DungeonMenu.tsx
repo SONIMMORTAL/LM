@@ -39,37 +39,31 @@ const MENU_ITEMS: MenuItem[] = [
         label: "Music",
         sub: "Albums · Singles · Vinyl",
         href: "/music",
-        vinyl: "/LFTD-3-deluxe-vinyl.png",
+        vinyl: "/vinyl-opt/LFTD-3-deluxe-vinyl-hd.webp",
     },
     {
         label: "Shop",
         sub: "Official Merch & Apparel",
         href: "/shop",
-        vinyl: "/THE-COMMISSION-7-deluxe-vinyl.png",
+        vinyl: "/vinyl-opt/THE-COMMISSION-7-deluxe-vinyl-hd.webp",
     },
     {
-        label: "Loaf Films",
-        sub: "Video Production",
+        label: "Films",
+        sub: "Loaf Films · Bookings & Packages",
         href: "/loaf-films",
-        vinyl: "/darkside-cover-deluxe-vinyl.png",
+        vinyl: "/vinyl-opt/darkside-cover-deluxe-vinyl-hd.webp",
     },
     {
         label: "Videos",
         sub: "Music Videos & Visuals",
         href: "/videos",
-        vinyl: "/lord-knows-cover-4-deluxe-vinyl.png",
+        vinyl: "/vinyl-opt/lord-knows-cover-4-deluxe-vinyl-hd.webp",
     },
     {
-        label: "Gallery",
-        sub: "Behind The Scenes",
+        label: "Blackbook",
+        sub: "Graffiti, Sketches & Pieces",
         href: "/gallery",
-        vinyl: "/MORE-LIFE-VINYL-5-deluxe-vinyl.png",
-    },
-    {
-        label: "Contact",
-        sub: "Bookings & Inquiries",
-        href: "/contact",
-        vinyl: "/LC1-2-deluxe-vinyl.png",
+        vinyl: "/vinyl-opt/MORE-LIFE-VINYL-5-deluxe-vinyl-hd.webp",
     },
 ];
 
@@ -215,11 +209,11 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
                 style={reducedMotion || isMobile ? undefined : { x: bgX, y: bgY }}
             >
                 <Image
-                    src="/menu/dungeon-bg.jpg"
+                    src="/brand/dungeon-studio-4k.webp"
                     alt=""
                     fill
                     priority
-                    quality={82}
+                    quality={85}
                     sizes="110vw"
                     className="object-cover object-center scale-[1.04]"
                 />
@@ -260,15 +254,16 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
             />
 
             {/* ═══ TOP CHROME ═══ */}
+            <div aria-hidden className="tiger-camo-strip absolute inset-x-0 top-0 z-40 h-1.5" />
             <header className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-5 pt-5 sm:px-8 sm:pt-6 safe-top">
                 <div className="flex items-center gap-3">
                     {/* The Loaf Records deck — same mark as the header and the mobile landing */}
                     <LoafDeck size={48} />
                     <div className="flex items-baseline gap-3">
-                        <span className="font-display text-2xl sm:text-3xl tracking-[0.08em] text-foreground leading-none">
+                        <span className="font-display text-2xl sm:text-3xl tracking-[0.08em] text-white leading-none">
                             LOAF RECORDS
                         </span>
-                        <span className="hidden sm:block text-[10px] tracking-[0.35em] uppercase text-noir-cloud/80">
+                        <span className="hidden sm:block text-[10px] tracking-[0.35em] uppercase text-zinc-300/90">
                             Brooklyn, NY
                         </span>
                     </div>
@@ -281,7 +276,7 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
                                 playCrateFlipSfx();
                                 onSwitchToStudio();
                             }}
-                            className="flex items-center gap-1.5 text-[10px] sm:text-[11px] tracking-[0.22em] uppercase text-accent-cyan hover:text-white transition-colors border border-accent-cyan/40 hover:border-accent-cyan px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/35"
+                            className="flex items-center gap-1.5 text-[10px] sm:text-[11px] tracking-[0.22em] uppercase text-[#9EC294] hover:text-white transition-colors border border-[#9EC294]/45 hover:border-[#9EC294] px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/50"
                         >
                             <Layers className="w-3.5 h-3.5" />
                             <span>3D Studio</span>
@@ -289,13 +284,13 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
                     )}
                     <Link
                         href="/bio"
-                        className="text-[11px] tracking-[0.3em] uppercase text-noir-cloud hover:text-accent-cyan transition-colors border border-white/15 hover:border-accent-cyan/50 px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/20"
+                        className="text-[11px] tracking-[0.3em] uppercase text-zinc-200 hover:text-white transition-colors border border-white/25 hover:border-[#9EC294] px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/35"
                     >
                         Bio
                     </Link>
                     <Link
                         href="/vip"
-                        className="text-[11px] tracking-[0.3em] uppercase text-noir-cloud hover:text-accent-cyan transition-colors border border-white/15 hover:border-accent-cyan/50 px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/20"
+                        className="text-[11px] tracking-[0.3em] uppercase text-zinc-200 hover:text-white transition-colors border border-white/25 hover:border-[#9EC294] px-3.5 py-2 rounded-full backdrop-blur-sm bg-black/35"
                     >
                         VIP
                     </Link>
@@ -314,7 +309,7 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
                         className="flex flex-col items-center"
                     >
                         <h1
-                            className="font-display uppercase leading-[0.9] text-foreground"
+                            className="font-display uppercase leading-[0.9] text-white"
                             style={{
                                 fontSize: "clamp(2.8rem, 7vw, 6rem)",
                                 textShadow:
@@ -323,12 +318,12 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
                         >
                             {current.label}
                         </h1>
-                        <p className="mt-2.5 text-[11px] sm:text-xs tracking-[0.42em] uppercase text-noir-cloud">
+                        <p className="mt-2.5 text-[11px] sm:text-xs tracking-[0.42em] uppercase text-zinc-300">
                             {current.sub}
                         </p>
                         <button
                             onClick={() => activate(selected)}
-                            className="pointer-events-auto mt-5 flex items-center gap-2 rounded-full border border-accent-cyan/40 bg-black/30 px-6 py-2.5 text-[11px] tracking-[0.35em] uppercase text-accent-cyan backdrop-blur-sm transition-all hover:bg-accent-cyan hover:text-noir-void hover:shadow-glow-md"
+                            className="pointer-events-auto mt-5 flex items-center gap-2 rounded-full border-2 border-white bg-white px-6 py-2.5 text-[11px] font-bold tracking-[0.35em] uppercase text-[#141714] shadow-lg transition-all hover:bg-[#365332] hover:border-[#9EC294] hover:text-white"
                         >
                             Enter
                             <CornerDownLeft className="h-3.5 w-3.5" />
@@ -375,11 +370,10 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
                                 scale: isCenter ? 1 : 0.66 - (abs - 1) * 0.08,
                                 rotateY: offset * -26,
                                 z: -abs * 170,
-                                opacity: visible
-                                    ? isCenter
-                                        ? 1
-                                        : 0.55 - (abs - 1) * 0.22
-                                    : 0,
+                                // Side records stay solid and step back by dimming, not fading: a
+                                // see-through record's black disc vanished into the dark room
+                                opacity: visible ? 1 : 0,
+                                filter: `brightness(${isCenter ? 1 : 0.62 - (abs - 1) * 0.16})`,
                             }}
                             transition={{
                                 type: "spring",
@@ -430,6 +424,11 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
                                     draggable={false}
                                 />
                             </span>
+                            {/* A thin rim of room light, so every record's edge reads against the dark walls */}
+                            <span
+                                aria-hidden
+                                className="pointer-events-none absolute inset-0 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.16),0_0_28px_rgba(0,0,0,0.55)]"
+                            />
                             {/* Stationary overhead studio light reflection across the center spinning vinyl */}
                             {isCenter && (
                                 <span
@@ -454,21 +453,21 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
             <button
                 aria-label="Previous"
                 onClick={() => select(-1)}
-                className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-3 text-noir-cloud/70 hover:text-foreground transition-colors"
+                className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-3 text-zinc-300/80 hover:text-white transition-colors"
             >
                 <ChevronLeft className="w-7 h-7 sm:w-9 sm:h-9" strokeWidth={1.25} />
             </button>
             <button
                 aria-label="Next"
                 onClick={() => select(1)}
-                className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-3 text-noir-cloud/70 hover:text-foreground transition-colors"
+                className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-3 text-zinc-300/80 hover:text-white transition-colors"
             >
                 <ChevronRight className="w-7 h-7 sm:w-9 sm:h-9" strokeWidth={1.25} />
             </button>
 
             {/* ═══ BOTTOM HUD ═══ */}
             <footer className="absolute inset-x-0 bottom-0 z-30 flex items-end justify-between px-5 pb-24 sm:px-8 sm:pb-6 safe-bottom pointer-events-none">
-                <div className="hidden md:flex items-center gap-4 text-[10px] tracking-[0.3em] uppercase text-noir-ash">
+                <div className="hidden md:flex items-center gap-4 text-[10px] tracking-[0.3em] uppercase text-zinc-300">
                     <span className="flex items-center gap-1.5">
                         <kbd className="dungeon-key">◄</kbd>
                         <kbd className="dungeon-key">►</kbd>
@@ -479,10 +478,10 @@ export function DungeonMenu({ onSwitchToStudio }: DungeonMenuProps = {}) {
                         Select
                     </span>
                 </div>
-                <span className="md:hidden text-[10px] tracking-[0.3em] uppercase text-noir-ash">
+                <span className="md:hidden text-[10px] tracking-[0.3em] uppercase text-zinc-300">
                     Swipe · Tap to enter
                 </span>
-                <span className="font-display text-sm tracking-[0.25em] text-noir-cloud tabular-nums">
+                <span className="font-display text-sm tracking-[0.25em] text-white tabular-nums">
                     {counter}
                 </span>
             </footer>

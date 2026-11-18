@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { Disc, Scissors, Sparkles, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useScratchDecks } from "@/hooks/use-scratch-decks";
 import { playNeedleDropSfx } from "@/lib/ui-sfx";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 
 const VinylCanvas3D = dynamic(
     () => import("@/components/three/VinylCanvas3D").then((m) => m.VinylCanvas3D),
@@ -15,24 +15,43 @@ const VinylCanvas3D = dynamic(
 );
 
 /*
- * The DJ-booth scene. The artwork has two blank turntable platters;
- * we composite real spinning records onto them using 3D WebGL canvases.
+ * The DJ-booth scene (`public/brand/music-decks-hero-4k.webp`: a 3840×2254 4x upscale of the
+ * 1024×601 original, so the percentages below hold at any size). The
+ * artwork frames twin turntables behind the mixer; we composite live spinning
+ * records onto both platters so grabbing either vinyl scratches it.
  *
- * Coordinates come from a pixel-level ellipse fit of the pure-black platter
- * wells in dj-scene.jpg (1536×1024), so they match the painted perspective:
- *   Left Platter:  center (481, 657) → cx 31.33%, cy 64.12%
- *                  well 166px across, squashed to 0.65, major axis tilted 15°
- *                  counter-clockwise (right edge sits higher than the left).
- *   Right Platter: center (1002, 643) → cx 65.22%, cy 62.83%
- *                  well 168px across, squashed to 0.67, tilt ~2°.
- * `w` is a touch wider than the well so the record covers the mat and meets
- * the inner edge of the strobe ring, as it would on a real deck.
- * CSS rotate() is clockwise-positive, so a counter-clockwise tilt is negative.
+ * Each record is centred on its platter's spindle: the centre of the painted LOAF label,
+ * measured in the art's pixels:
+ *   Left Platter:  label centre (334.6, 440.4) → cx 32.67%, cy 73.29%, w 13.09%, scaleY 0.642
+ *   Right Platter: label centre (685.7, 439.2) → cx 66.97%, cy 73.08%, w 13.09%, scaleY 0.642
  */
 const DECKS = [
-    { cx: 31.28, cy: 64.30, w: 11.9, scaleY: 0.65, rotate: -15 }, // left turntable platter
-    { cx: 65.20, cy: 62.95, w: 12.0, scaleY: 0.67, rotate: 2 },   // right turntable platter
+    { cx: 32.67, cy: 73.29, w: 13.09, scaleY: 0.642, rotate: -1 }, // left turntable platter
+    { cx: 66.97, cy: 73.08, w: 13.09, scaleY: 0.642, rotate: 1 },  // right turntable platter
 ] as const;
+
+/*
+ * The booth only shows from md up. Phones never see it, so they skip its art (a blank
+ * pixel stands in) and never build its WebGL decks.
+ */
+const NARROW = "(max-width: 767px)";
+const WIDE = "(min-width: 768px)";
+const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+const boothArt = getImageProps({
+    src: "/brand/music-decks-hero-4k.webp",
+    alt: "The Loaf Records crew gathered around the twin vinyl turntables in The Dungeon",
+    fill: true,
+    quality: 90,
+    sizes: "(max-width: 1536px) 100vw, 1536px",
+    loading: "eager",
+    fetchPriority: "high",
+}).props;
+
+const subscribeWide = (onChange: () => void) => {
+    const query = window.matchMedia(WIDE);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+};
 
 interface DJSceneHeroProps {
     /** Vinyl PNG for the left deck (the record currently cued up) */
@@ -68,6 +87,7 @@ export function DJSceneHero({
 }: DJSceneHeroProps) {
     const deckLabels = [leftLabel, rightLabel];
     const [use3DDecks, setUse3DDecks] = useState(true);
+    const isWide = useSyncExternalStore(subscribeWide, () => window.matchMedia(WIDE).matches, () => false);
     const vinyls = [leftVinyl, rightVinyl];
 
     const {
@@ -98,19 +118,17 @@ export function DJSceneHero({
     return (
         <section
             aria-label="Loaf Records DJ booth"
-            className="relative w-full flex justify-center bg-noir-void overflow-hidden"
+            className="relative w-full flex justify-center px-4 sm:px-6 overflow-hidden"
         >
-            <div className="relative w-full max-w-[150vh]">
-                <div className="relative aspect-[3/2] w-full select-none">
-                    <Image
-                        src="/scenes/dj-scene.jpg"
-                        alt="The Loaf Records crew gathered around the DJ decks"
-                        fill
-                        priority
-                        quality={85}
-                        sizes="(max-width: 1536px) 100vw, 1536px"
-                        className="object-contain"
-                    />
+            <div className="relative w-full max-w-[1440px] overflow-hidden rounded-3xl border-2 border-[#141714] bg-[#0B0B0F] shadow-[0_24px_60px_rgba(20,23,20,0.14)]">
+                <div aria-hidden className="tiger-camo-strip h-2 w-full" />
+                <div className="relative aspect-[1024/601] w-full select-none">
+                    {/* Phones take the blank pixel, so the hidden booth costs them nothing */}
+                    <picture>
+                        <source media={NARROW} srcSet={BLANK} />
+                        {/* eslint-disable-next-line jsx-a11y/alt-text -- the alt comes in with boothArt */}
+                        <img {...boothArt} className="object-cover" />
+                    </picture>
 
                     {/* Records on the decks — perspective-squashed to sit flush in the platter wells */}
                     {DECKS.map((deck, i) => (
@@ -124,7 +142,7 @@ export function DJSceneHero({
                                 transform: `translate(-50%, -50%) rotate(${deck.rotate || 0}deg) scaleY(${deck.scaleY})`,
                             }}
                         >
-                            {use3DDecks ? (
+                            {!isWide ? null : use3DDecks ? (
                                 <div className="aspect-square w-full">
                                     <VinylCanvas3D
                                         coverUrl={vinyls[i]}
@@ -176,22 +194,22 @@ export function DJSceneHero({
                             <div
                                 key={`label-${i}`}
                                 className="absolute z-20 -translate-x-1/2 pointer-events-none"
-                                style={{ left: `${deck.cx}%`, top: `${deck.cy + 7.5}%` }}
+                                style={{ left: `${deck.cx}%`, top: `${deck.cy - 9.5}%` }}
                             >
-                                <span className="whitespace-nowrap rounded-full bg-black/75 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.2em] text-noir-cloud backdrop-blur-sm">
+                                <span className="whitespace-nowrap rounded-full border border-white/15 bg-black/80 px-2.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-100 backdrop-blur-sm">
                                     {i === 0 ? "A" : "B"} · {deckLabels[i]}
                                 </span>
                             </div>
                         ) : null
                     )}
 
-                    {/* Bottom fade into the page */}
+                    {/* Bottom frame fade */}
                     <div
                         aria-hidden
-                        className="absolute inset-x-0 bottom-0 h-[18%] pointer-events-none"
+                        className="absolute inset-x-0 bottom-0 h-[14%] pointer-events-none"
                         style={{
                             background:
-                                "linear-gradient(to top, var(--color-noir-void) 0%, transparent 100%)",
+                                "linear-gradient(to top, rgba(11, 11, 15, 0.72) 0%, transparent 100%)",
                         }}
                     />
 
@@ -200,7 +218,7 @@ export function DJSceneHero({
                         {onInspect3D && (
                             <button
                                 onClick={onInspect3D}
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/90 text-accent-cyan hover:text-white border border-accent-cyan/30 backdrop-blur-md text-xs font-mono transition-all shadow-glow-sm hover:shadow-glow-md"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/75 hover:bg-black text-[#A3C49A] hover:text-white border border-[#A3C49A]/40 backdrop-blur-md text-xs font-mono transition-all"
                             >
                                 <Sparkles className="w-3.5 h-3.5" />
                                 <span>Inspect 3D Vinyl</span>
@@ -209,7 +227,7 @@ export function DJSceneHero({
                         <button
                             onClick={() => setUse3DDecks((v) => !v)}
                             title="Toggle between WebGL 3D and 2D decks"
-                            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 hover:bg-black/80 text-noir-cloud hover:text-white border border-white/10 backdrop-blur-md text-xs font-mono transition-colors"
+                            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black text-zinc-200 hover:text-white border border-white/15 backdrop-blur-md text-xs font-mono transition-colors"
                         >
                             <Disc className="w-3.5 h-3.5" />
                             <span>{use3DDecks ? "3D Decks (Active)" : "2D Decks"}</span>
@@ -223,10 +241,10 @@ export function DJSceneHero({
                                 initial={{ opacity: 0, y: 12 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 12 }}
-                                className="absolute bottom-[6%] left-4 sm:left-6 z-20 flex items-center gap-3 rounded-2xl border border-white/10 bg-black/80 px-4 py-3 backdrop-blur-md shadow-2xl"
+                                className="absolute bottom-[6%] left-4 sm:left-6 z-20 flex items-center gap-3 rounded-2xl border border-white/15 bg-black/85 px-4 py-3 backdrop-blur-md shadow-2xl"
                             >
                                 {status === "arming" ? (
-                                    <span className="text-[10px] tracking-[0.3em] uppercase text-noir-cloud font-mono animate-pulse">
+                                    <span className="text-[10px] tracking-[0.3em] uppercase text-zinc-200 font-mono animate-pulse">
                                         Cueing record…
                                     </span>
                                 ) : (
@@ -243,8 +261,8 @@ export function DJSceneHero({
                                             className={cn(
                                                 "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-mono transition-colors",
                                                 isCut
-                                                    ? "bg-accent-cyan text-black border-accent-cyan"
-                                                    : "bg-white/5 text-noir-cloud border-white/15 hover:text-white hover:bg-white/10"
+                                                    ? "bg-white text-black border-white"
+                                                    : "bg-white/10 text-zinc-200 border-white/20 hover:text-white hover:bg-white/20"
                                             )}
                                         >
                                             <Scissors className="w-3.5 h-3.5" />
@@ -252,7 +270,7 @@ export function DJSceneHero({
                                         </button>
 
                                         <div className="flex items-center gap-2">
-                                            <span aria-hidden className="text-[10px] font-mono text-noir-ash">A</span>
+                                            <span aria-hidden className="text-[10px] font-mono text-zinc-300">A</span>
                                             <input
                                                 type="range"
                                                 min={0}
@@ -261,16 +279,16 @@ export function DJSceneHero({
                                                 value={crossfade}
                                                 onChange={(e) => setCrossfade(parseFloat(e.target.value))}
                                                 aria-label="Crossfader — blend between the left and right deck"
-                                                className="w-24 sm:w-32 accent-accent-cyan cursor-ew-resize"
+                                                className="w-24 sm:w-32 accent-[#9EC294] cursor-ew-resize"
                                             />
-                                            <span aria-hidden className="text-[10px] font-mono text-noir-ash">B</span>
+                                            <span aria-hidden className="text-[10px] font-mono text-zinc-300">B</span>
                                         </div>
 
                                         <button
                                             onClick={stopDecks}
                                             aria-label="Stop the decks"
                                             title="Stop the decks"
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-noir-cloud hover:text-white border border-white/15 text-xs font-mono transition-colors"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-zinc-200 hover:text-white border border-white/20 text-xs font-mono transition-colors"
                                         >
                                             <Square className="w-3 h-3" />
                                             <span>Stop</span>
@@ -284,7 +302,7 @@ export function DJSceneHero({
                     {/* Invitation / failure notice */}
                     {!isLive && status !== "arming" && (leftSource || rightSource) && (
                         <div className="absolute bottom-[6%] left-4 sm:left-6 z-20 pointer-events-none">
-                            <span className="text-[10px] tracking-[0.25em] uppercase text-noir-ash font-mono">
+                            <span className="rounded-full bg-black/75 px-3 py-1 text-[10px] tracking-[0.25em] uppercase text-zinc-200 font-mono backdrop-blur-sm">
                                 {status === "unsupported"
                                     ? "Scratching needs a newer browser"
                                     : status === "error"
@@ -301,19 +319,19 @@ export function DJSceneHero({
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 10 }}
-                                className="absolute bottom-[6%] left-1/2 -translate-x-1/2 flex items-center gap-2.5 rounded-full border border-white/10 bg-black/75 px-4 py-2 backdrop-blur-md shadow-2xl z-20"
+                                className="absolute bottom-[6%] left-1/2 -translate-x-1/2 flex items-center gap-2.5 rounded-full border border-white/15 bg-black/80 px-4 py-2 backdrop-blur-md shadow-2xl z-20"
                             >
                                 <span className="relative flex h-2 w-2">
-                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-cyan opacity-60" />
-                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-accent-cyan" />
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#9EC294] opacity-60" />
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-[#9EC294]" />
                                 </span>
-                                <span className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase text-noir-cloud font-mono">
+                                <span className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase text-zinc-100 font-mono">
                                     Now spinning · {nowPlaying}
                                 </span>
                                 {onInspect3D && (
                                     <button
                                         onClick={onInspect3D}
-                                        className="ml-2 text-[10px] text-accent-cyan hover:underline uppercase font-bold tracking-wider"
+                                        className="ml-2 text-[10px] text-[#9EC294] hover:underline uppercase font-bold tracking-wider"
                                     >
                                         Inspect
                                     </button>

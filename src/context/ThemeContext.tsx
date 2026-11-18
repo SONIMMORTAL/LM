@@ -1,46 +1,34 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-type Theme = "dark" | "light";
+type Theme = "light" | "dark";
 
 interface ThemeContextType {
     theme: Theme;
     toggleTheme: () => void;
 }
 
+const STORAGE_KEY = "loaf-theme-v2";
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+/** Provides site-wide White + Tiger-Stripe Camo default theme with optional dark toggle. */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme, setTheme] = useState<Theme>("dark");
-    const [mounted, setMounted] = useState(false);
+    const [theme, setTheme] = useState<Theme>(() => {
+        if (typeof window === "undefined") return "light";
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved === "dark" ? "dark" : "light";
+    });
 
-    // Load saved theme on mount
     useEffect(() => {
-        setMounted(true);
-        const savedTheme = localStorage.getItem("loaf-theme") as Theme | null;
-        if (savedTheme) {
-            setTheme(savedTheme);
-            document.documentElement.setAttribute("data-theme", savedTheme);
-        }
-    }, []);
-
-    // Update DOM and save to localStorage when theme changes
-    useEffect(() => {
-        if (mounted) {
-            document.documentElement.setAttribute("data-theme", theme);
-            localStorage.setItem("loaf-theme", theme);
-        }
-    }, [theme, mounted]);
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        localStorage.setItem(STORAGE_KEY, theme);
+    }, [theme]);
 
     const toggleTheme = () => {
-        setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+        setTheme((prev) => (prev === "light" ? "dark" : "light"));
     };
-
-    // Prevent flash of wrong theme
-    if (!mounted) {
-        return <>{children}</>;
-    }
 
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
@@ -51,10 +39,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
 export function useTheme() {
     const context = useContext(ThemeContext);
-    // Return default values for SSR - will be replaced when mounted
     if (context === undefined) {
-        return { theme: "dark" as Theme, toggleTheme: () => { } };
+        return { theme: "light" as Theme, toggleTheme: () => {} };
     }
     return context;
 }
-

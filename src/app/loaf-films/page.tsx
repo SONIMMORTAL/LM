@@ -20,8 +20,8 @@ const packages = [
             "5-7 Days delivery turnaround"
         ],
         icon: Camera,
-        frame: "border-amber-700/50",
-        accent: "text-amber-600"
+        frame: "border-[#141714]/20",
+        accent: "text-[#7C4D22]"
     },
     {
         name: "Silver",
@@ -37,8 +37,8 @@ const packages = [
             "10-14 Days delivery turnaround"
         ],
         icon: Film,
-        frame: "border-accent-cyan/50",
-        accent: "text-accent-cyan",
+        frame: "border-[#365332]",
+        accent: "text-[#365332]",
         popular: true
     },
     {
@@ -56,8 +56,8 @@ const packages = [
             "BTS (Behind-The-Scenes) video + 2 socials cuts"
         ],
         icon: Sparkles,
-        frame: "border-amber-400/50",
-        accent: "text-amber-400"
+        frame: "border-amber-600/50",
+        accent: "text-amber-700"
     }
 ];
 
@@ -113,10 +113,10 @@ const REEL = [
     },
 ];
 
-// Booking form fields in the landing's stamped style. 16px text, so iPhones don't zoom on focus.
-const FIELD_LABEL = "font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-noir-cloud";
+// Booking form fields styled cleanly on chalk white. 16px text prevents iOS zoom on focus.
+const FIELD_LABEL = "font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#3E443B]";
 const FIELD =
-    "w-full rounded-xl border border-white/15 bg-black/60 px-4 py-3 text-base text-white placeholder:text-noir-ash focus:border-amber-400/60 focus:outline-none focus:ring-1 focus:ring-amber-400/40";
+    "w-full rounded-xl border-2 border-[#141714]/15 bg-[#FAF9F6] px-4 py-3 text-base text-[#141714] placeholder:text-[#61675E] focus:border-[#365332] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#365332]/40";
 
 export default function LoafFilmsPage() {
     const [name, setName] = useState("");
@@ -154,7 +154,7 @@ export default function LoafFilmsPage() {
             } else {
                 toast.error(data.error || "Failed to submit booking inquiry.");
             }
-        } catch (error) {
+        } catch {
             toast.error("Network error. Please try again later.");
         } finally {
             setIsSubmitting(false);
@@ -164,80 +164,76 @@ export default function LoafFilmsPage() {
     return (
         <div className="min-h-screen pt-24 pb-16">
             {/* ═══════════════════════════════════════════════════════════
-                HERO — the same stamped monument as the mobile landing
+                HERO — Loaf Films crew on set + stamped Films title bar
                ═══════════════════════════════════════════════════════════ */}
             <section className="px-3 sm:px-4 max-w-5xl mx-auto">
-                <div className="relative overflow-hidden rounded-[26px] border-2 border-amber-400/35 bg-[#0B0B0F] shadow-[0_28px_80px_rgba(0,0,0,0.95)]">
-                    <div className="relative h-52 sm:h-72 w-full overflow-hidden">
+                <div className="relative overflow-hidden rounded-[26px] border-2 border-[#141714] bg-white shadow-[0_22px_60px_rgba(20,23,20,0.12)]">
+                    <div aria-hidden className="tiger-camo-strip h-2.5 w-full" />
+                    <div className="relative aspect-[1024/577] w-full overflow-hidden bg-white">
                         <Image
-                            src="/LC1.jpg"
-                            alt="Still from Shadow The Great — Lost City, a Loaf Films production"
+                            src="/brand/films-header-4k.webp"
+                            alt="The Loaf Films crew on set with a cinema camera on tripod, studio light, director chair with storyboards, and boom mic under the Loaf Films tag"
                             fill
                             priority
-                            sizes="(max-width: 1024px) 96vw, 1000px"
-                            className="object-cover object-center"
+                            fetchPriority="high"
+                            sizes="(max-width: 1024px) 96vw, 1024px"
+                            className="object-contain object-center"
                         />
-                        <div
-                            aria-hidden
-                            className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-[#0B0B0F]/45 to-black/30"
-                        />
+                    </div>
 
-                        {/* Stamped badge */}
-                        <div className="absolute top-3 left-3">
-                            <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-400/50 bg-black/85 px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-amber-400">
-                                <Clapperboard className="h-3 w-3" />
-                                Cinematic Services
-                            </span>
-                        </div>
-
-                        {/* Loaf Films seal */}
-                        <div className="absolute bottom-3 right-3 h-14 w-14 sm:h-16 sm:w-16 overflow-hidden rounded-xl border border-amber-400/40 bg-black shadow-[0_0_20px_rgba(245,158,11,0.25)]">
-                            <Image src="/LOAFFILMS.png" alt="Loaf Films" fill sizes="64px" className="object-cover" />
-                        </div>
-
-                        <div className="absolute bottom-3 left-4 right-24">
-                            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-amber-400">
-                                Loaf Records · Production House
+                    <div className="flex flex-wrap items-end justify-between gap-3 border-t-2 border-[#141714]/15 bg-white px-4 py-4 sm:px-6">
+                        <div className="min-w-0">
+                            <p className="font-mono text-[9px] font-bold uppercase tracking-[0.3em] text-[#365332]">
+                                Loaf Records · Films
                             </p>
                             <h1
-                                className="font-display uppercase leading-[0.86] tracking-[0.02em] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]"
-                                style={{ fontSize: "clamp(2.75rem, 13vw, 4.5rem)" }}
+                                className="mt-1 font-display uppercase leading-[0.88] tracking-[0.02em] text-[#141714]"
+                                style={{ fontSize: "clamp(2.5rem, 11vw, 4.25rem)" }}
                             >
                                 Loaf{" "}
-                                <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-accent-cyan bg-clip-text text-transparent">
+                                <span className="text-[#365332]">
                                     Films
                                 </span>
                             </h1>
                         </div>
+                        <div className="flex items-center gap-2.5">
+                            <span className="inline-flex items-center gap-1.5 rounded-md border border-[#141714]/20 bg-[#F2F1EC] px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#141714]">
+                                <Clapperboard className="h-3 w-3 text-[#365332]" />
+                                Cinematic Services
+                            </span>
+                            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border-2 border-[#141714] bg-[#141714] shadow-sm">
+                                <Image src="/LOAFFILMS.png" alt="Loaf Films" fill sizes="48px" className="object-cover" />
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Stamped ticker */}
-                    <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar border-y border-amber-400/20 bg-black/90 px-4 py-2 font-mono text-[9px] uppercase tracking-[0.22em]">
-                        <span className="shrink-0 font-bold text-amber-400">We Shoot:</span>
-                        <span className="shrink-0 text-white/85">Music Videos</span>
-                        <span className="text-amber-400/50">•</span>
-                        <span className="shrink-0 text-white/85">Commercials</span>
-                        <span className="text-amber-400/50">•</span>
-                        <span className="shrink-0 text-white/85">Direction</span>
+                    {/* Stamped tiger-camo trimmed ticker */}
+                    <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar border-y border-[#141714]/15 bg-[#141714] px-4 py-2 font-mono text-[9px] uppercase tracking-[0.22em] text-white sm:px-6">
+                        <span className="shrink-0 font-bold text-[#9FC096]">We Shoot:</span>
+                        <span className="shrink-0 text-white">Music Videos</span>
+                        <span className="text-white/40">•</span>
+                        <span className="shrink-0 text-white">Commercials</span>
+                        <span className="text-white/40">•</span>
+                        <span className="shrink-0 text-white">Direction</span>
                     </div>
 
                     {/* Action console */}
-                    <div className="bg-gradient-to-b from-[#111218] to-[#090A0E] p-4">
-                        <p className="text-xs leading-relaxed text-noir-cloud">
+                    <div className="bg-[#FAF9F6] p-4 sm:px-6">
+                        <p className="text-xs leading-relaxed text-[#3E443B]">
                             Brooklyn-born cinematic execution. We shoot raw, concept-driven music videos and
                             commercial films that reflect visual soul.
                         </p>
                         <div className="mt-3 grid grid-cols-2 gap-2.5">
                             <a
                                 href="#booking"
-                                className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-3 py-3.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-black shadow-[0_0_25px_rgba(245,158,11,0.35)] transition-transform active:scale-[0.98]"
+                                className="flex items-center justify-center gap-2 rounded-xl border-2 border-[#141714] bg-[#141714] px-3 py-3.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-white shadow-sm transition-colors hover:bg-[#365332] hover:border-[#365332] active:scale-[0.98]"
                             >
                                 <Camera className="h-4 w-4" />
                                 <span>Book A Shoot</span>
                             </a>
                             <a
                                 href="#reel"
-                                className="flex items-center justify-center gap-2 rounded-xl border-2 border-accent-cyan/50 bg-accent-cyan/10 px-3 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan hover:text-black active:scale-[0.98]"
+                                className="flex items-center justify-center gap-2 rounded-xl border-2 border-[#365332] bg-white px-3 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-[#365332] transition-colors hover:bg-[#365332] hover:text-white active:scale-[0.98]"
                             >
                                 <Play className="h-4 w-4 fill-current" />
                                 <span>Watch The Reel</span>
@@ -248,7 +244,7 @@ export default function LoafFilmsPage() {
             </section>
 
             <div className="px-3 sm:px-4 max-w-5xl mx-auto mt-4 space-y-5">
-                {/* Stamped jump tabs, like the landing's section pills */}
+                {/* Jump tabs */}
                 <nav aria-label="Loaf Films sections" className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar">
                     {[
                         { href: "#reel", label: "The Reel" },
@@ -259,7 +255,7 @@ export default function LoafFilmsPage() {
                         <a
                             key={tab.href}
                             href={tab.href}
-                            className="inline-flex shrink-0 items-center rounded-lg border border-white/15 bg-black/70 px-2.5 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-noir-cloud transition-colors hover:border-amber-400/50 hover:text-amber-400"
+                            className="inline-flex shrink-0 items-center rounded-lg border border-[#141714]/20 bg-white px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-[#3E443B] transition-colors hover:border-[#365332] hover:text-[#365332]"
                         >
                             {tab.label}
                         </a>
@@ -270,29 +266,28 @@ export default function LoafFilmsPage() {
                 <section
                     id="reel"
                     aria-labelledby="reel-heading"
-                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-white/15 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-[#141714]/15 bg-white shadow-[0_18px_48px_rgba(20,23,20,0.08)]"
                 >
-                    <div className="flex items-end justify-between gap-3 border-b border-white/10 bg-black/60 p-4 sm:p-5">
+                    <div className="flex items-end justify-between gap-3 border-b border-[#141714]/10 bg-[#FAF9F6] p-4 sm:p-5">
                         <div className="min-w-0">
-                            <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-amber-400">
+                            <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-[#365332]">
                                 Selected Work
                             </p>
                             <h2
                                 id="reel-heading"
-                                className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-white"
+                                className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-[#141714]"
                             >
                                 The Reel
                             </h2>
-                            <p className="mt-1.5 text-xs text-noir-cloud">
+                            <p className="mt-1.5 text-xs text-[#61675E]">
                                 Recent Loaf Films productions. Pull a frame to watch it.
                             </p>
                         </div>
-                        <span className="shrink-0 rounded border border-white/15 bg-black/70 px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-white/70">
+                        <span className="shrink-0 rounded border border-[#141714]/15 bg-white px-2.5 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#141714]">
                             {REEL.length} Films
                         </span>
                     </div>
-                    {/* The strip bleeds to the card's edges */}
-                    <div className="px-6 pt-5 pb-3">
+                    <div className="bg-[#141714] px-6 pt-5 pb-3">
                         <FilmStrip entries={REEL} />
                     </div>
                 </section>
@@ -301,24 +296,20 @@ export default function LoafFilmsPage() {
                 <section
                     id="packages"
                     aria-labelledby="packages-heading"
-                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-amber-400/40 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-[#141714] bg-white shadow-[0_22px_56px_rgba(20,23,20,0.10)]"
                 >
-                    <div
-                        aria-hidden
-                        className="pointer-events-none absolute -top-24 left-1/2 h-[360px] w-full -translate-x-1/2"
-                        style={{ background: "radial-gradient(circle at 50% 30%, rgba(245, 158, 11, 0.18) 0%, transparent 70%)" }}
-                    />
-                    <div className="relative border-b border-white/10 bg-black/60 p-4 sm:p-5">
-                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-amber-400">
+                    <div aria-hidden className="tiger-camo-strip h-2 w-full" />
+                    <div className="relative border-b border-[#141714]/10 bg-[#FAF9F6] p-4 sm:p-5">
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-[#365332]">
                             Flat Rates · No Surprises
                         </p>
                         <h2
                             id="packages-heading"
-                            className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-white"
+                            className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-[#141714]"
                         >
                             Production Packages
                         </h2>
-                        <p className="mt-1.5 text-xs text-noir-cloud">
+                        <p className="mt-1.5 text-xs text-[#61675E]">
                             Transparent pricing tailored to independent and label-signed artists.
                         </p>
                     </div>
@@ -329,33 +320,33 @@ export default function LoafFilmsPage() {
                             return (
                                 <div
                                     key={pkg.name}
-                                    className={`relative flex flex-col rounded-2xl border-2 bg-[#101219] p-4 ${pkg.frame}`}
+                                    className={`relative flex flex-col rounded-2xl border-2 bg-[#FAF9F6] p-4 ${pkg.frame}`}
                                 >
                                     <div className="flex items-start justify-between gap-3">
                                         <div>
                                             {pkg.popular && (
-                                                <span className="mb-1.5 inline-block rounded bg-accent-cyan px-2 py-0.5 font-mono text-[8px] font-black uppercase tracking-widest text-black">
+                                                <span className="mb-1.5 inline-block rounded bg-[#365332] px-2 py-0.5 font-mono text-[8px] font-black uppercase tracking-widest text-white">
                                                     Recommended
                                                 </span>
                                             )}
-                                            <h3 className="font-display text-2xl uppercase leading-none tracking-wider text-white">
+                                            <h3 className="font-display text-2xl uppercase leading-none tracking-wider text-[#141714]">
                                                 {pkg.name}
                                             </h3>
                                         </div>
-                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-black/70">
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#141714]/15 bg-white">
                                             <PkgIcon className={`h-5 w-5 ${pkg.accent}`} />
                                         </div>
                                     </div>
 
                                     <p className="mt-3 font-mono">
-                                        <span className="text-3xl font-bold text-amber-400">{pkg.price}</span>
-                                        <span className="ml-2 text-[9px] uppercase tracking-[0.2em] text-noir-cloud">Flat Rate</span>
+                                        <span className="text-3xl font-bold text-[#141714]">{pkg.price}</span>
+                                        <span className="ml-2 text-[9px] uppercase tracking-[0.2em] text-[#61675E]">Flat Rate</span>
                                     </p>
-                                    <p className="mt-1.5 text-xs leading-relaxed text-noir-cloud">{pkg.tagline}</p>
+                                    <p className="mt-1.5 text-xs leading-relaxed text-[#3E443B]">{pkg.tagline}</p>
 
-                                    <ul className="mt-3 space-y-1.5 border-t border-dashed border-white/10 pt-3">
+                                    <ul className="mt-3 space-y-1.5 border-t border-dashed border-[#141714]/15 pt-3">
                                         {pkg.deliverables.map((item) => (
-                                            <li key={item} className="flex items-start gap-2 text-xs text-white/90">
+                                            <li key={item} className="flex items-start gap-2 text-xs text-[#141714]">
                                                 <Check className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${pkg.accent}`} />
                                                 <span>{item}</span>
                                             </li>
@@ -367,8 +358,8 @@ export default function LoafFilmsPage() {
                                         onClick={() => setSelectedPackage(pkg.name)}
                                         className={`mt-4 block rounded-xl py-3 text-center font-mono text-[10px] font-black uppercase tracking-[0.16em] transition-colors ${
                                             pkg.popular
-                                                ? "bg-accent-cyan text-black shadow-glow-sm"
-                                                : "border border-white/20 bg-black/60 text-white hover:border-amber-400"
+                                                ? "bg-[#365332] text-white hover:bg-[#141714]"
+                                                : "border-2 border-[#141714]/25 bg-white text-[#141714] hover:border-[#141714]"
                                         }`}
                                     >
                                         Select {pkg.name}
@@ -383,19 +374,19 @@ export default function LoafFilmsPage() {
                 <section
                     id="process"
                     aria-labelledby="process-heading"
-                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-white/15 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-[#141714]/15 bg-white shadow-[0_18px_48px_rgba(20,23,20,0.08)]"
                 >
-                    <div className="border-b border-white/10 bg-black/60 p-4 sm:p-5">
-                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-accent-cyan">
+                    <div className="border-b border-[#141714]/10 bg-[#FAF9F6] p-4 sm:p-5">
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-[#365332]">
                             Inception To Upload
                         </p>
                         <h2
                             id="process-heading"
-                            className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-white"
+                            className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-[#141714]"
                         >
                             The Process
                         </h2>
-                        <p className="mt-1.5 text-xs text-noir-cloud">
+                        <p className="mt-1.5 text-xs text-[#61675E]">
                             Here is how we bring your tracks to life.
                         </p>
                     </div>
@@ -407,17 +398,17 @@ export default function LoafFilmsPage() {
                             return (
                                 <li
                                     key={step.title}
-                                    className="flex gap-3 rounded-2xl border border-white/10 bg-[#101219] p-3.5"
+                                    className="flex gap-3 rounded-2xl border border-[#141714]/12 bg-[#FAF9F6] p-3.5"
                                 >
-                                    <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl border border-amber-400/40 bg-black/85">
-                                        <span className="font-mono text-[10px] font-black leading-none text-amber-400">{number}</span>
-                                        <StepIcon className="mt-0.5 h-3 w-3 text-white/60" />
+                                    <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl border border-[#141714] bg-[#141714]">
+                                        <span className="font-mono text-[10px] font-black leading-none text-white">{number}</span>
+                                        <StepIcon className="mt-0.5 h-3 w-3 text-[#9FC096]" />
                                     </div>
                                     <div className="min-w-0">
-                                        <h3 className="font-display text-xl uppercase leading-none tracking-wider text-white">
+                                        <h3 className="font-display text-xl uppercase leading-none tracking-wider text-[#141714]">
                                             {title}
                                         </h3>
-                                        <p className="mt-1 text-xs leading-relaxed text-noir-cloud">{step.desc}</p>
+                                        <p className="mt-1 text-xs leading-relaxed text-[#3E443B]">{step.desc}</p>
                                     </div>
                                 </li>
                             );
@@ -429,29 +420,25 @@ export default function LoafFilmsPage() {
                 <section
                     id="booking"
                     aria-labelledby="booking-heading"
-                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-accent-cyan/30 bg-[#0A0B10]/95 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                    className="relative scroll-mt-28 overflow-hidden rounded-[28px] border-2 border-[#141714] bg-white shadow-[0_22px_56px_rgba(20,23,20,0.10)]"
                 >
-                    <div
-                        aria-hidden
-                        className="pointer-events-none absolute -top-24 left-1/2 h-[360px] w-full -translate-x-1/2"
-                        style={{ background: "radial-gradient(circle at 50% 30%, rgba(0, 217, 255, 0.14) 0%, transparent 70%)" }}
-                    />
-                    <div className="relative border-b border-white/10 bg-black/60 p-4 sm:p-5">
-                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-accent-cyan">
+                    <div aria-hidden className="tiger-camo-strip h-2 w-full" />
+                    <div className="relative border-b border-[#141714]/10 bg-[#FAF9F6] p-4 sm:p-5">
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-[#365332]">
                             Reply Within 24 Hours
                         </p>
                         <h2
                             id="booking-heading"
-                            className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-white"
+                            className="mt-1 font-display text-3xl sm:text-4xl uppercase leading-none tracking-[0.03em] text-[#141714]"
                         >
                             Book Your Shoot
                         </h2>
-                        <p className="mt-1.5 text-xs text-noir-cloud">
+                        <p className="mt-1.5 text-xs text-[#61675E]">
                             Let&apos;s build your vision. Tell us about the track and we&apos;ll get back to you.
                         </p>
                     </div>
 
-                    <form onSubmit={handleBooking} className="relative mx-auto max-w-xl space-y-4 p-4 sm:p-5">
+                    <form onSubmit={handleBooking} className="relative mx-auto max-w-xl space-y-4 p-4 sm:p-6">
                         <div className="space-y-1.5">
                             <label htmlFor="films-name" className={FIELD_LABEL}>Your Name</label>
                             <input
@@ -509,10 +496,10 @@ export default function LoafFilmsPage() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 py-3.5 font-mono text-xs font-black uppercase tracking-[0.18em] text-black shadow-[0_0_25px_rgba(245,158,11,0.3)] transition-transform active:scale-[0.98] disabled:opacity-50"
+                            className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[#141714] bg-[#141714] py-3.5 font-mono text-xs font-black uppercase tracking-[0.18em] text-white shadow-sm transition-colors hover:bg-[#365332] hover:border-[#365332] active:scale-[0.98] disabled:opacity-50"
                         >
                             {isSubmitting ? (
-                                <span className="h-5 w-5 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                                <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                             ) : (
                                 <>
                                     Send Booking Inquiry

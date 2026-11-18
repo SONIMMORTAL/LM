@@ -11,9 +11,8 @@ const navLinks = [
     { href: "/videos", label: "Videos" },
     { href: "/shop", label: "Shop" },
     { href: "/loaf-films", label: "Films" },
-    { href: "/gallery", label: "Gallery" },
+    { href: "/gallery", label: "Blackbook" },
     { href: "/bio", label: "Bio" },
-    { href: "/contact", label: "Contact" },
 ];
 
 export function Footer() {
@@ -22,9 +21,11 @@ export function Footer() {
             {/* Phones end on the page itself; this only keeps the floating player off the last row */}
             <div aria-hidden className="h-28 lg:hidden" />
 
-            <footer aria-label="Loaf Records footer" className="relative z-10 hidden lg:block border-t border-noir-smoke bg-noir-void">
-                {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-noir-charcoal/50 to-transparent pointer-events-none" />
+            <footer aria-label="Loaf Records footer" className="relative z-10 hidden lg:block border-t-2 border-[#141714]/15 bg-white text-foreground">
+                {/* Tiger-stripe camo trim ribbon along the top edge */}
+                <div aria-hidden className="tiger-camo-strip h-1.5 w-full" />
+                {/* Subtle studio gradient */}
+                <div className="absolute inset-x-0 top-1.5 bottom-0 bg-gradient-to-t from-noir-slate/35 to-transparent pointer-events-none" />
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 safe-bottom">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
@@ -115,8 +116,8 @@ export function Footer() {
                             © {new Date().getFullYear()} Loaf Records. All rights reserved.
                         </p>
                         <div className="flex items-center gap-4 text-sm">
-                            <Link href="/contact" className="inline-flex min-h-11 items-center text-noir-cloud hover:text-accent-cyan transition-colors">
-                                Contact
+                            <Link href="/loaf-films" className="inline-flex min-h-11 items-center text-noir-cloud hover:text-accent-cyan transition-colors">
+                                Films &amp; Bookings
                             </Link>
                             <span className="text-noir-smoke">•</span>
                             <span className="text-noir-cloud">

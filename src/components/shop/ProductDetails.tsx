@@ -18,7 +18,6 @@ import {
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import type { PrintfulProductDetails } from "@/lib/printful";
-import { toast } from "react-hot-toast";
 
 interface ProductDetailsProps {
     product: PrintfulProductDetails;
@@ -98,7 +97,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     // State variables
     const [selectedColor, setSelectedColor] = useState<string | null>(colors[0] || null);
     const [selectedSize, setSelectedSize] = useState<string | null>(sizes[0] || null);
-    const [activeImage, setActiveImage] = useState<string>(sync_product.thumbnail_url);
+    const [manualImage, setManualImage] = useState<string | null>(null);
     const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
     const [openSpecTab, setOpenSpecTab] = useState<string | null>("fabric");
 
@@ -126,6 +125,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     // Sync selected size if color changes (ensures color/size combination exists)
     const handleColorChange = (color: string) => {
         setSelectedColor(color);
+        setManualImage(null);
         const availableSizes = sync_variants
             .filter((v) => v.color === color)
             .map((v) => v.size)
@@ -147,19 +147,13 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             return colorMatch && sizeMatch;
         }) || sync_variants[0];
 
-    // Automatically update the main image to the selected variant's image if available
-    useEffect(() => {
-        if (activeVariant) {
-            const variantImg =
-                activeVariant.files?.find((f) => f.type === "mockup")?.preview_url ||
-                sync_product.thumbnail_url ||
-                activeVariant.product?.image ||
-                activeVariant.files?.find((f) => f.type === "preview")?.preview_url;
-            if (variantImg) {
-                setActiveImage(variantImg);
-            }
-        }
-    }, [activeVariant, sync_product.thumbnail_url]);
+    const variantImage =
+        activeVariant?.files?.find((f) => f.type === "mockup")?.preview_url ||
+        sync_product.thumbnail_url ||
+        activeVariant?.product?.image ||
+        activeVariant?.files?.find((f) => f.type === "preview")?.preview_url ||
+        "";
+    const activeImage = manualImage || variantImage;
 
     // Reset success checkmark after 2 seconds
     useEffect(() => {
@@ -254,7 +248,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                 {/* Images Column (Left) */}
                 <div className="lg:col-span-7 space-y-4">
                     {/* Main Showcase — a light well, like the store tiles, so dark garments stay visible */}
-                    <div className="relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-white border-2 border-white/15 shadow-[0_26px_55px_rgba(0,0,0,0.95)] flex items-center justify-center">
+                    <div className="relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-white border-2 border-[#141714]/15 shadow-[0_18px_45px_rgba(20,23,20,0.10)] flex items-center justify-center">
                         {activeImage ? (
                             <Image
                                 src={activeImage}
@@ -275,7 +269,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                             {images.map((img, i) => (
                                 <button
                                     key={img}
-                                    onClick={() => setActiveImage(img)}
+                                    onClick={() => setManualImage(img)}
                                     className={`relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-white border transition-all duration-200 ${
                                         activeImage === img
                                             ? "border-accent-cyan ring-1 ring-accent-cyan/30"
@@ -302,7 +296,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                         <span className="text-accent-cyan text-xs font-bold tracking-[0.3em] uppercase block mb-2">
                             Official Release
                         </span>
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white leading-tight font-display mb-3">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-foreground leading-tight font-display mb-3">
                             {sync_product.name}
                         </h1>
                         <p className="text-2xl font-bold text-accent-cyan">
@@ -314,7 +308,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                     {colors.length > 1 && (
                         <div className="space-y-3">
                             <span className="text-xs font-bold text-noir-cloud uppercase tracking-widest block">
-                                Color: <span className="text-white ml-1">{selectedColor}</span>
+                                Color: <span className="text-foreground ml-1">{selectedColor}</span>
                             </span>
                             <div className="flex items-center gap-2 flex-wrap">
                                 {colors.map((color) => {
@@ -343,7 +337,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
                                 <span className="text-xs font-bold text-noir-cloud uppercase tracking-widest block">
-                                    Size: <span className="text-white ml-1">{selectedSize}</span>
+                                    Size: <span className="text-foreground ml-1">{selectedSize}</span>
                                 </span>
                                 {chartType !== "default" && (
                                     <button
@@ -365,12 +359,17 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                                         <button
                                             key={size}
                                             disabled={!isAvailable}
-                                            onClick={() => isAvailable && setSelectedSize(size)}
+                                            onClick={() => {
+                                                if (isAvailable) {
+                                                    setSelectedSize(size);
+                                                    setManualImage(null);
+                                                }
+                                            }}
                                             className={`min-w-[48px] h-11 px-3 rounded-xl text-xs font-bold border tracking-wider transition-all uppercase flex items-center justify-center ${
                                                 selectedSize === size
-                                                    ? "bg-accent-cyan text-noir-void border-accent-cyan shadow-glow-sm"
+                                                    ? "bg-accent-cyan text-white border-accent-cyan shadow-glow-sm"
                                                     : isAvailable
-                                                    ? "border-noir-smoke text-white hover:border-accent-cyan/50 bg-noir-charcoal/30"
+                                                    ? "border-noir-smoke text-foreground hover:border-accent-cyan/50 bg-noir-charcoal/80"
                                                     : "border-transparent text-noir-smoke/40 bg-noir-void cursor-not-allowed"
                                             }`}
                                             type="button"
@@ -388,8 +387,8 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                         <button
                             onClick={handleAddToCart}
                             disabled={isAdding || !activeVariant}
-                            className={`w-full h-14 bg-accent-cyan text-noir-void font-bold uppercase tracking-widest rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm shadow-glow-md ${
-                                isAdded ? "bg-green-600 text-white" : "hover:bg-accent-cyanMuted"
+                            className={`w-full h-14 bg-accent-cyan text-white font-bold uppercase tracking-widest rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm shadow-glow-md ${
+                                isAdded ? "bg-green-700 text-white" : "hover:bg-accent-cyanMuted"
                             }`}
                             type="button"
                         >
@@ -415,10 +414,10 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                     {/* Details / Specs Accordion */}
                     <div className="border-t border-noir-smoke pt-6 space-y-3">
                         {/* 1. Fabric Specifications */}
-                        <div className="border-b border-noir-charcoal pb-3">
+                        <div className="border-b border-noir-smoke pb-3">
                             <button
                                 onClick={() => setOpenSpecTab(openSpecTab === "fabric" ? null : "fabric")}
-                                className="w-full flex items-center justify-between text-left py-2 font-bold text-sm uppercase tracking-widest text-white hover:text-accent-cyan transition-colors"
+                                className="w-full flex items-center justify-between text-left py-2 font-bold text-sm uppercase tracking-widest text-foreground hover:text-accent-cyan transition-colors"
                                 type="button"
                             >
                                 <span className="flex items-center gap-2">
@@ -437,7 +436,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                                         className="overflow-hidden mt-2 text-xs leading-relaxed text-noir-cloud space-y-2"
                                     >
                                         <p>{specs.fabric}</p>
-                                        <p className="font-semibold text-white">Care guidelines:</p>
+                                        <p className="font-semibold text-foreground">Care guidelines:</p>
                                         <p>{specs.care}</p>
                                     </motion.div>
                                 )}
@@ -445,10 +444,10 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                         </div>
 
                         {/* 2. Shipping Info */}
-                        <div className="border-b border-noir-charcoal pb-3">
+                        <div className="border-b border-noir-smoke pb-3">
                             <button
                                 onClick={() => setOpenSpecTab(openSpecTab === "shipping" ? null : "shipping")}
-                                className="w-full flex items-center justify-between text-left py-2 font-bold text-sm uppercase tracking-widest text-white hover:text-accent-cyan transition-colors"
+                                className="w-full flex items-center justify-between text-left py-2 font-bold text-sm uppercase tracking-widest text-foreground hover:text-accent-cyan transition-colors"
                                 type="button"
                             >
                                 <span className="flex items-center gap-2">
@@ -468,9 +467,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                                     >
                                         <p>Every product is printed and shipped on demand for ecological conservation.</p>
                                         <ul className="list-disc pl-4 space-y-1">
-                                            <li><span className="text-white">Fulfillment:</span> 2–5 business days.</li>
-                                            <li><span className="text-white">US Shipping:</span> 3–6 business days via USPS/DHL.</li>
-                                            <li><span className="text-white">International:</span> 6–12 business days (custom duty details emailed).</li>
+                                            <li><span className="font-semibold text-foreground">Fulfillment:</span> 2–5 business days.</li>
+                                            <li><span className="font-semibold text-foreground">US Shipping:</span> 3–6 business days via USPS/DHL.</li>
+                                            <li><span className="font-semibold text-foreground">International:</span> 6–12 business days (custom duty details emailed).</li>
                                         </ul>
                                     </motion.div>
                                 )}
@@ -481,7 +480,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                         <div className="pb-1">
                             <button
                                 onClick={() => setOpenSpecTab(openSpecTab === "returns" ? null : "returns")}
-                                className="w-full flex items-center justify-between text-left py-2 font-bold text-sm uppercase tracking-widest text-white hover:text-accent-cyan transition-colors"
+                                className="w-full flex items-center justify-between text-left py-2 font-bold text-sm uppercase tracking-widest text-foreground hover:text-accent-cyan transition-colors"
                                 type="button"
                             >
                                 <span className="flex items-center gap-2">
@@ -532,13 +531,13 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                         >
                             <button
                                 onClick={() => setIsSizeChartOpen(false)}
-                                className="absolute top-4 right-4 text-noir-cloud hover:text-white transition-colors"
+                                className="absolute top-4 right-4 text-noir-cloud hover:text-foreground transition-colors"
                                 type="button"
                             >
                                 <X className="w-5 h-5" />
                             </button>
 
-                            <h3 className="text-xl font-bold text-white uppercase tracking-tight font-display mb-4">
+                            <h3 className="text-xl font-bold text-foreground uppercase tracking-tight font-display mb-4">
                                 {sync_product.name.split(" - ")[0]} Sizing Table
                             </h3>
 
@@ -553,9 +552,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                                             ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-noir-charcoal">
+                                    <tbody className="divide-y divide-noir-smoke/50">
                                         {activeChart.rows.map((row, rIdx) => (
-                                            <tr key={rIdx} className="text-white hover:bg-white/5">
+                                            <tr key={rIdx} className="text-foreground hover:bg-noir-slate/40">
                                                 {row.map((cell, cIdx) => (
                                                     <td key={cIdx} className="py-3 font-semibold">
                                                         {cell}
@@ -595,7 +594,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                                 />
                             </div>
                             <div className="min-w-0">
-                                <h4 className="font-bold text-xs uppercase tracking-tight text-white truncate">
+                                <h4 className="font-bold text-xs uppercase tracking-tight text-foreground truncate">
                                     {sync_product.name}
                                 </h4>
                                 <p className="text-[10px] text-accent-cyan font-bold">
@@ -609,7 +608,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                             onClick={handleAddToCart}
                             disabled={isAdding || !activeVariant}
                             className={`h-11 px-6 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0 shadow-glow-sm ${
-                                isAdded ? "bg-green-600 text-white" : "bg-accent-cyan text-noir-void active:scale-95"
+                                isAdded ? "bg-green-700 text-white" : "bg-accent-cyan text-white active:scale-95"
                             }`}
                             type="button"
                         >

@@ -92,30 +92,34 @@ export function RecordShopMobile({
 
     return (
         <section aria-label="Loaf Records record shop" className="md:hidden px-3 pt-[76px] pb-4 space-y-3">
-            {/* ── The shop sign ── */}
-            <header
-                className="relative overflow-hidden rounded-2xl border-2 border-amber-400/45 px-4 py-3.5"
-                style={{
-                    backgroundColor: "#140E08",
-                    backgroundImage:
-                        "repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 7px), linear-gradient(180deg, #1C140B, #0F0A06)",
-                    boxShadow: "inset 0 0 0 3px #0B0805, inset 0 0 0 4px rgba(245,158,11,0.28)",
-                }}
-            >
-                <div className="flex items-start justify-between gap-3">
+            {/* ── The shop banner + sign ── */}
+            <header className="relative overflow-hidden rounded-2xl border-2 border-[#141714] bg-white shadow-[0_18px_45px_rgba(20,23,20,0.12)]">
+                <div aria-hidden className="tiger-camo-strip h-2 w-full" />
+                <div className="relative aspect-[2/1] w-full overflow-hidden">
+                    <Image
+                        src="/brand/music-shop-header-4k.webp"
+                        alt="The Loaf Records crew digging through vinyl crates labeled Classics, Hip Hop, Soul and Jazz with the Brooklyn Bridge outside the window"
+                        fill
+                        priority
+                        fetchPriority="high"
+                        sizes="(max-width: 768px) 96vw, 680px"
+                        className="object-cover"
+                    />
+                </div>
+                <div className="flex items-center justify-between gap-3 border-t-2 border-[#141714]/15 bg-white px-4 py-3">
                     <div className="min-w-0">
-                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.3em] text-amber-400/80">
-                            Est. 2009 · Brooklyn NY
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-[#365332]">
+                            Loaf Records · Brooklyn NY
                         </p>
-                        <p className="mt-1 font-display text-[clamp(30px,10vw,40px)] uppercase leading-[0.9] tracking-[0.04em] text-amber-300 [text-shadow:0_2px_0_#000]">
-                            Loaf Records
-                        </p>
-                        <p className="mt-1 font-mono text-[10px] font-bold uppercase tracking-[0.26em] text-white/70">
-                            Record shop · {records.length} LPs in the crate
+                        <p className="mt-0.5 font-display text-2xl uppercase leading-none tracking-[0.04em] text-[#141714]">
+                            Music{" "}
+                            <span className="font-mono text-[10px] font-bold tracking-[0.2em] text-[#61675E]">
+                                · {records.length} LPs in the crate
+                            </span>
                         </p>
                     </div>
-                    <span className="mt-0.5 inline-flex shrink-0 items-center gap-1.5 rounded-md border border-red-500/70 bg-[#1a0606]/85 px-2 py-1 font-display text-[13px] uppercase leading-none tracking-[0.18em] text-[#FFE1E1] [text-shadow:0_0_4px_#ff3b3b,0_0_10px_rgba(255,40,40,0.7)]">
-                        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-red-500 motion-safe:animate-pulse" />
+                    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-[#365332]/40 bg-[#365332]/10 px-2.5 py-1 font-display text-[13px] uppercase leading-none tracking-[0.18em] text-[#365332]">
+                        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#365332] motion-safe:animate-pulse" />
                         Open
                     </span>
                 </div>
@@ -177,7 +181,7 @@ export function RecordShopMobile({
                                 {/* Price sticker */}
                                 <span
                                     aria-hidden
-                                    className="absolute right-1 top-1 flex h-10 w-10 rotate-[-10deg] items-center justify-center rounded-full font-mono text-[10px] font-black text-white shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                                    className="absolute right-1 top-1 flex h-10 w-10 rotate-[-10deg] items-center justify-center rounded-full font-mono text-[10px] font-black text-[#1F0E03] shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                                     style={{ backgroundColor: STICKER, boxShadow: "inset 0 0 0 2px rgba(255,255,255,0.35)" }}
                                 >
                                     {price(r)}
@@ -206,7 +210,7 @@ export function RecordShopMobile({
             </div>
 
             {/* ── The record you pulled out ── */}
-            <article className="overflow-hidden rounded-2xl border border-white/12 bg-[#0D0D10] p-3">
+            <article className="overflow-hidden rounded-2xl border-2 border-[#141714] bg-white p-3.5 shadow-[0_14px_38px_rgba(20,23,20,0.09)]">
                 <div className="relative h-[clamp(150px,46vw,200px)] overflow-hidden">
                     {/* The vinyl slides out from behind the sleeve, and turns while it plays */}
                     <div
@@ -219,29 +223,29 @@ export function RecordShopMobile({
                                 alt=""
                                 fill
                                 sizes="200px"
-                                className="object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.8)]"
+                                className="object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)]"
                             />
                         </div>
                     </div>
-                    <div className="relative z-10 aspect-square h-full overflow-hidden rounded-[4px] shadow-[8px_0_18px_rgba(0,0,0,0.75)] ring-1 ring-black/60">
+                    <div className="relative z-10 aspect-square h-full overflow-hidden rounded-[4px] shadow-[8px_0_18px_rgba(0,0,0,0.35)] ring-1 ring-black/40">
                         <Image src={record.cover} alt={`${record.name} sleeve`} fill sizes="200px" className="object-cover" />
                     </div>
                 </div>
 
-                <p className="mt-3 font-mono text-[9px] font-bold uppercase tracking-[0.24em] text-amber-400">
+                <p className="mt-3 font-mono text-[9px] font-bold uppercase tracking-[0.24em] text-[#365332]">
                     LP · {record.tracks.length} {record.tracks.length === 1 ? "track" : "tracks"} · Digital album
                 </p>
-                <h2 className="mt-1 font-display text-[clamp(28px,9vw,38px)] uppercase leading-[0.95] tracking-[0.03em] text-white">
+                <h2 className="mt-1 font-display text-[clamp(28px,9vw,38px)] uppercase leading-[0.95] tracking-[0.03em] text-[#141714]">
                     {record.name}
                 </h2>
-                <p className="mt-0.5 text-sm text-noir-cloud">{record.artist}</p>
+                <p className="mt-0.5 text-sm text-[#3E443B]">{record.artist}</p>
 
                 <div className="mt-3 grid grid-cols-2 gap-2.5">
                     <button
                         type="button"
                         disabled={playable.length === 0}
                         onClick={() => play(playable[0])}
-                        className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-3 py-3 font-display text-[17px] uppercase leading-none tracking-[0.04em] text-black shadow-[0_0_20px_rgba(245,158,11,0.3)] active:scale-[0.98] disabled:opacity-40"
+                        className="flex items-center justify-center gap-2 rounded-xl border-2 border-[#141714] bg-[#141714] px-3 py-3 font-display text-[17px] uppercase leading-none tracking-[0.04em] text-white active:scale-[0.98] disabled:opacity-40"
                     >
                         <Play className="h-4 w-4 shrink-0 fill-current" />
                         Drop the needle
@@ -250,10 +254,10 @@ export function RecordShopMobile({
                     <button
                         type="button"
                         onClick={() => onBuy(record)}
-                        className="relative flex items-center justify-center gap-2 rounded-xl px-3 py-3 font-display text-[17px] uppercase leading-none tracking-[0.04em] active:scale-[0.98]"
+                        className="relative flex items-center justify-center gap-2 rounded-xl border-2 border-[#141714]/20 px-3 py-3 font-display text-[17px] uppercase leading-none tracking-[0.04em] active:scale-[0.98]"
                         style={{ backgroundColor: PAPER, color: INK }}
                     >
-                        <span aria-hidden className="absolute left-2.5 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-[#0D0D10]" />
+                        <span aria-hidden className="absolute left-2.5 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full border border-[#141714]/30 bg-white" />
                         Buy {price(record)}
                     </button>
                 </div>

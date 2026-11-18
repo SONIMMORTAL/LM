@@ -34,14 +34,33 @@ function decodeXml(text: string): string {
 const field = (entry: string, tag: string) =>
     decodeXml(entry.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`))?.[1] ?? "").trim();
 
-/** The first line of a description that says something — not a bare link or hashtags. */
+/**
+ * The first line of a description that says something — not a bare link, hashtags, or the
+ * start of a tracklist ("1.Desperado 0:00", "1 Intro (feat. …)", "00:00 Intro").
+ */
 function firstLine(description: string): string {
     return (
         description
             .split("\n")
             .map((line) => line.trim())
-            .find((line) => line && !/^(https?:\/\/|www\.)\S+$/i.test(line) && !/^(#\S+\s*)+$/.test(line)) ?? ""
+            .find(
+                (line) =>
+                    line &&
+                    !/^(https?:\/\/|www\.)\S+$/i.test(line) &&
+                    !/^(#\S+\s*)+$/.test(line) &&
+                    !/^\d{1,2}(?:[.)]\s*|\s+)[A-Za-z]/.test(line) &&
+                    !/\b\d{1,2}:\d{2}\b/.test(line)
+            ) ?? ""
     );
+}
+
+/** "Get Money - Shadow The Great , Rah Tha Ruler" → "Get Money - Shadow The Great, Rah Tha Ruler" */
+export function tidyTitle(title: string): string {
+    return title
+        .replace(/\s+/g, " ")
+        .replace(/\s+,/g, ",")
+        .replace(/,(?=\S)/g, ", ")
+        .trim();
 }
 
 /**
@@ -56,7 +75,7 @@ export function parseChannelFeed(xml: string): ChannelUpload[] {
         if (/<link rel="alternate" href="[^"]*\/shorts\//.test(entry)) continue;
         uploads.push({
             youtubeId,
-            title: field(entry, "title"),
+            title: tidyTitle(field(entry, "title")),
             description: firstLine(field(entry, "media:description")),
             published: field(entry, "published"),
         });

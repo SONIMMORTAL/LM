@@ -1,5 +1,6 @@
 import { getTracks } from "@/lib/tracks-server";
 import { AlbumDetailsClient } from "@/components/music/AlbumDetailsClient";
+import { StreamingAlbum } from "@/components/music/StreamingAlbum";
 import { albumBySlug, albumDescription, albumTrackCredits } from "@/lib/discography";
 import { LOAF_MUZIK, crewMemberPath, findCrewMember } from "@/lib/crew";
 import { albumNode, breadcrumbNode, jsonLd, loafMuzikNode, personNode } from "@/lib/structured-data";
@@ -81,18 +82,25 @@ export default async function AlbumReleasePage({ params }: PageProps) {
         <div className="min-h-screen pt-24 pb-16">
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
 
-            <AlbumDetailsClient
-                albumName={album.name}
-                artist={album.artist}
-                artistHref={artistPath(album.artist)}
-                cover={album.cover}
-                gradient={album.gradient}
-                accentColor={album.accentColor}
-                youtubeId={album.youtubeId}
-                price={album.price}
-                tracks={albumTracks}
-                allTracks={allTracks}
-            />
+            {/* An album that streams elsewhere gets its credits and where to listen, not the player */}
+            {album.tracklist ? (
+                <StreamingAlbum album={album} artistHref={artistPath(album.artist)} songs={songs} />
+            ) : (
+                <AlbumDetailsClient
+                    albumName={album.name}
+                    artist={album.artist}
+                    artistHref={artistPath(album.artist)}
+                    about={album.about}
+                    listen={album.listen}
+                    cover={album.cover}
+                    gradient={album.gradient}
+                    accentColor={album.accentColor}
+                    youtubeId={album.youtubeId}
+                    price={album.price}
+                    tracks={albumTracks}
+                    allTracks={allTracks}
+                />
+            )}
         </div>
     );
 }

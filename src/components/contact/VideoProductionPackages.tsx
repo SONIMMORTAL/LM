@@ -107,7 +107,7 @@ function ScissorsIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function VideoProductionPackages() {
     return (
-        <section className="py-16 relative overflow-hidden">
+        <section className="py-10 sm:py-14 relative overflow-hidden">
             <div className="absolute inset-0 bg-noir-void -z-20" />
             
             {/* Cinematic atmospheric lights */}
@@ -115,22 +115,18 @@ export function VideoProductionPackages() {
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/10 blur-[120px] rounded-full -z-10 pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-                {/* Unified Image Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="w-full flex justify-center mb-16"
-                >
-                    <Image
-                        src="/NEW HEADER CONTACT.png"
-                        alt="Loaf Films Video Production Packages"
-                        width={1024}
-                        height={352}
-                        className="w-full max-w-4xl h-auto object-contain drop-shadow-2xl"
-                        priority
-                    />
-                </motion.div>
+                {/* Production Packages Section Heading */}
+                <div className="text-center mb-12">
+                    <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-amber-400">
+                        Loaf Films · Production Packages
+                    </p>
+                    <h2 className="mt-2 font-display text-3xl sm:text-5xl uppercase tracking-[0.03em] text-white leading-none">
+                        Video Production Packages
+                    </h2>
+                    <p className="mt-2 text-xs sm:text-sm text-noir-cloud tracking-wide">
+                        Cinematic Visions. Powerful Stories. Unforgettable Impact.
+                    </p>
+                </div>
 
                 {/* Pricing Cards Grid */}
                 <div className="grid lg:grid-cols-3 gap-8 lg:gap-6 mb-16">

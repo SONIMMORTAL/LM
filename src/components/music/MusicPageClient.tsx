@@ -8,14 +8,14 @@ import { RecordCrate } from "@/components/music/RecordCrate";
 import { RecordShopMobile } from "@/components/music/RecordShopMobile";
 import type { Track } from "@/lib/tracks-server";
 
-// Album name → transparent deluxe-vinyl render (spins on the DJ decks)
+// Album name → edge-trimmed lightweight deluxe-vinyl WebP render (spins on the DJ decks)
 const ALBUM_VINYLS: Record<string, string> = {
-    "The Commission": "/THE-COMMISSION-7-deluxe-vinyl.png",
-    "Lost City": "/LC1-2-deluxe-vinyl.png",
-    "More Life": "/MORE-LIFE-VINYL-5-deluxe-vinyl.png",
-    "Live From The Dungeon": "/LFTD-3-deluxe-vinyl.png",
+    "The Commission": "/vinyl-opt/THE-COMMISSION-7-deluxe-vinyl-hd.webp",
+    "Lost City": "/vinyl-opt/LC1-2-deluxe-vinyl-hd.webp",
+    "More Life": "/vinyl-opt/MORE-LIFE-VINYL-5-deluxe-vinyl-hd.webp",
+    "Live From The Dungeon": "/vinyl-opt/LFTD-3-deluxe-vinyl-hd.webp",
 };
-const DEFAULT_VINYL = "/LFTD-3-deluxe-vinyl.png";
+const DEFAULT_VINYL = "/vinyl-opt/LFTD-3-deluxe-vinyl-hd.webp";
 
 interface Album {
     name: string;
@@ -107,7 +107,7 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
         {
             name: "More Life",
             artist: "Shadow The Great",
-            cover: "/MORE LIFE VINYL.jpg",
+            cover: "/more-life-cover-hd.jpg",
             gradient: "from-rose-500/20 via-pink-600/10 to-purple-900/20",
             accentColor: "rose",
             tracks: tracks.filter(t => t.album === "More Life"),
@@ -138,17 +138,13 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
 
 
     return (
-        <div className="min-h-screen bg-noir-void relative overflow-hidden">
+        <div className="min-h-screen bg-transparent text-[#141714] relative overflow-hidden">
             {/* The booth carries the page visually; screen readers and search
                 engines still need a page title. */}
             <h1 className="sr-only">Music — Loaf Records</h1>
 
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute inset-0 bg-gradient-to-br from-accent-cyan/5 via-transparent to-purple-900/10" />
-            </div>
-
             {/* DESKTOP DJ BOOTH SCENE (Hidden on mobile so mobile has zero vinyl turntable clutter) */}
-            <section className="hidden md:block relative pt-20 pb-12">
+            <section className="hidden md:block relative pt-24 pb-10">
                 <DJSceneHero
                     leftVinyl={
                         (currentTrack?.album && ALBUM_VINYLS[currentTrack.album]) ||
@@ -156,8 +152,8 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
                     }
                     rightVinyl={
                         currentTrack?.album === "The Commission"
-                            ? "/LC1-2-deluxe-vinyl.png"
-                            : "/THE-COMMISSION-7-deluxe-vinyl.png"
+                            ? "/vinyl-opt/LC1-2-deluxe-vinyl-hd.webp"
+                            : "/vinyl-opt/THE-COMMISSION-7-deluxe-vinyl-hd.webp"
                     }
                     isPlaying={isPlaying}
                     nowPlaying={currentTrack?.album || undefined}
@@ -198,11 +194,11 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
 
             <section className="hidden md:block relative px-4 sm:px-6 pb-40 pt-8">
                 <div className="max-w-7xl mx-auto">
-                    <div className="hidden md:flex mb-8 items-baseline justify-between border-b border-white/10 pb-4">
-                        <h2 className="text-2xl font-black uppercase tracking-tighter text-white">
+                    <div className="hidden md:flex mb-8 items-baseline justify-between border-b-2 border-[#141714]/15 pb-4">
+                        <h2 className="text-2xl font-black uppercase tracking-tighter text-[#141714]">
                             The Crate
                         </h2>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-noir-ash">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#61675E]">
                             {albums.length} releases
                         </span>
                     </div>
@@ -292,23 +288,6 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
                     setPurchaseModalOpen(true);
                 }}
             />
-
-            <style jsx global>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 6px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: rgba(255, 255, 255, 0.05);
-                    border-radius: 3px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(0, 255, 204, 0.3);
-                    border-radius: 3px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: rgba(0, 255, 204, 0.5);
-                }
-            `}</style>
         </div>
     );
 }

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 // Map album slugs to cover images
 const ALBUM_COVERS: Record<string, string> = {
-    "more-life": "/MORE LIFE VINYL.jpg",
+    "more-life": "/more-life-cover-hd.jpg",
     "the-commission": "/THE COMMISSION.png",
     "lost-city": "/LC1.jpg",
     "live-from-the-dungeon": "/LFTD.jpg",
@@ -87,7 +87,7 @@ export default async function DownloadPage({
     }));
 
     // Get album cover
-    const cover = ALBUM_COVERS[payload.albumSlug] || "/MORE LIFE VINYL.jpg";
+    const cover = ALBUM_COVERS[payload.albumSlug] || "/more-life-cover-hd.jpg";
 
     // Calculate expiration
     const expiresAt = new Date(payload.exp * 1000).toISOString();

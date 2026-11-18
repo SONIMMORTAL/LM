@@ -6,12 +6,12 @@ import type { Metadata } from "next";
  * shared link that it was the store.
  */
 export const metadata: Metadata = {
-    title: "Gallery — Behind The Scenes",
+    title: "Blackbook — Graffiti, Sketches & Pieces",
     description:
         "Photographs from the Loaf Records archive. Trailer and box truck pieces, blackbook pages, and the crew behind them.",
     openGraph: {
         url: "/gallery",
-        title: "Gallery — Behind The Scenes",
+        title: "Blackbook — Graffiti, Sketches & Pieces | Loaf Records",
         description: "Photographs from the Loaf Records archive.",
         type: "website",
         images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "Gallery — Loaf Records",
+        title: "Blackbook — Loaf Records",
         description: "Photographs from the Loaf Records archive.",
         images: ["/og/og-gallery.jpg"],
     },

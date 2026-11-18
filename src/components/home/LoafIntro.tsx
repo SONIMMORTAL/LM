@@ -1,131 +1,115 @@
-"use client";
-
-import { useEffect } from "react";
-import Image from "next/image";
-
-const ART = "/brand/loaf-intro.webp";
 const SEEN = "hasSeenIntro";
+
+/** Phones and tablets get the 720p cut, desktops the 1080p: the hero tape's phone test */
+const PHONE_MEDIA = "(max-width: 1023px), (pointer: coarse)";
+const PHONE_FILM = "/intro/loaf-intro-mobile.mp4";
+const DESKTOP_FILM = "/intro/loaf-intro-desktop.mp4";
 
 /** A skip fades out over this long */
 const SKIP_MS = 350;
-
-/** The full run, in ms: matches the CSS timeline in globals.css (the overlay is gone by 5.6s) */
-const RUN_MS = 5600;
-/** Reduce Motion: the art fades in, holds, and goes */
-const STILL_MS = 2300;
+/** The natural end fades out over this long (matches introOut in globals.css) */
+const OUT_MS = 600;
+/** The film's length */
+const FILM_MS = 10000;
+/** Reduce Motion: the first frame holds this long, then goes */
+const STILL_MS = 1800;
+/** How long playback gets to start before the intro stops waiting on the video */
+const START_MS = 3000;
 
 /*
  * Runs during the HTML parse, before any of the page's JavaScript and before the first paint.
  * The intro only shows once this script has marked the page with intro-boot, which happens
  * only when someone arrives on the home page fresh — not when they tap over to it from another
- * page, and not with JavaScript off. Anyone who has seen it this visit is marked to skip it.
- * The run starts the moment the art has loaded (or after 2.5s, whatever happens to the image),
- * and a tap skips it straight away, even on a slow phone that hasn't finished loading the page
- * (listened for on the document, so it holds even if React swaps the overlay's element).
+ * page, and not with JavaScript off. Anyone who has seen it this visit is marked to skip it,
+ * and the film isn't fetched for them at all.
+ *
+ * It starts the film itself (muted, so every browser allows it), and if React ever swaps the
+ * <video> for a new one (Fast Refresh does in development) it picks the film up on the new one
+ * where it left off. If a phone refuses to play (iPhones in Low Power Mode do) or it hasn't
+ * started within START_MS, Safari still plays an MP4 through an <img>, so the film runs there;
+ * anywhere else the intro steps aside. A tap, Escape, Enter or Space skips it, listened for on
+ * the document so it holds before React is up.
  * Classes go on <html>, which the root layout marks suppressHydrationWarning.
  */
-const BOOT = `(function(){var d=document.documentElement;try{if(sessionStorage.getItem('${SEEN}')){d.classList.add('intro-seen');return}}catch(e){}d.classList.add('intro-boot');var i=document.getElementById('loaf-intro-art'),g=function(){d.classList.add('intro-go')};if(!i||i.complete)g();else{i.addEventListener('load',g);i.addEventListener('error',g);setTimeout(g,2500)}document.addEventListener('click',function k(e){if(!e.target.closest||!e.target.closest('#loaf-intro'))return;document.removeEventListener('click',k);d.classList.add('intro-skip');setTimeout(function(){d.classList.add('intro-done');try{sessionStorage.setItem('${SEEN}','true')}catch(e){}},${SKIP_MS})})})();`;
+const BOOT = `(function () {
+  var d = document.documentElement, c = d.classList;
+  try { if (sessionStorage.getItem('${SEEN}')) { c.add('intro-seen'); return; } } catch (e) {}
+  c.add('intro-boot');
+
+  var v = null, over = 0, playing = 0, fell = 0, watch = 0;
+  var film = matchMedia('${PHONE_MEDIA}').matches ? '${PHONE_FILM}' : '${DESKTOP_FILM}';
+  function el(id) { return document.getElementById(id); }
+  function done() {
+    c.add('intro-done');
+    try { sessionStorage.setItem('${SEEN}', 'true'); } catch (e) {}
+    clearInterval(watch);
+    document.removeEventListener('click', tap);
+    document.removeEventListener('keydown', key);
+    try { el('loaf-intro-film').pause(); } catch (e) {}
+  }
+  function end(k, ms) { if (over) return; over = 1; c.add(k); setTimeout(done, ms); }
+  function skip() { end('intro-skip', ${SKIP_MS}); }
+  function out(ms) { setTimeout(function () { end('intro-out', ${OUT_MS}); }, ms); }
+  function tap(e) { if (e.target.closest && e.target.closest('#loaf-intro')) skip(); }
+  function key(e) { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') skip(); }
+  document.addEventListener('click', tap);
+  document.addEventListener('keydown', key);
+  setTimeout(skip, ${START_MS + FILM_MS + 4000});
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { out(${STILL_MS}); return; }
+
+  function fallback() {
+    if (playing || fell || over) return;
+    fell = 1;
+    var s = el('loaf-intro-image');
+    if (!s) { skip(); return; }
+    s.onload = function () { c.add('intro-film'); out(${FILM_MS}); };
+    s.onerror = skip;
+    s.src = film;
+  }
+  function adopt() {
+    var n = el('loaf-intro-film');
+    if (!n || n === v || over) return;
+    var t = v ? v.currentTime : 0;
+    v = n;
+    n.muted = true;
+    n.addEventListener('playing', function () { if (playing || fell) return; playing = 1; out(${FILM_MS + 3000}); });
+    n.addEventListener('ended', function () { end('intro-out', ${OUT_MS}); });
+    if (t) try { n.currentTime = t; } catch (e) {}
+    var p;
+    try { p = n.play(); } catch (e) { fallback(); }
+    // Removed from the page mid-start: the next tick adopts its replacement
+    if (p && p.catch) p.catch(function (e) { if (!(e && e.name === 'AbortError')) fallback(); });
+  }
+  function tick() {
+    if (!fell) { adopt(); return; }
+    var s = el('loaf-intro-image');
+    if (s && !s.getAttribute('src')) { s.onerror = skip; s.src = film; }
+  }
+  adopt();
+  watch = setInterval(tick, 250);
+  setTimeout(fallback, ${START_MS});
+})();`;
 
 /**
- * The opening: a blank white screen, then the crew runs in from the left carrying the LOAF
- * letters, skids to a stop in the middle in a kick of dust, and the camera eases in on them
- * before the site comes up. About five and a half seconds, once per visit, on desktop and
- * phones alike.
- *
- * It's drawn with CSS on top of the server HTML rather than played as a video, so it shows
- * from the first paint and no phone can hold it back the way some hold back video autoplay.
- * A tap, a click or a key skips it.
+ * The opening: the crew runs in carrying the LOAF letters, hoists them overhead and heads off
+ * down the block in a cloud of dust — a ten-second film, once per visit, on desktop and phones
+ * alike. Phones get a lighter cut, and on a tall screen the film sits whole across the middle
+ * on a backdrop the colour of its own sky, so nothing is cropped or faded out. A tap, a click
+ * or a key skips it.
  */
 export function LoafIntro() {
-    useEffect(() => {
-        const root = document.documentElement;
-        // Not showing: they've seen it, or came to home from another page
-        if (!root.classList.contains("intro-boot") || root.classList.contains("intro-seen") || root.classList.contains("intro-done")) {
-            return;
-        }
-
-        const finish = () => {
-            root.classList.add("intro-done");
-            try {
-                sessionStorage.setItem(SEEN, "true");
-            } catch {
-                // Private browsing: it simply plays again next visit
-            }
-            cleanup();
-        };
-
-        const skip = () => {
-            root.classList.add("intro-skip");
-            window.clearTimeout(done);
-            done = window.setTimeout(finish, SKIP_MS);
-        };
-        const onKey = (e: KeyboardEvent) => {
-            if (["Escape", "Enter", " ", "Spacebar"].includes(e.key)) skip();
-        };
-
-        // Counted from when the run actually starts, which waits on the art
-        const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        let done = 0;
-        const startClock = () => {
-            window.clearTimeout(done);
-            done = window.setTimeout(finish, still ? STILL_MS : RUN_MS);
-        };
-        const watch = new MutationObserver(() => {
-            if (root.classList.contains("intro-go")) {
-                watch.disconnect();
-                startClock();
-            }
-        });
-        if (root.classList.contains("intro-go")) startClock();
-        else watch.observe(root, { attributes: true, attributeFilter: ["class"] });
-        // Never strand anyone behind it
-        const ceiling = window.setTimeout(finish, RUN_MS + 4000);
-
-        // Taps are the boot script's; the keyboard is handled here
-        window.addEventListener("keydown", onKey);
-
-        function cleanup() {
-            watch.disconnect();
-            window.clearTimeout(done);
-            window.clearTimeout(ceiling);
-            window.removeEventListener("keydown", onKey);
-        }
-        return cleanup;
-    }, []);
-
     return (
         <>
             <div id="loaf-intro" className="loaf-intro">
-                <div className="loaf-intro__stage">
-                    <div className="loaf-intro__run">
-                        <span aria-hidden className="loaf-intro__lines">
-                            <span />
-                            <span />
-                            <span />
-                        </span>
-                        <div className="loaf-intro__bob">
-                            {/* Preloaded; the boot script finds it by id to start the run once it's in */}
-                            <Image
-                                id="loaf-intro-art"
-                                src={ART}
-                                width={1600}
-                                height={654}
-                                priority
-                                sizes="(max-width: 1170px) 94vw, 1100px"
-                                alt="Loaf Records: the crew running with the LOAF letters on their backs"
-                                draggable={false}
-                            />
-                        </div>
-                        <span aria-hidden className="loaf-intro__dust">
-                            <span />
-                            <span />
-                            <span />
-                        </span>
-                    </div>
-                    <p aria-hidden className="loaf-intro__label">
-                        Loaf Records · Brooklyn, NY
-                    </p>
-                </div>
+                {/* Not fetched until the boot script plays it; its first frame is painted underneath by CSS */}
+                <video id="loaf-intro-film" className="loaf-intro__film" playsInline preload="none" disablePictureInPicture aria-hidden>
+                    <source media={PHONE_MEDIA} src={PHONE_FILM} type="video/mp4" />
+                    <source src={DESKTOP_FILM} type="video/mp4" />
+                </video>
+                {/* The same film for browsers that refuse to autoplay video but will animate an MP4 image */}
+                {/* eslint-disable-next-line @next/next/no-img-element -- an MP4 source, which next/image can't serve */}
+                <img id="loaf-intro-image" className="loaf-intro__film loaf-intro__film--image" alt="" />
+                <p className="sr-only">Loaf Records: the crew carrying the LOAF letters down the block</p>
                 <button type="button" className="loaf-intro__skip">
                     Skip intro
                 </button>

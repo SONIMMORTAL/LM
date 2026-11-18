@@ -5,6 +5,17 @@ import Image from "next/image";
 import * as THREE from "three";
 import { cn } from "@/lib/utils";
 
+/**
+ * The texture to load for a record. The vinyl renders are 1536px masters for big retina
+ * screens; a record on a deck is drawn a couple of hundred pixels wide, so it takes a 640px
+ * copy from the image optimizer instead (AVIF where the browser takes it). The showcase
+ * gets the full-size copy, still through the optimizer so it arrives compressed.
+ */
+function textureUrl(url: string, deckMode: boolean): string {
+  if (!url.startsWith("/") || url.startsWith("/_next/")) return url;
+  return `/_next/image?url=${encodeURIComponent(url)}&w=${deckMode ? 640 : 1920}&q=85`;
+}
+
 export interface VinylCanvas3DProps {
   /** Label texture URL (album cover or center label) */
   coverUrl: string;
@@ -53,31 +64,32 @@ function getVinylGrooveTexture(): THREE.CanvasTexture {
   if (sharedGrooveTexture) return sharedGrooveTexture;
 
   const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 1024;
+  canvas.width = 512;
+  canvas.height = 512;
   const ctx = canvas.getContext("2d");
 
   if (ctx) {
     ctx.fillStyle = "#808080";
-    ctx.fillRect(0, 0, 1024, 1024);
+    ctx.fillRect(0, 0, 512, 512);
 
-    const cx = 512;
-    const cy = 512;
+    const cx = 256;
+    const cy = 256;
 
-    for (let r = 180; r < 500; r += 1.2) {
+    for (let r = 90; r < 250; r += 1.1) {
       const alpha = 0.08 + Math.sin(r * 12) * 0.06;
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = Math.random() > 0.5 ? `rgba(255, 255, 255, ${alpha})` : `rgba(0, 0, 0, ${alpha})`;
-      ctx.lineWidth = 0.8 + Math.random() * 0.8;
+      ctx.strokeStyle =
+        r % 2.2 < 1.1 ? `rgba(255, 255, 255, ${alpha})` : `rgba(0, 0, 0, ${alpha})`;
+      ctx.lineWidth = 0.7;
       ctx.stroke();
     }
 
-    for (let r = 150; r < 180; r += 4) {
+    for (let r = 74; r < 90; r += 3) {
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.strokeStyle = "rgba(0, 0, 0, 0.15)";
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.2;
       ctx.stroke();
     }
   }
@@ -156,6 +168,7 @@ export function VinylCanvas3D({
   const targetMaterialRef = useRef<THREE.MeshBasicMaterial | THREE.MeshStandardMaterial | null>(null);
   const activeTextureRef = useRef<THREE.Texture | null>(null);
   const initialCoverUrlRef = useRef(coverUrl);
+  const requestRenderRef = useRef<(() => void) | null>(null);
 
   const stateRef = useRef({
     isPlaying,
@@ -189,6 +202,7 @@ export function VinylCanvas3D({
   useEffect(() => {
     stateRef.current.isPlaying = isPlaying;
     stateRef.current.speed = speed;
+    requestRenderRef.current?.();
   }, [isPlaying, speed]);
 
   useEffect(() => {
@@ -209,7 +223,7 @@ export function VinylCanvas3D({
     let cancelled = false;
     const loader = new THREE.TextureLoader();
     loader.load(
-      coverUrl,
+      textureUrl(coverUrl, deckMode),
       (tex) => {
         if (cancelled) {
           tex.dispose();
@@ -229,12 +243,14 @@ export function VinylCanvas3D({
         if (prevTex && prevTex !== tex) {
           prevTex.dispose();
         }
+        requestRenderRef.current?.();
       },
       undefined,
       () => {
         if (!cancelled) {
           mat.color.setHex(deckMode ? 0x111111 : 0x1a1a1a);
           mat.needsUpdate = true;
+          requestRenderRef.current?.();
         }
       }
     );
@@ -273,15 +289,32 @@ export function VinylCanvas3D({
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
-      powerPreference: "high-performance",
+      powerPreference: deckMode ? "default" : "high-performance",
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const isLowCoreDevice =
+      typeof navigator !== "undefined" &&
+      typeof navigator.hardwareConcurrency === "number" &&
+      navigator.hardwareConcurrency <= 4;
+    const maxDpr = isLowCoreDevice ? 1 : deckMode ? 1.5 : 2;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxDpr));
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
     container.appendChild(renderer.domElement);
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      cancelAnimationFrame(animationFrameId);
+      setHasWebGL(false);
+    };
+    const handleContextRestored = () => {
+      setHasWebGL(true);
+      scheduleRender();
+    };
+    renderer.domElement.addEventListener("webglcontextlost", handleContextLost);
+    renderer.domElement.addEventListener("webglcontextrestored", handleContextRestored);
 
     const textureLoader = new THREE.TextureLoader();
     const disposables: { dispose: () => void }[] = [];
@@ -296,12 +329,10 @@ export function VinylCanvas3D({
 
     if (deckMode) {
       // ═════════════════════════════════════════════════════════════
-      //  DECK MODE: Flat textured circle with the vinyl PNG
-      //  OrthographicCamera looking along -Z at a CircleGeometry
-      //  in the XY plane. The vinyl PNG IS the texture — no
-      //  procedural grooves needed since the PNG has the full design.
+      //  DECK MODE: Flat textured circle with edge-trimmed vinyl WebP
+      //  Minimal frustum margin so the groove edge meets the strobe ring cleanly.
       // ═════════════════════════════════════════════════════════════
-      const frustumHalf = VINYL_RADIUS * 1.02; // 2% padding
+      const frustumHalf = VINYL_RADIUS * 1.004;
       const aspect = width / height;
       camera = new THREE.OrthographicCamera(
         -frustumHalf * aspect,
@@ -311,15 +342,8 @@ export function VinylCanvas3D({
          0.1, 50
       );
       camera.position.set(0, 0, 5);
-      // Default lookAt is along -Z toward origin — exactly what we need
 
-      // Single soft ambient light — MeshBasicMaterial doesn't use lights,
-      // but we add one in case of future material upgrades
-      const ambient = new THREE.AmbientLight(0xffffff, 1.0);
-      scene.add(ambient);
-
-      // Vinyl disc — flat circle textured with the actual vinyl PNG
-      const discGeo = new THREE.CircleGeometry(VINYL_RADIUS, 64);
+      const discGeo = new THREE.CircleGeometry(VINYL_RADIUS, 48);
       const discMat = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
@@ -327,9 +351,9 @@ export function VinylCanvas3D({
       });
       targetMaterialRef.current = discMat;
 
-      // Load initial vinyl PNG as the disc texture
+      // Load initial vinyl asset as the disc texture
       textureLoader.load(
-        initialCoverUrlRef.current,
+        textureUrl(initialCoverUrlRef.current, deckMode),
         (tex) => {
           tex.colorSpace = THREE.SRGBColorSpace;
           tex.generateMipmaps = true;
@@ -340,12 +364,13 @@ export function VinylCanvas3D({
           discMat.map = tex;
           discMat.needsUpdate = true;
           if (prev && prev !== tex) prev.dispose();
+          scheduleRender();
         },
         undefined,
         () => {
-          // Fallback: dark vinyl appearance if texture fails
           discMat.color.setHex(0x111111);
           discMat.needsUpdate = true;
+          scheduleRender();
         }
       );
 
@@ -354,7 +379,7 @@ export function VinylCanvas3D({
       disposables.push(discGeo, discMat);
 
       // Stationary studio overhead light sheen across the spinning grooves
-      const sheenGeo = new THREE.CircleGeometry(VINYL_RADIUS * 0.98, 48);
+      const sheenGeo = new THREE.CircleGeometry(VINYL_RADIUS * 0.99, 48);
       const sheenMat = new THREE.MeshBasicMaterial({
         map: getDeckSheenTexture(),
         transparent: true,
@@ -368,18 +393,16 @@ export function VinylCanvas3D({
       disposables.push(sheenGeo, sheenMat);
 
       spinTarget = disc;
-      spinAxis = "z"; // CircleGeometry is in XY plane, spin around Z
+      spinAxis = "z";
 
     } else {
       // ═════════════════════════════════════════════════════════════
-      //  SHOWCASE MODE: Full procedural 3D vinyl with grooves,
-      //  label, clearcoat — PerspectiveCamera with parallax tilt
+      //  SHOWCASE MODE: Optimized procedural 3D vinyl (2-light budget)
       // ═════════════════════════════════════════════════════════════
       camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
       camera.position.set(0, 0, 4.2);
 
-      // Dramatic Noir rim lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
       scene.add(ambientLight);
 
       const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
@@ -387,15 +410,10 @@ export function VinylCanvas3D({
       scene.add(dirLight);
       dirLightRef = dirLight;
 
-      const cyanRimLight = new THREE.PointLight(0x00d9ff, 3.0, 10);
-      cyanRimLight.position.set(-2.5, -2.5, 1.8);
-      scene.add(cyanRimLight);
+      const rimLight = new THREE.DirectionalLight(0x88b882, 1.4);
+      rimLight.position.set(-2.5, -2.5, 1.8);
+      scene.add(rimLight);
 
-      const warmFillLight = new THREE.PointLight(0xff9944, 1.2, 10);
-      warmFillLight.position.set(2.8, -1.8, 1.5);
-      scene.add(warmFillLight);
-
-      // Vinyl group with isometric tilt
       const vinylGroup = new THREE.Group();
       scene.add(vinylGroup);
       vinylGroup.rotation.x = THREE.MathUtils.degToRad(18);
@@ -403,30 +421,27 @@ export function VinylCanvas3D({
 
       const grooveTexture = getVinylGrooveTexture();
 
-      const vinylMaterial = new THREE.MeshPhysicalMaterial({
+      const vinylMaterial = new THREE.MeshStandardMaterial({
         color: 0x0a0a0c,
-        roughness: 0.22,
-        metalness: 0.1,
+        roughness: 0.2,
+        metalness: 0.18,
         bumpMap: grooveTexture,
         bumpScale: 0.003,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.08,
-        reflectivity: 0.9,
       });
       disposables.push(vinylMaterial);
 
-      const vinylGeo = new THREE.CylinderGeometry(VINYL_RADIUS, VINYL_RADIUS, 0.024, 64);
+      const vinylGeo = new THREE.CylinderGeometry(VINYL_RADIUS, VINYL_RADIUS, 0.024, 48);
       const vinylMesh = new THREE.Mesh(vinylGeo, vinylMaterial);
       vinylGroup.add(vinylMesh);
       disposables.push(vinylGeo);
 
-      const centerHoleGeo = new THREE.CylinderGeometry(0.045, 0.045, 0.026, 32);
+      const centerHoleGeo = new THREE.CylinderGeometry(0.045, 0.045, 0.026, 24);
       const centerHoleMat = new THREE.MeshBasicMaterial({ color: 0x050505 });
       const centerHole = new THREE.Mesh(centerHoleGeo, centerHoleMat);
       vinylGroup.add(centerHole);
       disposables.push(centerHoleGeo, centerHoleMat);
 
-      const labelGeo = new THREE.CylinderGeometry(0.52, 0.52, 0.025, 48);
+      const labelGeo = new THREE.CylinderGeometry(0.52, 0.52, 0.025, 36);
       const labelMat = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         roughness: 0.45,
@@ -438,7 +453,7 @@ export function VinylCanvas3D({
       targetMaterialRef.current = labelMat;
 
       textureLoader.load(
-        initialCoverUrlRef.current,
+        textureUrl(initialCoverUrlRef.current, deckMode),
         (tex) => {
           tex.colorSpace = THREE.SRGBColorSpace;
           tex.generateMipmaps = true;
@@ -447,11 +462,13 @@ export function VinylCanvas3D({
           labelMat.map = tex;
           labelMat.needsUpdate = true;
           if (prev && prev !== tex) prev.dispose();
+          scheduleRender();
         },
         undefined,
         () => {
           labelMat.color.setHex(0x1a1a1a);
           labelMat.needsUpdate = true;
+          scheduleRender();
         }
       );
 
@@ -464,27 +481,42 @@ export function VinylCanvas3D({
     }
 
     // ═══════════════════════════════════════════════════════════════
-    //  INTERSECTION OBSERVER — pause when offscreen
+    //  ON-DEMAND + VISIBILITY-AWARE RENDER LOOP (0% GPU burn when idle)
     // ═══════════════════════════════════════════════════════════════
-    let animationFrameId: number;
+    let animationFrameId = 0;
+    let rafActive = false;
     let lastTime = performance.now();
+
+    function scheduleRender() {
+      if (rafActive || !stateRef.current.isVisible || document.hidden) return;
+      rafActive = true;
+      lastTime = performance.now();
+      animationFrameId = requestAnimationFrame(render);
+    }
+
+    requestRenderRef.current = scheduleRender;
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           stateRef.current.isVisible = entry.isIntersecting;
+          if (entry.isIntersecting) {
+            scheduleRender();
+          }
         });
       },
       { threshold: 0.05 }
     );
     observer.observe(container);
 
-    // ═══════════════════════════════════════════════════════════════
-    //  RENDER LOOP — 60 FPS
-    // ═══════════════════════════════════════════════════════════════
+    const handleVisibilityChange = () => {
+      if (!document.hidden) scheduleRender();
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     const render = (time: number) => {
-      animationFrameId = requestAnimationFrame(render);
-      if (!stateRef.current.isVisible) return;
+      rafActive = false;
+      if (!stateRef.current.isVisible || document.hidden) return;
 
       const delta = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
@@ -492,10 +524,6 @@ export function VinylCanvas3D({
 
       // Rotation physics
       if (state.isDragging) {
-        // Dragging overrides playback. A hand resting on the record holds it
-        // still, so with no movement to report the platter has to wind down —
-        // otherwise it coasts on the last velocity and the music plays on
-        // under a stationary hand.
         if (time - state.lastMoveAt > 40) {
           state.angularVelocity = THREE.MathUtils.lerp(state.angularVelocity, 0, delta * 30);
         }
@@ -504,11 +532,13 @@ export function VinylCanvas3D({
         state.angularVelocity = THREE.MathUtils.lerp(state.angularVelocity, targetVelocity, delta * 4);
       } else {
         state.angularVelocity = THREE.MathUtils.lerp(state.angularVelocity, 0, delta * 3.5);
+        if (Math.abs(state.angularVelocity) < 0.002) {
+          state.angularVelocity = 0;
+        }
       }
 
       state.rotation += state.angularVelocity * delta;
 
-      // Hand the platter's motion to whoever is listening (the audio engine).
       if (platterRef) {
         platterRef.current = {
           angularVelocity: state.angularVelocity,
@@ -516,11 +546,9 @@ export function VinylCanvas3D({
         };
       }
 
-      // Apply spin to the correct axis
       if (spinAxis === "z") {
         spinTarget.rotation.z = state.rotation;
       } else {
-        // In showcase mode, spin individual meshes on Y (group has tilt)
         spinTarget.children.forEach((child) => {
           if (child instanceof THREE.Mesh) {
             child.rotation.y = state.rotation;
@@ -528,10 +556,15 @@ export function VinylCanvas3D({
         });
       }
 
-      // Parallax tilt (showcase mode only)
+      let tiltMoving = false;
       if (!state.reducedMotion && !deckMode) {
-        state.currentTiltX = THREE.MathUtils.lerp(state.currentTiltX, state.targetTiltX, delta * 5);
-        state.currentTiltY = THREE.MathUtils.lerp(state.currentTiltY, state.targetTiltY, delta * 5);
+        const dx = state.targetTiltX - state.currentTiltX;
+        const dy = state.targetTiltY - state.currentTiltY;
+        if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) {
+          tiltMoving = true;
+          state.currentTiltX = THREE.MathUtils.lerp(state.currentTiltX, state.targetTiltX, delta * 5);
+          state.currentTiltY = THREE.MathUtils.lerp(state.currentTiltY, state.targetTiltY, delta * 5);
+        }
 
         spinTarget.rotation.x = THREE.MathUtils.degToRad(18) + state.currentTiltY * 0.35;
         spinTarget.rotation.y = THREE.MathUtils.degToRad(-10) + state.currentTiltX * 0.35;
@@ -543,9 +576,20 @@ export function VinylCanvas3D({
       }
 
       renderer.render(scene, camera);
+
+      const keepSpinning =
+        state.isPlaying ||
+        state.isDragging ||
+        Math.abs(state.angularVelocity) > 0.002 ||
+        tiltMoving;
+
+      if (keepSpinning) {
+        scheduleRender();
+      }
     };
 
-    animationFrameId = requestAnimationFrame(render);
+    // Draw initial crisp frame
+    scheduleRender();
 
     // ═══════════════════════════════════════════════════════════════
     //  RESIZE OBSERVER — catches 0→real dimension layout
@@ -556,7 +600,7 @@ export function VinylCanvas3D({
         const h = entry.contentRect.height;
         if (w > 0 && h > 0) {
           if (camera instanceof THREE.OrthographicCamera) {
-            const frustumHalf = VINYL_RADIUS * 1.02;
+            const frustumHalf = VINYL_RADIUS * 1.004;
             const aspect = w / h;
             camera.left   = -frustumHalf * aspect;
             camera.right  =  frustumHalf * aspect;
@@ -567,13 +611,14 @@ export function VinylCanvas3D({
           }
           camera.updateProjectionMatrix();
           renderer.setSize(w, h);
+          scheduleRender();
         }
       }
     });
     resizeObserver.observe(container);
 
     // ═══════════════════════════════════════════════════════════════
-    //  INTERACTIVE DRAG / SCRATCH PHYSICS
+    //  INTERACTIVE DRAG / SCRATCH PHYSICS (Frame-rate independent)
     // ═══════════════════════════════════════════════════════════════
     const getAngleFromCenter = (clientX: number, clientY: number) => {
       const rect = container.getBoundingClientRect();
@@ -591,6 +636,7 @@ export function VinylCanvas3D({
       stateRef.current.lastMoveAt = performance.now();
       setIsDragging(true);
       callbacksRef.current.onScratchStart?.();
+      scheduleRender();
     };
 
     const handlePointerMove = (e: MouseEvent | TouchEvent) => {
@@ -603,19 +649,23 @@ export function VinylCanvas3D({
         const ny = -(((clientY - rect.top) / rect.height) * 2 - 1);
         stateRef.current.targetTiltX = nx;
         stateRef.current.targetTiltY = ny;
+        scheduleRender();
       }
 
       if (stateRef.current.isDragging) {
+        const now = performance.now();
+        const dt = Math.min(Math.max((now - stateRef.current.lastMoveAt) / 1000, 0.004), 0.05);
         const currentAngle = getAngleFromCenter(clientX, clientY);
         let angleDelta = currentAngle - stateRef.current.lastAngle;
         if (angleDelta > Math.PI) angleDelta -= Math.PI * 2;
         if (angleDelta < -Math.PI) angleDelta += Math.PI * 2;
 
         stateRef.current.rotation += angleDelta;
-        stateRef.current.angularVelocity = angleDelta / 0.016;
+        stateRef.current.angularVelocity = angleDelta / dt;
         stateRef.current.lastAngle = currentAngle;
-        stateRef.current.lastMoveAt = performance.now();
+        stateRef.current.lastMoveAt = now;
         callbacksRef.current.onInteract?.(stateRef.current.angularVelocity);
+        scheduleRender();
       }
     };
 
@@ -624,6 +674,7 @@ export function VinylCanvas3D({
         stateRef.current.isDragging = false;
         setIsDragging(false);
         callbacksRef.current.onScratchEnd?.();
+        scheduleRender();
       }
     };
 
@@ -631,11 +682,10 @@ export function VinylCanvas3D({
       stateRef.current.targetTiltX = 0;
       stateRef.current.targetTiltY = 0;
       handlePointerUp();
+      scheduleRender();
     };
 
-    // ── Keyboard scratching ─────────────────────────────────────────
-    // Arrow keys drive the same angularVelocity the pointer does, so the audio
-    // engine can't tell the difference between a hand and a keyboard.
+    // Arrow key scratching
     const KEY_SCRATCH_VELOCITY = 9;
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -652,6 +702,7 @@ export function VinylCanvas3D({
       stateRef.current.angularVelocity = KEY_SCRATCH_VELOCITY * direction;
       stateRef.current.lastMoveAt = performance.now();
       callbacksRef.current.onInteract?.(stateRef.current.angularVelocity);
+      scheduleRender();
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -670,13 +721,14 @@ export function VinylCanvas3D({
     window.addEventListener("touchmove", handlePointerMove, { passive: true });
     window.addEventListener("touchend", handlePointerUp);
 
-    // ═══════════════════════════════════════════════════════════════
-    //  CLEANUP — prevent WebGL context leaks
-    // ═══════════════════════════════════════════════════════════════
     return () => {
+      requestRenderRef.current = null;
       cancelAnimationFrame(animationFrameId);
       observer.disconnect();
       resizeObserver.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      domElement.removeEventListener("webglcontextlost", handleContextLost);
+      domElement.removeEventListener("webglcontextrestored", handleContextRestored);
 
       container.removeEventListener("keydown", handleKeyDown);
       container.removeEventListener("keyup", handleKeyUp);
@@ -752,6 +804,12 @@ export function VinylCanvas3D({
         willChange: "transform",
       }}
     >
+      {deckMode && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-20 h-[4.5%] w-[4.5%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-zinc-400/70 bg-gradient-to-br from-zinc-200 via-zinc-400 to-zinc-700 shadow-sm"
+        />
+      )}
       {interactive && !deckMode && (
         <div
           className={cn(

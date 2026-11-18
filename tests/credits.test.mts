@@ -66,21 +66,34 @@ describe('discography', () => {
 
     test('guests are counted across the album, most first', () => {
         const guests = albumGuests(albumTrackCredits(lftd, CATALOGUE));
-        assert.deepEqual(guests.slice(0, 2), ['Oso Dope', 'Shadow The Great']);
+        assert.deepEqual(guests.slice(0, 3), ['Kidaf', 'Oso Dope', 'Shadow The Great']);
     });
 
-    test('names not to be featured are left out of the credits everywhere', () => {
+    test('Shine Sinatra is left out of the credits everywhere', () => {
         const songs = albumTrackCredits(lftd, CATALOGUE);
-        for (const name of ['Kidaf', 'Shine Sinatra']) {
-            assert.ok(songs.every((song) => !song.featured.includes(name)), name);
-            assert.ok(!albumDescription(lftd, songs).includes(name), name);
-        }
-        assert.deepEqual(songs[1].featured, ['Laron']);
+        assert.ok(songs.every((song) => !song.featured.includes('Shine Sinatra')));
+        assert.ok(!albumDescription(lftd, songs).includes('Shine Sinatra'));
+    });
+
+    test("Kidaf keeps his credit on his albums, and they say so in their bios", () => {
+        const songs = albumTrackCredits(lftd, CATALOGUE);
+        assert.deepEqual(songs[1].featured, ['Kidaf', 'Laron']);
+        const kb = albumBySlug('knowledge-born')!;
+        for (const album of [lftd, kb]) assert.match(album.about!.join(' '), /featuring Kidaf/);
+    });
+
+    test('Knowledge Born carries its own tracklist, minus Shine Sinatra', () => {
+        const kb = albumBySlug('knowledge-born')!;
+        const songs = albumTrackCredits(kb, []);
+        assert.equal(songs.length, 16);
+        assert.deepEqual(songs[0], { title: '1865', main: 'Loaf Muzik', featured: ['Shadow The Great', 'Kidz in Brooklyn'] });
+        assert.match(albumDescription(kb, songs), /^Knowledge Born \(2017\) by Loaf Muzik, .* Listen on Spotify, Apple Music & Deezer\.$/);
     });
 
     test('an artist gets the songs they are on, or the whole album when it is theirs', () => {
         const oso = artistAlbumCredits('Oso Dope', CATALOGUE);
-        assert.deepEqual(oso.map((credit) => credit.album.name), ['Live From The Dungeon']);
+        assert.deepEqual(oso.map((credit) => credit.album.name), ['Live From The Dungeon', 'Knowledge Born']);
+        assert.equal(oso[1].songs.length, 8);
         assert.deepEqual(oso[0].songs.map((song) => song.title), ['The Dungeon', 'Toasters', 'Slide off kid (Live)']);
         assert.equal(oso[0].total, 4);
 
@@ -96,12 +109,13 @@ describe('discography', () => {
         const names = artistCollaborators('Shadow The Great', artistAlbumCredits('Shadow The Great', CATALOGUE));
         assert.ok(!names.includes('Shadow The Great'));
         assert.ok(names.includes('Ruggz') && names.includes('King illa') && names.includes('Loaf Muzik'));
+        // Credited on the albums, but not listed on an artist's page
         assert.ok(!names.includes('Kidaf') && !names.includes('Shine Sinatra'));
     });
 
     test('the description says who made it and what is on it', () => {
         const text = albumDescription(lftd, albumTrackCredits(lftd, CATALOGUE));
-        assert.match(text, /^Live From The Dungeon \(2015\) by Loaf Muzik, with Oso Dope, Shadow The Great, /);
+        assert.match(text, /^Live From The Dungeon \(2015\) by Loaf Muzik, with Kidaf, Oso Dope, Shadow The Great /);
         assert.match(text, /4 tracks including The Dungeon, Nitty Gritty & Toasters\./);
     });
 });
@@ -121,15 +135,15 @@ describe('crew', () => {
 
 describe('withoutUnfeatured', () => {
     test('takes the names out and leaves the rest of the credit', () => {
-        assert.equal(withoutUnfeatured(CATALOGUE[5]).title, 'The Dungeon (feat. Shadow The Great & Oso Dope)');
-        assert.equal(withoutUnfeatured(CATALOGUE[6]).title, 'Nitty Gritty (feat. Laron)');
-        assert.equal(withoutUnfeatured(CATALOGUE[8]).title, 'Slide off kid (feat. King illa, Shadow The Great & Oso Dope) (Live)');
-        assert.equal(withoutUnfeatured({ title: 'Nah meen (feat. Shine Sinatra & Kidaf)', artist: 'X' }).title, 'Nah meen');
-        assert.equal(withoutUnfeatured({ title: 'Jeeps', artist: 'Shadow The Great feat. Kidaf , Paydro' }).artist, 'Shadow The Great feat. Paydro');
+        assert.equal(withoutUnfeatured(CATALOGUE[5]).title, 'The Dungeon (feat. Shadow The Great, Kidaf & Oso Dope)');
+        assert.equal(withoutUnfeatured(CATALOGUE[8]).title, 'Slide off kid (feat. King illa, Kidaf, Shadow The Great & Oso Dope) (Live)');
+        assert.equal(withoutUnfeatured({ title: 'Smoked out Convos (feat. Shine Sinatra)', artist: 'X' }).title, 'Smoked out Convos');
+        assert.equal(withoutUnfeatured({ title: 'Jeeps', artist: 'Shadow The Great feat. Shine Sinatra , Paydro' }).artist, 'Shadow The Great feat. Paydro');
     });
 
     test('leaves rows without them exactly as they were', () => {
         assert.equal(withoutUnfeatured(CATALOGUE[1]), CATALOGUE[1]);
+        assert.equal(withoutUnfeatured(CATALOGUE[6]), CATALOGUE[6]);
         assert.equal(withoutUnfeatured(CATALOGUE[3]), CATALOGUE[3]);
     });
 });

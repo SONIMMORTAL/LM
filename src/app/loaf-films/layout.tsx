@@ -4,14 +4,14 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
     alternates: { canonical: "/loaf-films" },
-    title: "Loaf Films | Cinematic Music Video Production — Brooklyn, NY",
+    title: "Films — Loaf Films | Cinematic Music Video Production — Brooklyn, NY",
     description: "Loaf Films is a Brooklyn-based music video and commercial production company by Loaf Records. Cinema-grade visuals for independent and label-signed artists. Bronze, Silver, and Gold packages available.",
     openGraph: {
         url: "/loaf-films",
         images: [
             { url: "/og/og-videos.jpg", width: 1200, height: 630, alt: "The Loaf Records screening room" },
         ],
-        title: "Loaf Films | Cinematic Music Video Production",
+        title: "Films — Loaf Films | Cinematic Music Video Production",
         description: "Brooklyn-born cinematic execution. We shoot raw, concept-driven music videos and commercial films that reflect visual soul.",
         type: "website",
         siteName: "Loaf Records",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     twitter: {
         images: ["/og/og-videos.jpg"],
         card: "summary_large_image",
-        title: "Loaf Films | Cinematic Music Video Production",
+        title: "Films — Loaf Films | Cinematic Music Video Production",
         description: "Brooklyn-born cinematic execution. We shoot raw, concept-driven music videos and commercial films.",
     },
 };

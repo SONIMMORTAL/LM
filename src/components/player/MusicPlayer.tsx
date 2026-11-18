@@ -32,7 +32,7 @@ interface Track {
 const getAlbumCover = (albumName: string | null | undefined): string => {
     switch (albumName) {
         case "Lost City": return "/LC1.jpg";
-        case "More Life": return "/MORE LIFE VINYL.jpg";
+        case "More Life": return "/more-life-cover-hd.jpg";
         case "Live From The Dungeon": return "/LFTD.jpg";
         case "The Commission":
         default: return "/THE COMMISSION.png";
@@ -546,8 +546,8 @@ export function MusicPlayer() {
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 style={{
                     boxShadow: isPlaying
-                        ? "0 0 40px rgba(0, 217, 255, 0.3)"
-                        : "0 4px 20px rgba(0, 0, 0, 0.5)"
+                        ? "0 12px 36px rgba(54, 83, 50, 0.28)"
+                        : "0 8px 24px rgba(20, 23, 20, 0.14)"
                 }}
             >
                 <AnimatePresence mode="popLayout">
@@ -826,11 +826,6 @@ function ExpandedPlayer({
             </AnimatePresence>
 
             {/* Custom Scrollbar Styles */}
-            <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-                .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 2px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,255,204,0.3); border-radius: 2px; }
-            `}</style>
         </motion.div>
     );
 }

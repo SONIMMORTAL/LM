@@ -21,6 +21,7 @@ const navItems = [
     { href: "/videos", label: "Videos" },
     { href: "/shop", label: "Shop" },
     { href: "/loaf-films", label: "Films" },
+    { href: "/gallery", label: "Blackbook" },
     { href: "/bio", label: "Bio" },
 ];
 
@@ -30,10 +31,14 @@ const isCurrent = (pathname: string, href: string) =>
 
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mobileMenuPath, setMobileMenuPath] = useState<string | null>(null);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [userMenuPath, setUserMenuPath] = useState<string | null>(null);
     const pathname = usePathname();
+    const isMobileMenuOpen = mobileMenuPath === pathname;
+    const isUserMenuOpen = userMenuPath === pathname;
+    const setIsMobileMenuOpen = (open: boolean) => setMobileMenuPath(open ? pathname : null);
+    const setIsUserMenuOpen = (open: boolean) => setUserMenuPath(open ? pathname : null);
     const { user, profile, signOut, loading } = useAuth();
     const { cartCount, setIsCartOpen } = useCart();
     const tabsRef = useRef<HTMLElement>(null);
@@ -53,12 +58,6 @@ export function Header() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Close mobile menu on route change
-    useEffect(() => {
-        setIsMobileMenuOpen(false);
-        setIsUserMenuOpen(false);
-    }, [pathname]);
-
     // Lock body scroll when mobile menu is open
     useEffect(() => {
         if (isMobileMenuOpen) {
@@ -71,14 +70,37 @@ export function Header() {
         };
     }, [isMobileMenuOpen]);
 
-    // Bring the current page's tab into view in the scrolling strip
+    // Bring the current page's tab into view in the scrolling strip, resting on a whole tab:
+    // as near the middle as the strip allows, but never with half a tab cut off at the left
     useEffect(() => {
         const tabs = tabsRef.current;
         const current = tabs?.querySelector<HTMLElement>('[aria-current="page"]');
-        if (tabs && current) {
-            tabs.scrollLeft = current.offsetLeft - (tabs.clientWidth - current.offsetWidth) / 2;
-        }
+        if (!tabs || !current) return;
+        const pad = parseFloat(getComputedStyle(tabs).paddingLeft) || 0;
+        const centred = current.offsetLeft - (tabs.clientWidth - current.offsetWidth) / 2;
+        const starts = [...tabs.querySelectorAll<HTMLElement>("a")].map((tab) => tab.offsetLeft - pad);
+        const resting = starts.filter((start) => start <= centred).pop() ?? 0;
+        const fits = current.offsetLeft + current.offsetWidth - resting <= tabs.clientWidth;
+        tabs.scrollLeft = fits ? resting : current.offsetLeft - pad;
     }, [pathname]);
+
+    // Fade only the edges that have more tabs past them
+    useEffect(() => {
+        const tabs = tabsRef.current;
+        if (!tabs) return;
+        const mark = () => {
+            const atStart = tabs.scrollLeft <= 2;
+            const atEnd = tabs.scrollLeft + tabs.clientWidth >= tabs.scrollWidth - 2;
+            tabs.dataset.edge = atStart && atEnd ? "none" : atStart ? "start" : atEnd ? "end" : "middle";
+        };
+        mark();
+        tabs.addEventListener("scroll", mark, { passive: true });
+        window.addEventListener("resize", mark);
+        return () => {
+            tabs.removeEventListener("scroll", mark);
+            window.removeEventListener("resize", mark);
+        };
+    }, []);
 
     async function handleSignOut() {
         await signOut();
@@ -96,13 +118,13 @@ export function Header() {
             <header
                 className={cn(
                     "fixed top-0 left-0 right-0 z-40 transition-all duration-200",
-                    // Phones: the same stamped bar as the home page
-                    "max-md:bg-[#07070A]/90 max-md:backdrop-blur-xl max-md:border-b-2 max-md:border-amber-400/25 max-md:safe-top",
+                    "max-md:bg-white/95 max-md:backdrop-blur-xl max-md:border-b-2 max-md:border-[#141714]/20 max-md:safe-top",
                     isScrolled
-                        ? "md:bg-noir-void/95 md:backdrop-blur-md md:border-b md:border-noir-smoke/50"
-                        : "md:bg-noir-void/90"
+                        ? "md:bg-white/96 md:backdrop-blur-md md:border-b-2 md:border-[#141714]/15 md:shadow-sm"
+                        : "md:bg-white/90 md:backdrop-blur-sm md:border-b md:border-[#141714]/10"
                 )}
             >
+                <div aria-hidden className="tiger-camo-strip h-[3px] w-full" />
                 {/* Phones: deck, every section as a stamped tab, bag and the fold-out menu */}
                 <div className="md:hidden flex items-center gap-2 px-3 py-2">
                     <Link href="/" aria-label="Loaf Records — home" className="relative z-50 shrink-0">
@@ -112,7 +134,13 @@ export function Header() {
                     <nav
                         ref={tabsRef}
                         aria-label="Site sections"
-                        className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto hide-scrollbar px-1 [mask-image:linear-gradient(to_right,transparent,black_6px,black_calc(100%-20px),transparent)]"
+                        className={cn(
+                            "relative min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto overscroll-x-contain snap-x snap-proximity scroll-px-1 hide-scrollbar px-1",
+                            "[mask-image:linear-gradient(to_right,black_calc(100%-24px),transparent)]",
+                            "data-[edge=middle]:[mask-image:linear-gradient(to_right,transparent,black_16px,black_calc(100%-24px),transparent)]",
+                            "data-[edge=end]:[mask-image:linear-gradient(to_right,transparent,black_16px)]",
+                            "data-[edge=none]:[mask-image:none]"
+                        )}
                     >
                         {PRIMARY_NAV.map((item) => {
                             const current = isCurrent(pathname, item.href);
@@ -123,10 +151,10 @@ export function Header() {
                                     onClick={() => playCrateFlipSfx()}
                                     aria-current={current ? "page" : undefined}
                                     className={cn(
-                                        "shrink-0 inline-flex items-center rounded-lg border px-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] transition-colors",
+                                        "shrink-0 snap-start inline-flex items-center rounded-lg border px-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] transition-colors",
                                         current
-                                            ? "border-amber-400 bg-amber-400 text-black"
-                                            : "border-white/15 bg-black/70 text-noir-cloud hover:text-amber-400 hover:border-amber-400/50"
+                                            ? "border-[#141714] bg-[#141714] text-white"
+                                            : "border-[#141714]/15 bg-[#F2F1EC] text-[#3E443B] hover:text-[#141714] hover:border-[#365332]/60"
                                     )}
                                 >
                                     {item.label}
@@ -143,13 +171,13 @@ export function Header() {
                                 ? `Open bag, ${cartCount} item${cartCount === 1 ? "" : "s"}`
                                 : "Open bag, empty"
                         }
-                        className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-amber-400/35 bg-amber-400/10 text-amber-300 hover:bg-amber-400 hover:text-black transition-colors"
+                        className="relative shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border border-[#141714]/25 bg-[#F2F1EC] text-[#141714] hover:bg-[#141714] hover:text-white transition-colors"
                     >
                         <ShoppingBag className="w-4 h-4" aria-hidden="true" />
                         {cartCount > 0 && (
                             <span
                                 aria-hidden="true"
-                                className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-accent-cyan text-black font-mono text-[9px] font-black flex items-center justify-center"
+                                className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#365332] text-white font-mono text-[9px] font-black flex items-center justify-center"
                             >
                                 {cartCount}
                             </span>
@@ -167,8 +195,8 @@ export function Header() {
                         className={cn(
                             "relative z-50 shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border transition-colors",
                             isMobileMenuOpen
-                                ? "border-amber-400 bg-amber-400 text-black"
-                                : "border-white/20 bg-white/[0.05] text-white hover:border-amber-400"
+                                ? "border-[#141714] bg-[#141714] text-white"
+                                : "border-[#141714]/25 bg-white text-[#141714] hover:border-[#365332]"
                         )}
                     >
                         {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -195,7 +223,7 @@ export function Header() {
                                         key={item.href}
                                         href={item.href}
                                         className={cn(
-                                            "relative px-5 py-2 text-sm font-medium uppercase tracking-wider transition-colors",
+                                            "relative px-2.5 lg:px-4 py-2 text-xs lg:text-sm font-medium uppercase tracking-wider transition-colors whitespace-nowrap",
                                             isActive
                                                 ? "text-accent-cyan"
                                                 : "text-foreground hover:text-accent-cyan"
@@ -298,7 +326,7 @@ export function Header() {
                 </div>
             </header>
 
-            {/* Mobile menu: the whole screen, lit like the dungeon — big stamped section names */}
+            {/* Mobile menu: crisp white & tiger-stripe camo backdrop with stamped section names */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <motion.div
@@ -306,29 +334,22 @@ export function Header() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.25 }}
-                        className="fixed inset-0 z-30 md:hidden bg-[#060608] text-[#F5F5F7]"
+                        className="fixed inset-0 z-30 md:hidden tiger-camo-surface text-[#141714]"
                     >
-                        {/* Brick dungeon mural, halftone and vignette — the home page's atmosphere */}
                         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
                             <Image
-                                src="/brand/dungeon-crew.png"
+                                src="/brand/dungeon-studio-4k.webp"
                                 alt=""
                                 fill
-                                sizes="100vw"
-                                className="object-cover object-top opacity-[0.14] scale-105"
-                            />
-                            <div
-                                className="absolute inset-0 opacity-25"
-                                style={{
-                                    backgroundImage: "radial-gradient(rgba(245, 158, 11, 0.22) 1px, transparent 1px)",
-                                    backgroundSize: "16px 16px",
-                                }}
+                                sizes="50vw"
+                                quality={70}
+                                className="object-cover object-top opacity-[0.07] scale-105"
                             />
                             <div
                                 className="absolute inset-0"
                                 style={{
                                     background:
-                                        "radial-gradient(ellipse 95% 70% at 50% 15%, rgba(245,158,11,0.12) 0%, rgba(6,6,8,0.9) 55%, #050507 100%)",
+                                        "radial-gradient(ellipse 95% 70% at 50% 15%, rgba(255,255,255,0.65) 0%, rgba(250,249,246,0.92) 60%, #FAF9F6 100%)",
                                 }}
                             />
                         </div>
@@ -339,7 +360,7 @@ export function Header() {
                         >
                             {/* Socials sit up top, where the floating mini player can't cover them */}
                             <div className="flex items-center justify-between gap-2">
-                                <p className="min-w-0 truncate font-mono text-[8px] font-bold uppercase tracking-[0.24em] text-amber-400">
+                                <p className="min-w-0 truncate font-mono text-[9px] font-bold uppercase tracking-[0.24em] text-[#365332]">
                                     Loaf Records · Brooklyn NY
                                 </p>
                                 <div className="flex shrink-0 items-center">
@@ -350,7 +371,7 @@ export function Header() {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             aria-label={link.label}
-                                            className="inline-flex h-10 w-8 items-center justify-center text-white/60 transition-colors hover:text-amber-300"
+                                            className="inline-flex h-10 w-8 items-center justify-center text-[#3E443B] transition-colors hover:text-[#141714]"
                                         >
                                             <link.icon className="h-[18px] w-[18px]" />
                                         </a>
@@ -359,7 +380,7 @@ export function Header() {
                                 </div>
                             </div>
 
-                            <ul className="mt-2 border-t border-white/10">
+                            <ul className="mt-2 border-t-2 border-[#141714]/15">
                                 {PRIMARY_NAV.map((item, index) => {
                                     const current = isCurrent(pathname, item.href);
                                     return (
@@ -368,7 +389,7 @@ export function Header() {
                                             initial={{ opacity: 0, x: 18 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: 0.04 + index * 0.04, type: "spring", stiffness: 320, damping: 28 }}
-                                            className="border-b border-white/10"
+                                            className="border-b border-[#141714]/12"
                                         >
                                             <Link
                                                 href={item.href}
@@ -376,21 +397,21 @@ export function Header() {
                                                 aria-current={current ? "page" : undefined}
                                                 className="group flex items-center gap-3 py-2"
                                             >
-                                                <span className="w-6 font-mono text-[10px] font-bold tracking-widest text-amber-400/60">
+                                                <span className="w-6 font-mono text-[10px] font-bold tracking-widest text-[#365332]">
                                                     {String(index + 1).padStart(2, "0")}
                                                 </span>
                                                 <span
                                                     className={cn(
                                                         "font-display text-[2.25rem] uppercase leading-none tracking-[0.04em] transition-colors",
-                                                        current ? "text-amber-400" : "text-white group-hover:text-amber-300"
+                                                        current ? "text-[#365332]" : "text-[#141714] group-hover:text-[#365332]"
                                                     )}
                                                 >
                                                     {item.label}
                                                 </span>
                                                 {current && (
-                                                    <span className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-red-500/70 bg-[#1a0606]/85 px-2 py-1 font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#FFE1E1]">
-                                                        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-red-500 motion-safe:animate-pulse" />
-                                                        On air
+                                                    <span className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-[#141714]/25 bg-white px-2 py-1 font-mono text-[8px] font-bold uppercase tracking-[0.2em] text-[#141714]">
+                                                        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#365332] motion-safe:animate-pulse" />
+                                                        Active
                                                     </span>
                                                 )}
                                             </Link>
@@ -400,17 +421,17 @@ export function Header() {
                             </ul>
 
                             {/* The rest of the site, small, so nothing is unreachable */}
-                            <p className="mt-3 flex flex-wrap items-center gap-x-1 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-noir-cloud">
+                            <p className="mt-3 flex flex-wrap items-center gap-x-1 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#3E443B]">
                                 {SECONDARY_NAV.map((item, index) => (
                                     <span key={item.href} className="inline-flex items-center">
-                                        {index > 0 && <span aria-hidden className="mx-1.5 text-amber-400/50">·</span>}
+                                        {index > 0 && <span aria-hidden className="mx-1.5 text-[#365332]/60">·</span>}
                                         <Link
                                             href={item.href}
                                             onClick={() => playCrateFlipSfx()}
                                             aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
                                             className={cn(
-                                                "inline-flex min-h-11 items-center transition-colors hover:text-amber-300",
-                                                isCurrent(pathname, item.href) && "text-amber-400"
+                                                "inline-flex min-h-11 items-center transition-colors hover:text-[#365332]",
+                                                isCurrent(pathname, item.href) && "text-[#365332]"
                                             )}
                                         >
                                             {item.label}
@@ -419,17 +440,17 @@ export function Header() {
                                 ))}
                             </p>
 
-                            {/* Account & bag, styled like the home page's Spin / Shop buttons */}
+                            {/* Account & bag */}
                             <div className="mt-6 grid grid-cols-2 gap-2.5">
                                 {user ? (
                                     <button
                                         type="button"
                                         onClick={handleSignOut}
-                                        className="flex items-center gap-2 rounded-xl border-2 border-white/15 bg-black/60 py-3 px-3 text-left text-white active:scale-[0.98] transition-transform"
+                                        className="flex items-center gap-2 rounded-xl border-2 border-[#141714]/20 bg-white py-3 px-3 text-left text-[#141714] active:scale-[0.98] transition-transform"
                                     >
-                                        <LogOut className="w-4 h-4 shrink-0 text-red-400" />
+                                        <LogOut className="w-4 h-4 shrink-0 text-red-600" />
                                         <span className="min-w-0">
-                                            <span className="block font-mono text-[9px] font-bold uppercase tracking-[0.24em] text-noir-cloud truncate">
+                                            <span className="block font-mono text-[9px] font-bold uppercase tracking-[0.24em] text-[#61675E] truncate">
                                                 {profile?.display_name || profile?.username || user.email?.split("@")[0]}
                                             </span>
                                             <span className="block font-display text-[17px] uppercase leading-[1.05] tracking-[0.03em]">
@@ -444,7 +465,7 @@ export function Header() {
                                             setIsMobileMenuOpen(false);
                                             setIsAuthModalOpen(true);
                                         }}
-                                        className="flex items-center gap-2 rounded-xl border-2 border-accent-cyan/50 bg-accent-cyan/10 py-3 px-3 text-left text-accent-cyan active:scale-[0.98] transition-transform"
+                                        className="flex items-center gap-2 rounded-xl border-2 border-[#365332] bg-white py-3 px-3 text-left text-[#365332] active:scale-[0.98] transition-transform"
                                     >
                                         <User className="w-4 h-4 shrink-0" />
                                         <span className="min-w-0">
@@ -463,11 +484,11 @@ export function Header() {
                                         setIsMobileMenuOpen(false);
                                         setIsCartOpen(true);
                                     }}
-                                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 py-3 px-3 text-left text-black shadow-[0_0_25px_rgba(245,158,11,0.35)] active:scale-[0.98] transition-transform"
+                                    className="flex items-center gap-2 rounded-xl border-2 border-[#141714] bg-[#141714] py-3 px-3 text-left text-white shadow-md active:scale-[0.98] transition-transform"
                                 >
                                     <ShoppingBag className="w-4 h-4 shrink-0" />
                                     <span className="min-w-0">
-                                        <span className="block font-mono text-[9px] font-black uppercase tracking-[0.24em] text-black/70">
+                                        <span className="block font-mono text-[9px] font-black uppercase tracking-[0.24em] text-zinc-300">
                                             {cartCount} {cartCount === 1 ? "item" : "items"}
                                         </span>
                                         <span className="block font-display text-[17px] uppercase leading-[1.05] tracking-[0.03em]">

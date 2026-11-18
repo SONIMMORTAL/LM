@@ -76,21 +76,21 @@ export function VinylInspectModal({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.92, opacity: 0, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-4xl max-h-[90vh] bg-gradient-to-b from-noir-charcoal via-noir-slate/90 to-noir-void border border-white/15 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row"
+            className="relative w-full max-w-4xl max-h-[90vh] bg-noir-charcoal border-2 border-foreground rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row text-foreground"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
             <button
               onClick={onClose}
               aria-label="Close 3D vinyl inspector"
-              className="absolute top-4 right-4 z-30 p-2.5 rounded-full bg-black/60 hover:bg-black/90 text-noir-cloud hover:text-white border border-white/10 transition-colors"
+              className="absolute top-4 right-4 z-30 p-2.5 rounded-full bg-noir-void/90 hover:bg-foreground text-foreground hover:text-background border border-noir-smoke transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Left Column: 3D WebGL Vinyl Studio */}
-            <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto flex flex-col items-center justify-center p-6 bg-gradient-to-b from-transparent to-black/40">
-              <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 rounded-full bg-accent-cyan/10 border border-accent-cyan/20 text-accent-cyan text-xs font-mono">
+            <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto flex flex-col items-center justify-center p-6 bg-noir-slate/75">
+              <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 rounded-full bg-accent-cyan/15 border border-accent-cyan/30 text-accent-cyan text-xs font-mono">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>3D WebGL Studio</span>
               </div>
@@ -112,14 +112,15 @@ export function VinylInspectModal({
             </div>
 
             {/* Right Column: Album Details & Tracklist */}
-            <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-white/10 overflow-y-auto max-h-[50vh] md:max-h-[85vh]">
+            <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-noir-smoke overflow-y-auto max-h-[50vh] md:max-h-[85vh]">
               <div>
+                <div aria-hidden className="tiger-camo-strip h-1.5 w-full rounded-full mb-4" />
                 <div className="flex items-center gap-2 text-accent-cyan text-xs tracking-widest uppercase font-mono mb-1">
                   <Disc className="w-3.5 h-3.5" />
                   <span>Deluxe 12&quot; Vinyl Edition</span>
                 </div>
 
-                <h2 className="text-3xl font-display font-bold tracking-tight text-white mb-1">
+                <h2 className="text-3xl font-display font-bold tracking-tight text-foreground mb-1">
                   {album.name}
                 </h2>
                 <p className="text-sm text-noir-cloud mb-6 font-mono">
@@ -128,7 +129,7 @@ export function VinylInspectModal({
 
                 {/* Tracklist */}
                 <div className="space-y-1.5 mb-6">
-                  <div className="text-xs uppercase tracking-widest font-mono text-noir-ash pb-1 border-b border-white/10">
+                  <div className="text-xs uppercase tracking-widest font-mono text-noir-ash pb-1 border-b border-noir-smoke">
                     Track Selection
                   </div>
                   <div className="space-y-1 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
@@ -142,11 +143,11 @@ export function VinylInspectModal({
                             "w-full flex items-center justify-between px-3 py-2 rounded-lg text-left text-sm transition-all group",
                             isCurrent
                               ? "bg-accent-cyan/15 text-accent-cyan border border-accent-cyan/30"
-                              : "hover:bg-white/5 text-noir-cloud hover:text-white"
+                              : "hover:bg-noir-slate text-noir-cloud hover:text-foreground"
                           )}
                         >
                           <div className="flex items-center gap-2.5 truncate">
-                            <span className="text-xs font-mono opacity-50 w-5">
+                            <span className="text-xs font-mono opacity-60 w-5">
                               {(idx + 1).toString().padStart(2, "0")}
                             </span>
                             <span className="truncate font-medium">{track.title}</span>
@@ -155,7 +156,7 @@ export function VinylInspectModal({
                             {isCurrent && isPlaying ? (
                               <Volume2 className="w-4 h-4 text-accent-cyan animate-pulse" />
                             ) : (
-                              <Play className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-white" />
+                              <Play className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-accent-cyan" />
                             )}
                             <span className="text-xs font-mono text-noir-ash">
                               {track.duration || "--:--"}
@@ -169,21 +170,21 @@ export function VinylInspectModal({
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t border-white/10 flex items-center gap-3">
+              <div className="pt-4 border-t border-noir-smoke flex items-center gap-3">
                 {album.price && onOpenPurchaseModal && (
                   <button
                     onClick={() => {
                       onClose();
                       onOpenPurchaseModal(album);
                     }}
-                    className="flex-1 py-3 px-4 rounded-xl bg-accent-cyan hover:bg-accent-cyan/90 text-black font-semibold text-sm transition-all shadow-glow-sm hover:shadow-glow-md text-center"
+                    className="flex-1 py-3 px-4 rounded-xl bg-accent-cyan hover:bg-foreground text-white hover:text-background font-semibold text-sm transition-all shadow-glow-sm hover:shadow-glow-md text-center"
                   >
                     Buy Vinyl & Download (${album.price.toFixed(2)})
                   </button>
                 )}
                 <button
                   onClick={() => onPlayTrack(0)}
-                  className="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                  className="py-3 px-5 rounded-xl bg-foreground hover:bg-accent-cyan text-background hover:text-white font-medium text-sm transition-colors flex items-center justify-center gap-2"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>Play All</span>
