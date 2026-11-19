@@ -123,7 +123,6 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
     const [screenVideo, setScreenVideo] = useState<{ id: string; title?: string } | null>(null);
     // Starts on the poster: walking into the room shouldn't cut off music that's already playing
     const [isWatching, setIsWatching] = useState(false);
-    const [channelSwitchKey, setChannelSwitchKey] = useState(0);
     const [showOsd, setShowOsd] = useState(true);
     const osdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const theaterRef = useRef<HTMLElement>(null);
@@ -156,7 +155,6 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
         claimAudio("video");
         setScreenVideo({ id: youtubeId, title });
         setIsWatching(true);
-        setChannelSwitchKey((k) => k + 1);
         setShowOsd(true);
         if (osdTimerRef.current) clearTimeout(osdTimerRef.current);
         osdTimerRef.current = setTimeout(() => setShowOsd(false), 2400);
@@ -370,21 +368,6 @@ export function VideosPageClient({ tapes, uploads }: VideosPageClientProps) {
                                         </span>
                                     </span>
                                 </button>
-                            )}
-
-                            {/* CRT Scanline & Tube Curvature Glare Overlay */}
-                            <div
-                                aria-hidden
-                                className="pointer-events-none absolute inset-0 z-10 crt-scanlines opacity-40"
-                            />
-
-                            {/* CRT Channel-Switch Static Burst on Tape Load */}
-                            {channelSwitchKey > 0 && (
-                                <div
-                                    key={channelSwitchKey}
-                                    aria-hidden
-                                    className="pointer-events-none absolute inset-0 z-20 crt-static-burst"
-                                />
                             )}
 
                             {/* Retro VCR On-Screen Display (OSD) */}

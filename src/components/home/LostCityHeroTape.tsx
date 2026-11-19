@@ -5,8 +5,8 @@ import Image from "next/image";
 import { claimAudio, getMasterVolume, onAudioClaim } from "@/lib/audio-bus";
 import { cn } from "@/lib/utils";
 
-// The VHS colour grade is baked into these encodes (H.264 Main, streamable), so phones only
-// decode and draw them — no filter runs on the video while it plays. Both carry the song
+// These encodes (H.264 Main, streamable) play clean, with nothing laid over them, so phones
+// only decode and draw them — no filter runs on the video while it plays. Both carry the song
 // (from God Is Good), lined up with the picture from the first frame; it starts muted.
 const TAPE_SRC = "/crunch-time-tape.mp4"; // 640x360, ~360 kbps + 128 kbps AAC
 const TAPE_LITE_SRC = "/crunch-time-tape-lite.mp4"; // 426x240, ~155 kbps + 64 kbps AAC, for slow connections
@@ -36,8 +36,8 @@ type ActivationHints = Navigator & {
 
 /**
  * Crunch Time ("Crunch Time - Oso Dope , Shadow The Great | Prod by Ruggz") running muted behind
- * the mobile hero, like a tape left playing in the deck, with VHS scanlines, grain and a rolling
- * tracking band over it.
+ * the mobile hero, like a tape left playing in the deck. The picture plays clean: no scanlines,
+ * grain or tracking band over it.
  *
  * It's in the server HTML, so it starts as the page appears. The video itself is never
  * hidden — some phones won't autoplay a video they can't see — instead the Dungeon Crew
@@ -310,13 +310,6 @@ export function LostCityHeroTape() {
                 </picture>
             )}
 
-            {/* VHS layers, only once the tape is rolling */}
-            <div aria-hidden className="absolute inset-0 opacity-0 transition-opacity duration-500 group-data-[playing]:opacity-100">
-                <div className="vhs-noise" />
-                <div className="vhs-tracking" />
-                <div className="crt-scanlines absolute inset-0 opacity-70" />
-            </div>
-
             {/* The studio mural, until frames are moving */}
             <div className="absolute inset-0 transition-opacity duration-500 group-data-[playing]:opacity-0">
                 <Image
@@ -329,9 +322,6 @@ export function LostCityHeroTape() {
                     className="object-cover object-center"
                 />
             </div>
-
-            {/* The tape catching as it starts */}
-            <div aria-hidden className="crt-static-burst absolute inset-0 hidden group-data-[playing]:block" />
 
             {/* The song: a tap away, since no browser starts a video with its sound on */}
             {deck !== "loading" && !film && (

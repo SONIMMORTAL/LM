@@ -81,7 +81,6 @@ export function NewReleaseFeature({ video }: { video: ChannelUpload }) {
                                 sizes="(max-width: 768px) 92vw, 600px"
                                 className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
                             />
-                            <div aria-hidden className="absolute inset-0 crt-scanlines opacity-60" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
                             <span
                                 aria-hidden
