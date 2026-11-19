@@ -1,0 +1,135 @@
+[
+  {
+    "position": 1,
+    "title": "Rasclat",
+    "file": "01-rasclat.mp3",
+    "from": 36.1,
+    "length": 157.2
+  },
+  {
+    "position": 2,
+    "title": "Chaka",
+    "file": "02-chaka.mp3",
+    "from": 32.1,
+    "length": 176.5
+  },
+  {
+    "position": 3,
+    "title": "All Good Remix",
+    "file": "03-all-good-remix.mp3",
+    "from": 29.4,
+    "length": 183.4
+  },
+  {
+    "position": 4,
+    "title": "Bape",
+    "file": "04-bape.mp3",
+    "from": 96.6,
+    "length": 168
+  },
+  {
+    "position": 5,
+    "title": "Daniels Flute",
+    "file": "05-daniels-flute.mp3",
+    "from": 37.8,
+    "length": 162.5
+  },
+  {
+    "position": 6,
+    "title": "Crunch Time",
+    "file": "06-crunch-time.mp3",
+    "from": 7.5,
+    "length": 122.1
+  },
+  {
+    "position": 7,
+    "title": "Locked in",
+    "file": "07-locked-in.mp3",
+    "from": 104.3,
+    "length": 166.5
+  },
+  {
+    "position": 8,
+    "title": "inna lude",
+    "file": "08-inna-lude.mp3",
+    "from": 19.3,
+    "length": 75.5
+  },
+  {
+    "position": 9,
+    "title": "Keys",
+    "file": "09-keys.mp3",
+    "from": 19.3,
+    "length": 123.7
+  },
+  {
+    "position": 10,
+    "title": "Hear you",
+    "file": "10-hear-you.mp3",
+    "from": 69.3,
+    "length": 145.8
+  },
+  {
+    "position": 11,
+    "title": "Da Light",
+    "file": "11-da-light.mp3",
+    "from": 102.9,
+    "length": 129.1
+  },
+  {
+    "position": 12,
+    "title": "Fly",
+    "file": "12-fly.mp3",
+    "from": 31.6,
+    "length": 128.5
+  },
+  {
+    "position": 13,
+    "title": "Reign",
+    "file": "13-reign.mp3",
+    "from": 120.1,
+    "length": 240.7
+  },
+  {
+    "position": 14,
+    "title": "Archie Story",
+    "file": "14-archie-story.mp3",
+    "from": 59.3,
+    "length": 156
+  },
+  {
+    "position": 15,
+    "title": "Save the ppl",
+    "file": "15-save-the-ppl.mp3",
+    "from": 60,
+    "length": 162.8
+  },
+  {
+    "position": 16,
+    "title": "Tomorrow feat. AR Immortal",
+    "file": "16-tomorrow.mp3",
+    "from": 48,
+    "length": 142.1
+  },
+  {
+    "position": 17,
+    "title": "Adam",
+    "file": "17-adam.mp3",
+    "from": 37.4,
+    "length": 117
+  },
+  {
+    "position": 18,
+    "title": "watch this",
+    "file": "18-watch-this.mp3",
+    "from": 22.6,
+    "length": 90.5
+  },
+  {
+    "position": 19,
+    "title": "Air",
+    "file": "19-air.mp3",
+    "from": 64.1,
+    "length": 117.5
+  }
+]

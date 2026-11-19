@@ -50,7 +50,8 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({ error: 'Failed to upload audio file. Ensure "music" bucket exists.' }, { status: 500 });
             }
 
-            // Get public URL (standard client is fine for this if bucket is public)
+            // The bucket is private, so this "public" URL doesn't open on its own: it's stored as the
+            // track's address, and lib/tracks-server turns it into a signed /api/stream link
             const { data: { publicUrl } } = supabaseAdmin.storage
                 .from('music')
                 .getPublicUrl(filePath);

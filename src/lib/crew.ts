@@ -185,7 +185,7 @@ export const LOAF_FAQ: Array<{ question: string; answer: string }> = [
     },
     {
         question: "What albums has Shadow The Great released?",
-        answer: "Lost City, The Commission and More Life, plus the mixtapes Darkside, Lord Knows and The Munchies. With Loaf Muzik he made Live From The Dungeon (2015) and Knowledge Born (2017).",
+        answer: "His newest is God Is Good, produced by Ruggz. Before it: Lost City, The Commission and More Life, plus the mixtapes Darkside, Lord Knows and The Munchies. With Loaf Muzik he made Live From The Dungeon (2015) and Knowledge Born (2017).",
     },
     {
         question: "Where can I listen to Loaf Muzik and Shadow The Great?",

@@ -154,6 +154,10 @@ export function albumNode(album: AlbumRelease, songs: TrackCredits[]): Node {
                       priceCurrency: "USD",
                       availability: "https://schema.org/InStock",
                       url,
+                      // Name-your-price: the price is the floor
+                      ...(album.sale
+                          ? { priceSpecification: { "@type": "PriceSpecification", minPrice: album.price, priceCurrency: "USD" } }
+                          : {}),
                   },
               }
             : {}),

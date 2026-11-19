@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { path: '/loaf-films', changeFrequency: 'monthly', priority: 0.7 },
         { path: '/bio', changeFrequency: 'monthly', priority: 0.7 },
         { path: '/gallery', changeFrequency: 'monthly', priority: 0.6 },
+        { path: '/audiobook', changeFrequency: 'monthly', priority: 0.8 },
         ...ALBUM_RELEASES.map((album) => ({
             path: `/music/${album.slug}`,
             changeFrequency: 'monthly' as const,

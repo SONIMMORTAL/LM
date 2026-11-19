@@ -8,7 +8,7 @@
  * starts; everyone else hears the claim and stops.
  */
 
-export type AudioOwner = "player" | "decks" | "video";
+export type AudioOwner = "player" | "decks" | "video" | "preview" | "hero";
 
 const CLAIM_EVENT = "loaf:audio-claim";
 

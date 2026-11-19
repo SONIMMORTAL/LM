@@ -26,6 +26,8 @@ interface RecordShopMobileProps {
     /** Title of the track the page player currently holds */
     currentTrackTitle?: string;
     isPlaying: boolean;
+    /** Shown under the shop sign, before the crate: the new release */
+    lead?: React.ReactNode;
 }
 
 const PAPER = "#EEE5D1";
@@ -56,6 +58,7 @@ export function RecordShopMobile({
     onBuy,
     currentTrackTitle,
     isPlaying,
+    lead,
 }: RecordShopMobileProps) {
     const crateRef = useRef<HTMLDivElement>(null);
     const record = records[selectedIndex];
@@ -124,6 +127,8 @@ export function RecordShopMobile({
                     </span>
                 </div>
             </header>
+
+            {lead}
 
             {/* ── The crate: flip through the sleeves ── */}
             <div

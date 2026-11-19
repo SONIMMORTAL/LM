@@ -7,6 +7,7 @@
  */
 
 import { isFeatured, isListedCollaborator, listNames } from "./crew.ts";
+import type { ReleaseId } from "./releases.ts";
 import { isCredited, trackCredits, type TrackCredits } from "./credits.ts";
 
 export interface AlbumRelease {
@@ -32,9 +33,59 @@ export interface AlbumRelease {
      * its songs as the streaming services credit them
      */
     tracklist?: Array<{ title: string; artist: string }>;
+    /**
+     * An album sold through the site and delivered by hand (lib/releases): its page plays a
+     * 20-second preview of each track, in tracklist order, and sells it name-your-price
+     */
+    sale?: { release: ReleaseId; previews: string[] };
 }
 
+const GOD_IS_GOOD_TRACKS = [
+    "Rasclat (feat. Rah Tha Ruler)",
+    "Chaka",
+    "All Good Remix",
+    "Bape",
+    "Daniels Flute",
+    "Crunch Time (feat. Oso Dope)",
+    "Locked In",
+    "Inna Lude",
+    "Keys",
+    "Hear You",
+    "Da Light",
+    "Fly",
+    "Reign",
+    "Archie Story",
+    "Save The PPL",
+    "Tomorrow (feat. AR Immortal)",
+    "Adam",
+    "Watch This",
+    "Air",
+];
+
+/** The preview files in public/previews/god-is-good: "06-crunch-time.mp3" */
+const previewFile = (title: string, index: number) =>
+    `/previews/god-is-good/${String(index + 1).padStart(2, "0")}-${title
+        .replace(/\s*\(feat\..*$/, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")}.mp3`;
+
 export const ALBUM_RELEASES: AlbumRelease[] = [
+    {
+        slug: "god-is-good",
+        name: "God Is Good",
+        artist: "Shadow The Great",
+        cover: "/god-is-good-cover.jpg",
+        gradient: "from-sky-500/20 via-amber-200/10 to-blue-900/20",
+        accentColor: "sky",
+        price: 10,
+        producer: "Ruggz",
+        about: [
+            "Shadow The Great's new album, produced by Ruggz: 19 tracks from Brooklyn, with Rah Tha Ruler, Oso Dope and AR Immortal. Hear 20 seconds of every song, then name your price for the whole thing, from $10.",
+        ],
+        tracklist: GOD_IS_GOOD_TRACKS.map((title) => ({ title, artist: "Shadow The Great" })),
+        sale: { release: "god-is-good", previews: GOD_IS_GOOD_TRACKS.map(previewFile) },
+    },
     {
         slug: "lost-city",
         name: "Lost City",
@@ -173,9 +224,11 @@ export function albumDescription(album: AlbumRelease, credits: TrackCredits[]): 
     const producer = album.producer ? ` Produced by ${album.producer}.` : "";
     const songs = credits.slice(0, 3).map((song) => song.title);
     const songList = songs.length ? ` ${credits.length} tracks including ${listNames(songs)}.` : "";
-    const where = album.tracklist
-        ? ` Listen on ${listNames((album.listen ?? []).map((link) => link.service))}.`
-        : " Stream it free and buy the download on Loaf Records.";
+    const where = album.sale
+        ? " Hear 20-second previews and name your price, from $10, on Loaf Records."
+        : album.tracklist
+          ? ` Listen on ${listNames((album.listen ?? []).map((link) => link.service))}.`
+          : " Stream it free and buy the download on Loaf Records.";
     return `${album.name}${year} by ${album.artist}${withGuests}.${producer}${songList}${where}`;
 }
 

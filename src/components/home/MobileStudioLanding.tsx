@@ -25,9 +25,9 @@ import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
 import { playCrateFlipSfx, playVhsClunkSfx } from "@/lib/ui-sfx";
 import { claimAudio } from "@/lib/audio-bus";
-import { requestWelcomeTrack } from "@/lib/welcome-track";
 import type { Track } from "@/lib/tracks-server";
 import { LoafDeck } from "@/components/brand/LoafDeck";
+import { NewAlbumBanner } from "@/components/music/NewAlbumBanner";
 import { LostCityHeroTape } from "@/components/home/LostCityHeroTape";
 import { NewReleaseFeature } from "@/components/home/NewReleaseFeature";
 import { PRIMARY_NAV } from "@/components/layout/navItems";
@@ -409,11 +409,7 @@ export function MobileStudioLanding({
         masterManualVal.set(1);
     }, [prefersReducedMotion, masterManualMode, masterManualVal]);
 
-    // Welcome to the realm — Lost City greets the visitor when the mobile site boots.
-    // (Once per page load; it stands down as soon as they pick any other media.)
-    useEffect(() => {
-        requestWelcomeTrack("Lost City");
-    }, []);
+    // No welcome track here: Crunch Time in the hero tape is the song that greets the visitor
 
     const toggleMasterExplode = useCallback(() => {
         playCrateFlipSfx();
@@ -522,6 +518,9 @@ export function MobileStudioLanding({
                     </div>
                 </div>
             </section>
+
+            {/* THE NEW ALBUM — previews and name your price */}
+            <NewAlbumBanner className="mx-auto max-w-2xl px-3 py-4 sm:px-4" />
 
             {/* NEW RELEASE — whatever went up on the channel last */}
             {newRelease && <NewReleaseFeature video={newRelease} />}

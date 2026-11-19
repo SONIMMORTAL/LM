@@ -10,10 +10,9 @@ import { createHmac, timingSafeEqual } from 'crypto';
  * /api/stream route verifies it and mints a short-lived Supabase signed URL at
  * playback time, so nothing durable ever reaches the client.
  *
- * NOTE: this only actually gates the audio once the storage buckets are set to
- * private in the Supabase dashboard. While they stay public, the old
- * `/storage/v1/object/public/...` paths still resolve for anyone who knows a
- * bucket and filename.
+ * The album buckets (music, music2, Music3, "more life") are private, so this
+ * route is the only way to the audio: the old `/storage/v1/object/public/...`
+ * paths no longer resolve.
  */
 const SECRET_KEY =
     process.env.SUPABASE_SERVICE_ROLE_KEY ||

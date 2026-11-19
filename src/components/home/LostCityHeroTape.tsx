@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { claimAudio, getMasterVolume, onAudioClaim } from "@/lib/audio-bus";
 import { cn } from "@/lib/utils";
 
 // The VHS colour grade is baked into these encodes (H.264 Main, streamable), so phones only
-// decode and draw them — no filter runs on the video while it plays.
-const TAPE_SRC = "/crunch-time-tape.mp4"; // 640x360, ~360 kbps
-const TAPE_LITE_SRC = "/crunch-time-tape-lite.mp4"; // 426x240, ~155 kbps, for slow connections
+// decode and draw them — no filter runs on the video while it plays. Both carry the song
+// (from God Is Good), lined up with the picture from the first frame; it starts muted.
+const TAPE_SRC = "/crunch-time-tape.mp4"; // 640x360, ~360 kbps + 128 kbps AAC
+const TAPE_LITE_SRC = "/crunch-time-tape-lite.mp4"; // 426x240, ~155 kbps + 64 kbps AAC, for slow connections
 // The whole video again as an animated image (AV1, 384x216, 12 fps, 1.3 MB). Phones that refuse
 // to autoplay video still play moving images, so this is what plays when the video can't.
 const TAPE_FILM_SRC = "/crunch-time-tape-loop.avif";
@@ -24,6 +26,14 @@ type Deck = "loading" | "playing" | "paused";
 /** Loaded but still not moving after this long means the phone is quietly refusing to play it */
 const SILENT_REFUSAL_MS = 2500;
 
+/** Set when the viewer mutes the song with the button: their next tap won't bring it back this visit */
+const MUTED_KEY = "heroSoundOff";
+
+type ActivationHints = Navigator & {
+    userActivation?: { isActive: boolean; hasBeenActive: boolean };
+    getAutoplayPolicy?: (type: "mediaelement") => "allowed" | "allowed-muted" | "disallowed";
+};
+
 /**
  * Crunch Time ("Crunch Time - Oso Dope , Shadow The Great | Prod by Ruggz") running muted behind
  * the mobile hero, like a tape left playing in the deck, with VHS scanlines, grain and a rolling
@@ -37,14 +47,35 @@ const SILENT_REFUSAL_MS = 2500;
  * Instagram's. There the tape switches to the same footage as a moving image, which no phone
  * holds back: iPhones play the lite MP4 as an image, everything else the animated AVIF.
  * Either way nobody has to tap. The readout doubles as the pause button.
+ *
+ * The song comes on with the tape wherever the browser lets it (someone who tapped their way
+ * here from another page). Everywhere else no browser allows sound before the visitor has
+ * touched the page, so the tape rolls muted and the song starts on their first tap anywhere,
+ * skipping the intro included. The Sound button turns it off and on; turning it off sticks for
+ * the visit. Sound takes the room from anything else playing (and gives it back, muted, when
+ * something else starts).
  */
 export function LostCityHeroTape() {
     const wrapRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const pausedByViewer = useRef(false);
+    /** Stops waiting for the first tap to start the song */
+    const stopTapListener = useRef<() => void>(() => {});
     const [deck, setDeck] = useState<Deck>("loading");
     /** Playing the moving-image version because this phone won't autoplay video */
     const [film, setFilm] = useState(false);
+    /** The song's on: the viewer tapped Sound */
+    const [sound, setSound] = useState(false);
+
+    // Something else started playing: the tape goes quiet but keeps rolling
+    useEffect(
+        () =>
+            onAudioClaim("hero", () => {
+                if (videoRef.current) videoRef.current.muted = true;
+                setSound(false);
+            }),
+        []
+    );
 
     useEffect(() => {
         const wrap = wrapRef.current;
@@ -123,6 +154,55 @@ export function LostCityHeroTape() {
             }
         }, SILENT_REFUSAL_MS);
 
+        // The song: on now if the browser allows it, otherwise on the visitor's first tap
+        const hints = navigator as ActivationHints;
+        const soundOn = () => {
+            if (refused) return Promise.resolve(false);
+            claimAudio("hero");
+            video.volume = getMasterVolume();
+            video.muted = false;
+            return video
+                .play()
+                .then(() => {
+                    setSound(true);
+                    return true;
+                })
+                .catch(() => {
+                    // Not allowed yet: back to a muted tape, and wait for a tap
+                    video.muted = true;
+                    if (onScreen && !pausedByViewer.current) void play();
+                    return false;
+                });
+        };
+        const firstTap = (event: Event) => {
+            // A scroll ends in a touch too, but it isn't a tap: only a real tap lets sound start
+            if (hints.userActivation && !hints.userActivation.isActive) return;
+            if ((event.target as Element | null)?.closest?.("[data-hero-sound]")) return;
+            void soundOn().then((on) => on && stopListening());
+        };
+        const taps = ["pointerup", "touchend", "click", "keydown"] as const;
+        const stopListening = () => taps.forEach((type) => document.removeEventListener(type, firstTap, true));
+        stopTapListener.current = stopListening;
+
+        let mutedThisVisit = false;
+        try {
+            mutedThisVisit = sessionStorage.getItem(MUTED_KEY) === "1";
+        } catch {
+            // Private browsing: no memory of it, so the song comes on as for anyone
+        }
+        if (!mutedThisVisit) {
+            const allowedNow =
+                hints.getAutoplayPolicy?.("mediaelement") === "allowed" || hints.userActivation?.hasBeenActive === true;
+            const startSound = () => void soundOn().then((on) => !on && taps.forEach((type) => document.addEventListener(type, firstTap, true)));
+            if (allowedNow) {
+                // Once the tape is rolling, so the song and the picture start together
+                if (!video.paused) startSound();
+                else video.addEventListener("playing", startSound, { once: true });
+            } else {
+                taps.forEach((type) => document.addEventListener(type, firstTap, true));
+            }
+        }
+
         return () => {
             cancelAnimationFrame(first);
             window.clearTimeout(silent);
@@ -130,6 +210,7 @@ export function LostCityHeroTape() {
             video.removeEventListener("pause", onPause);
             document.removeEventListener("visibilitychange", resume);
             observer.disconnect();
+            stopListening();
         };
     }, []);
 
@@ -163,6 +244,35 @@ export function LostCityHeroTape() {
         } else {
             pausedByViewer.current = true;
             video.pause();
+        }
+    };
+
+    const toggleSound = () => {
+        const video = videoRef.current;
+        if (!video) return;
+        stopTapListener.current();
+        if (sound) {
+            video.muted = true;
+            setSound(false);
+            try {
+                sessionStorage.setItem(MUTED_KEY, "1");
+            } catch {
+                // Private browsing: muted for now, not remembered
+            }
+            return;
+        }
+        try {
+            sessionStorage.removeItem(MUTED_KEY);
+        } catch {
+            // Private browsing
+        }
+        claimAudio("hero");
+        video.volume = getMasterVolume();
+        video.muted = false;
+        setSound(true);
+        if (video.paused) {
+            pausedByViewer.current = false;
+            void video.play().catch(() => {});
         }
     };
 
@@ -222,6 +332,21 @@ export function LostCityHeroTape() {
 
             {/* The tape catching as it starts */}
             <div aria-hidden className="crt-static-burst absolute inset-0 hidden group-data-[playing]:block" />
+
+            {/* The song: a tap away, since no browser starts a video with its sound on */}
+            {deck !== "loading" && !film && (
+                <button
+                    type="button"
+                    data-hero-sound
+                    onClick={toggleSound}
+                    aria-pressed={sound}
+                    aria-label={sound ? "Mute Crunch Time" : "Play Crunch Time with sound"}
+                    className="vhs-osd pointer-events-auto absolute left-1.5 top-1.5 z-[1] flex min-h-11 items-center gap-1.5 px-2 py-2 font-mono text-[13px] font-bold uppercase tracking-[0.14em] text-white"
+                >
+                    <span aria-hidden>{sound ? "♪ Sound on" : "♪ Tap for sound"}</span>
+                    {!sound && <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#ff3b3b] motion-safe:animate-pulse" />}
+                </button>
+            )}
 
             {/* VCR readout, and the play/pause button */}
             {deck !== "loading" && (

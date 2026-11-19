@@ -6,6 +6,7 @@ import { DJSceneHero } from "@/components/music/DJSceneHero";
 import { VinylInspectModal } from "@/components/three/VinylInspectModal";
 import { RecordCrate } from "@/components/music/RecordCrate";
 import { RecordShopMobile } from "@/components/music/RecordShopMobile";
+import { NewAlbumBanner } from "@/components/music/NewAlbumBanner";
 import type { Track } from "@/lib/tracks-server";
 
 // Album name → edge-trimmed lightweight deluxe-vinyl WebP render (spins on the DJ decks)
@@ -169,8 +170,14 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
                 />
             </section>
 
-            {/* PHONES: the record shop — the crate, the record you picked, its tracklist. Nothing else. */}
+            {/* Big screens: the new album, between the booth and the crate */}
+            <div className="hidden md:block px-4 sm:px-6">
+                <NewAlbumBanner className="mx-auto max-w-7xl" />
+            </div>
+
+            {/* PHONES: the record shop — the new album, the crate, the record you picked, its tracklist */}
             <RecordShopMobile
+                lead={<NewAlbumBanner />}
                 records={albums}
                 vinyls={ALBUM_VINYLS}
                 selectedIndex={crateIndex}

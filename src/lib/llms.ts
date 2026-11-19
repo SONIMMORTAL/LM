@@ -22,6 +22,8 @@ interface LlmsInput {
 
 const PAGES: Array<{ name: string; path: string; about: string }> = [
     { name: "Music", path: "/music", about: "every album, streaming free, with digital downloads to buy" },
+    { name: "God Is Good", path: "/music/god-is-good", about: "Shadow The Great's new album: 20-second previews of all 19 tracks, name your price from $10" },
+    { name: "God Is Good Audio Book", path: "/audiobook", about: "the 12-chapter audio book, $25, a Loaf Records publication" },
     { name: "Videos", path: "/videos", about: "music videos, live performances and full mixtapes, newest upload first" },
     { name: "Shop", path: "/shop", about: "official Loaf Wear & Loaf Records merch: apparel, vinyl and accessories, shipped worldwide" },
     { name: "Films", path: "/loaf-films", about: "Loaf Films — Brooklyn music video & commercial production, bookings and packages" },

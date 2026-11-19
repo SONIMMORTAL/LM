@@ -1,6 +1,7 @@
 import { getTracks } from "@/lib/tracks-server";
 import { AlbumDetailsClient } from "@/components/music/AlbumDetailsClient";
 import { StreamingAlbum } from "@/components/music/StreamingAlbum";
+import { PreviewAlbum } from "@/components/music/PreviewAlbum";
 import { albumBySlug, albumDescription, albumTrackCredits } from "@/lib/discography";
 import { LOAF_MUZIK, crewMemberPath, findCrewMember } from "@/lib/crew";
 import { albumNode, breadcrumbNode, jsonLd, loafMuzikNode, personNode } from "@/lib/structured-data";
@@ -82,8 +83,11 @@ export default async function AlbumReleasePage({ params }: PageProps) {
         <div className="min-h-screen pt-24 pb-16">
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
 
-            {/* An album that streams elsewhere gets its credits and where to listen, not the player */}
-            {album.tracklist ? (
+            {/* An album sold here gets its previews and checkout; one that streams elsewhere,
+                its credits and where to listen; the rest, the player */}
+            {album.sale ? (
+                <PreviewAlbum album={{ ...album, sale: album.sale }} artistHref={artistPath(album.artist)} songs={songs} />
+            ) : album.tracklist ? (
                 <StreamingAlbum album={album} artistHref={artistPath(album.artist)} songs={songs} />
             ) : (
                 <AlbumDetailsClient

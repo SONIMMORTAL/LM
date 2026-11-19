@@ -92,10 +92,13 @@ describe('discography', () => {
 
     test('an artist gets the songs they are on, or the whole album when it is theirs', () => {
         const oso = artistAlbumCredits('Oso Dope', CATALOGUE);
-        assert.deepEqual(oso.map((credit) => credit.album.name), ['Live From The Dungeon', 'Knowledge Born']);
-        assert.equal(oso[1].songs.length, 8);
-        assert.deepEqual(oso[0].songs.map((song) => song.title), ['The Dungeon', 'Toasters', 'Slide off kid (Live)']);
-        assert.equal(oso[0].total, 4);
+        assert.deepEqual(oso.map((credit) => credit.album.name), ['God Is Good', 'Live From The Dungeon', 'Knowledge Born']);
+        // On Shadow's new album for one song, Crunch Time
+        assert.deepEqual(oso[0].songs.map((song) => song.title), ['Crunch Time']);
+        assert.equal(oso[0].total, 19);
+        assert.deepEqual(oso[1].songs.map((song) => song.title), ['The Dungeon', 'Toasters', 'Slide off kid (Live)']);
+        assert.equal(oso[1].total, 4);
+        assert.equal(oso[2].songs.length, 8);
 
         const shadow = artistAlbumCredits('Shadow The Great', CATALOGUE);
         const lostCity = shadow.find((credit) => credit.album.name === 'Lost City')!;
