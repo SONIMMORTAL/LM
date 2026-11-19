@@ -9,6 +9,7 @@ import {
     normalizeCommissionTracks,
 } from '@/lib/commission-tracklist';
 import { withoutUnfeatured } from '@/lib/credits';
+import { albumBySlug } from '@/lib/discography';
 
 export interface Track {
     id: string;
@@ -241,10 +242,33 @@ const getCachedTracks = unstable_cache(loadTracks, ['tracks-catalogue-v2'], {
  * Video tapes are left out — none of their rows has audio, so in the player's
  * list they were silent entries that next and shuffle could land on. Names the
  * site doesn't feature are taken out of the credits (see lib/credits).
+ *
+ * God Is Good, sold through the site rather than streamed, joins as its 20-second
+ * previews, so the crate, the record shop, the home page and the mini player show it
+ * like every other album. They go on the end, so saved player positions still point
+ * at the same songs.
  */
 export async function getTracks(): Promise<Track[]> {
     const tracks = await getCachedTracks();
-    return tracks.filter((track) => !isVideoTapeAlbum(track.album)).map(withoutUnfeatured);
+    return [...tracks.filter((track) => !isVideoTapeAlbum(track.album)), ...previewTracks()].map(withoutUnfeatured);
+}
+
+/** The 20-second previews of the albums sold through the site, as catalogue rows */
+function previewTracks(): Track[] {
+    const album = albumBySlug('god-is-good');
+    const sale = album?.sale;
+    if (!album || !sale || !album.tracklist) return [];
+    return album.tracklist.map((track, index) => ({
+        id: `${album.slug}-preview-${index + 1}`,
+        title: track.title,
+        artist: track.artist,
+        duration: '0:20',
+        audio_url: sale.previews[index],
+        soundcloud_url: null,
+        album: album.name,
+        price: null,
+        plays: 0,
+    }));
 }
 
 /** Each video tape's track titles, in running order, keyed by album name. */

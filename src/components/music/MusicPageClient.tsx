@@ -7,10 +7,15 @@ import { VinylInspectModal } from "@/components/three/VinylInspectModal";
 import { RecordCrate } from "@/components/music/RecordCrate";
 import { RecordShopMobile } from "@/components/music/RecordShopMobile";
 import { NewAlbumBanner } from "@/components/music/NewAlbumBanner";
+import { ReleasePurchaseModal } from "@/components/music/ReleasePurchaseModal";
+import { RELEASES, type ReleaseProduct } from "@/lib/releases";
 import type { Track } from "@/lib/tracks-server";
+
+const GOD_IS_GOOD = RELEASES["god-is-good"];
 
 // Album name → edge-trimmed lightweight deluxe-vinyl WebP render (spins on the DJ decks)
 const ALBUM_VINYLS: Record<string, string> = {
+    "God Is Good": "/vinyl-opt/god-is-good-deluxe-vinyl-hd.webp",
     "The Commission": "/vinyl-opt/THE-COMMISSION-7-deluxe-vinyl-hd.webp",
     "Lost City": "/vinyl-opt/LC1-2-deluxe-vinyl-hd.webp",
     "More Life": "/vinyl-opt/MORE-LIFE-VINYL-5-deluxe-vinyl-hd.webp",
@@ -26,6 +31,8 @@ interface Album {
     gradient: string;
     accentColor: string;
     price?: number;
+    /** Sold name-your-price through the site; its tracks are 20-second previews */
+    nameYourPrice?: boolean;
 }
 
 interface MusicPageClientProps {
@@ -87,6 +94,17 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
     // Darkside, Lord Knows and Munchies are video-only and live on the videos
     // page (lib/video-tapes.ts) until their audio is uploaded.
     const albums: Album[] = [
+        // The new album leads the crate: its previews play, and it sells name-your-price
+        {
+            name: GOD_IS_GOOD.name,
+            artist: GOD_IS_GOOD.by,
+            cover: GOD_IS_GOOD.cover,
+            gradient: "from-sky-500/20 via-amber-200/10 to-blue-900/20",
+            accentColor: "sky",
+            tracks: tracks.filter((t) => t.album === GOD_IS_GOOD.name),
+            price: GOD_IS_GOOD.minPrice,
+            nameYourPrice: true,
+        },
         {
             name: "The Commission",
             artist: "Shadow The Great",
@@ -125,6 +143,17 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
         }
     ];
 
+
+    // God Is Good checks out name-your-price; every other album, the fixed-price checkout
+    const [buyingRelease, setBuyingRelease] = useState<ReleaseProduct | null>(null);
+    const buy = (album: { name: string; price?: number; cover: string; artist: string }) => {
+        if (album.name === GOD_IS_GOOD.name) {
+            setBuyingRelease(GOD_IS_GOOD);
+            return;
+        }
+        setSelectedPurchaseAlbum({ name: album.name, price: album.price || 9.99, cover: album.cover, artist: album.artist });
+        setPurchaseModalOpen(true);
+    };
 
     const getGlobalTrackIndex = (track: Track) => {
         return tracks.findIndex(t => t.id === track.id);
@@ -188,15 +217,7 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
                     const globalIndex = getGlobalTrackIndex(track);
                     if (globalIndex >= 0) playTrack(globalIndex);
                 }}
-                onBuy={(record) => {
-                    setSelectedPurchaseAlbum({
-                        name: record.name,
-                        price: record.price || 9.99,
-                        cover: record.cover,
-                        artist: record.artist,
-                    });
-                    setPurchaseModalOpen(true);
-                }}
+                onBuy={buy}
             />
 
             <section className="hidden md:block relative px-4 sm:px-6 pb-40 pt-8">
@@ -233,15 +254,7 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
                                 return next;
                             });
                         }}
-                        onBuy={(album) => {
-                            setSelectedPurchaseAlbum({
-                                name: album.name,
-                                price: album.price || 9.99,
-                                cover: album.cover,
-                                artist: album.artist,
-                            });
-                            setPurchaseModalOpen(true);
-                        }}
+                        onBuy={buy}
                         onInspect={(album) => {
                             const found = albums.find((a) => a.name === album.name) || albums[0];
                             setSelectedInspectAlbum(found);
@@ -285,16 +298,10 @@ export function MusicPageClient({ initialTracks }: MusicPageClientProps) {
                         }
                     }
                 }}
-                onOpenPurchaseModal={(albumToBuy) => {
-                    setSelectedPurchaseAlbum({
-                        name: albumToBuy.name,
-                        price: albumToBuy.price || 9.99,
-                        cover: albumToBuy.cover,
-                        artist: albumToBuy.artist,
-                    });
-                    setPurchaseModalOpen(true);
-                }}
+                onOpenPurchaseModal={buy}
             />
+
+            <ReleasePurchaseModal release={buyingRelease} onClose={() => setBuyingRelease(null)} />
         </div>
     );
 }

@@ -31,6 +31,7 @@ interface Track {
 // Album cover mapping — kept in sync with music page
 const getAlbumCover = (albumName: string | null | undefined): string => {
     switch (albumName) {
+        case "God Is Good": return "/god-is-good-cover.jpg";
         case "Lost City": return "/LC1.jpg";
         case "More Life": return "/more-life-cover-hd.jpg";
         case "Live From The Dungeon": return "/LFTD.jpg";

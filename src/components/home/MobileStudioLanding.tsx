@@ -63,6 +63,28 @@ const CD_HUB =
     "radial-gradient(circle, #060608 0 30%, rgba(225,230,238,0.85) 31% 46%, rgba(255,255,255,0.35) 47% 70%, rgba(200,210,225,0.6) 71% 100%)";
 
 const SHOWCASE_ALBUMS: ShowcaseAlbum[] = [
+    // The new album, featured first: its tracks here are the 20-second previews
+    {
+        id: "god-is-good",
+        name: "God Is Good",
+        subtitle: "New Album · 19 Tracks · Name Your Price",
+        artist: "Shadow The Great",
+        year: "2026",
+        catalogNo: "LR-008-GOOD",
+        stampCode: "BKLYN // GOD-IS-GOOD-08",
+        cover: "/god-is-good-cover.jpg",
+        accent: "sky",
+        accentHex: "#3B82F6",
+        glowRgba: "rgba(59, 130, 246, 0.34)",
+        price: 10,
+        producers: "Ruggz",
+        featuredCrew: ["Ruggz", "Rah Tha Ruler", "Oso Dope", "AR Immortal"],
+        specs: {
+            mastering: "Produced by Ruggz",
+            console: "The Dungeon · Brooklyn",
+            format: "WAV, sent by email",
+        },
+    },
     {
         id: "the-commission",
         name: "The Commission",

@@ -13,6 +13,8 @@ export interface ShopRecord {
     cover: string;
     tracks: Track[];
     price?: number;
+    /** Name-your-price, `price` being the least: the sticker reads "$10+" */
+    nameYourPrice?: boolean;
 }
 
 interface RecordShopMobileProps {
@@ -39,7 +41,8 @@ const STICKER = "#F26B1D";
 const GRAIN =
     "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
-const price = (record: ShopRecord) => `$${(record.price ?? 9.99).toFixed(2)}`;
+const price = (record: ShopRecord) =>
+    record.nameYourPrice ? `$${record.price ?? 10}+` : `$${(record.price ?? 9.99).toFixed(2)}`;
 
 /**
  * The music page on a phone, as a record shop: the shop sign, a crate of sleeves to flip

@@ -17,6 +17,8 @@ export interface CrateAlbum {
     youtubeId?: string;
     /** 0 means the record is streaming-free; anything else is for sale. */
     price?: number;
+    /** Sold name-your-price, `price` being the least; its tracks are 20-second previews */
+    nameYourPrice?: boolean;
 }
 
 interface RecordCrateProps {
@@ -317,7 +319,11 @@ export function RecordCrate({
                             ) : (
                                 <>
                                     <Disc3 className="h-3.5 w-3.5" />
-                                    <span>Digital album · ${album.price?.toFixed(2)}</span>
+                                    <span>
+                                        {album.nameYourPrice
+                                            ? `New album · 20-sec previews · name your price from $${album.price?.toFixed(2)}`
+                                            : `Digital album · $${album.price?.toFixed(2)}`}
+                                    </span>
                                 </>
                             )}
                         </div>
@@ -342,7 +348,7 @@ export function RecordCrate({
                                     className="flex items-center gap-2 rounded-full bg-[#141714] px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-all hover:bg-[#365332]"
                                 >
                                     <Play className="h-4 w-4" />
-                                    Play album
+                                    {album.nameYourPrice ? "Play previews" : "Play album"}
                                 </button>
                             ) : (
                                 <Link
@@ -364,7 +370,7 @@ export function RecordCrate({
                                     className="flex items-center gap-2 rounded-full border-2 border-[#141714]/20 bg-[#FAF9F6] px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-[#141714] transition-colors hover:border-[#365332] hover:text-[#365332]"
                                 >
                                     <ShoppingBag className="h-4 w-4" />
-                                    Buy ${album.price?.toFixed(2)}
+                                    {album.nameYourPrice ? "Buy · name your price" : `Buy $${album.price?.toFixed(2)}`}
                                 </button>
                             )}
                         </div>
