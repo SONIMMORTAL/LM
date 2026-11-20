@@ -18,6 +18,7 @@ import {
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import type { PrintfulProductDetails } from "@/lib/printful";
+import { colorFront, productGallery } from "@/lib/merch-mockups";
 
 interface ProductDetailsProps {
     product: PrintfulProductDetails;
@@ -118,8 +119,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         )
     ) as string[];
 
-    const images = Array.from(
-        new Set([sync_product.thumbnail_url, ...allPreviewImages])
+    // Our own fronts and worn shots replace previews that show the unprinted side
+    const images = (productGallery(sync_product.id) ??
+        Array.from(new Set([sync_product.thumbnail_url, ...allPreviewImages]))
     ).filter(Boolean) as string[];
 
     // Sync selected size if color changes (ensures color/size combination exists)
@@ -147,7 +149,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             return colorMatch && sizeMatch;
         }) || sync_variants[0];
 
+    const ownFront = colorFront(sync_product.id, activeVariant?.color ?? selectedColor);
     const variantImage =
+        ownFront ||
         activeVariant?.files?.find((f) => f.type === "mockup")?.preview_url ||
         sync_product.thumbnail_url ||
         activeVariant?.product?.image ||
@@ -187,6 +191,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                 currency: activeVariant.currency,
                 quantity: 1,
                 thumbnail:
+                    ownFront ||
                     activeVariant.files?.find((f) => f.type === "mockup")?.preview_url ||
                     sync_product.thumbnail_url ||
                     activeVariant.product?.image ||

@@ -1,5 +1,6 @@
 import { SITE_URL } from "@/lib/site";
 import { getPrintfulProduct } from "@/lib/printful";
+import { productGallery } from "@/lib/merch-mockups";
 import { ProductDetails } from "@/components/shop/ProductDetails";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -68,13 +69,15 @@ export default async function ProductPage({ params }: PageProps) {
 
     // Build Product + Offer JSON-LD schema
     const { sync_product, sync_variants } = productData;
+    const ownImages = productGallery(sync_product.id)?.map((src) => `${SITE_URL}${src}`);
     const allImages = [
         sync_product.thumbnail_url,
-        ...sync_variants.flatMap(v =>
-            v.files
-                ?.filter(f => f.type === "mockup" || f.type === "preview")
-                .map(f => f.preview_url) ?? []
-        ),
+        ...(ownImages ??
+            sync_variants.flatMap(v =>
+                v.files
+                    ?.filter(f => f.type === "mockup" || f.type === "preview")
+                    .map(f => f.preview_url) ?? []
+            )),
     ].filter(Boolean);
 
     const offers = sync_variants.map(v => ({

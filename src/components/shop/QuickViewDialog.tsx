@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { ArrowUpRight, Check, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import type { PrintfulProductDetails } from "@/lib/printful";
+import { colorFront } from "@/lib/merch-mockups";
 import {
     extractRackOptions,
     formatRackPrice,
@@ -116,8 +117,10 @@ function QuickViewContent({ item, onClose }: { item: RackProductItem; onClose: (
     const variantPreviewUrl = activeVariant?.files?.find(
         (f) => f.type === "preview" || f.type === "mockup"
     )?.preview_url;
+    // Where Printful's previews show the unprinted side, we have our own front for every colour
+    const ownFront = colorFront(item.product.id, activeColor);
     const previewSrc =
-        !isDefaultColor && variantPreviewUrl ? variantPreviewUrl : item.meta.cutoutSrc;
+        ownFront ?? (!isDefaultColor && variantPreviewUrl ? variantPreviewUrl : item.meta.cutoutSrc);
 
     const handleAddToCart = () => {
         if (!activeVariant || !Number.isFinite(unitPrice) || unitPrice <= 0) return;
@@ -131,7 +134,7 @@ function QuickViewContent({ item, onClose }: { item: RackProductItem; onClose: (
             price: unitPrice,
             currency: activeVariant.currency || item.currency || "USD",
             quantity: 1,
-            thumbnail: variantPreviewUrl || item.product.thumbnail_url || item.meta.cutoutSrc,
+            thumbnail: ownFront || variantPreviewUrl || item.product.thumbnail_url || item.meta.cutoutSrc,
         });
 
         setJustAdded(true);
